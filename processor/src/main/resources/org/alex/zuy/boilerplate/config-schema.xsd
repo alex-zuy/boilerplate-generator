@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+        targetNamespace="config-schema.xsd"
+        elementFormDefault="qualified"
+        xmlns="config-schema.xsd"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:simpleType name="identifierType">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="[a-zA-Z](\w|\.)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="identifierTemplateType">
+        <xs:restriction base="xs:token"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="stringConstantNameStyle">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="camelcase"/>
+            <xs:enumeration value="uppercase"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="annotationList">
+        <xs:sequence>
+            <xs:element name="annotation" type="identifierType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="basePackage" type="identifierType"/>
+
+    <xs:element name="supportClasses">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="basePackage"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="metadataClasses">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="basePackage"/>
+                <xs:element name="propertyClassName" type="identifierTemplateType"
+                            default="${beanClassName}_p" minOccurs="0"/>
+                <xs:element name="relationshipClassName" type="identifierTemplateType"
+                            default="${beanClassName}_r" minOccurs="0"/>
+                <xs:element name="stringConstantNameStyle" type="stringConstantNameStyle"
+                            default="camelcase" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="style">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="supportClasses"/>
+                <xs:element ref="metadataClasses"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:ID" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="generationStyleList">
+        <xs:sequence>
+            <xs:element ref="style" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="packageList">
+        <xs:sequence>
+            <xs:element name="package" type="identifierType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="basePackages" type="packageList"/>
+
+    <xs:element name="typeAnnotations" type="annotationList"/>
+
+    <xs:element name="packageInfoAnnotations" type="annotationList"/>
+
+    <xs:element name="includes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="basePackages" minOccurs="0"/>
+                <xs:element ref="typeAnnotations" minOccurs="0"/>
+                <xs:element ref="packageInfoAnnotations" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="pattern" type="xs:string"/>
+
+    <xs:complexType name="patternList">
+        <xs:sequence>
+            <xs:element ref="pattern" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="patterns" type="patternList"/>
+
+    <xs:element name="excludes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="typeAnnotations" minOccurs="0"/>
+                <xs:element ref="patterns" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="domain">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="includes"/>
+                <xs:element ref="excludes" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="style" type="xs:IDREF" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="domainList">
+        <xs:sequence>
+            <xs:element ref="domain" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="beanProcessing">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="generationStyles" type="generationStyleList"/>
+                <xs:element name="domains" type="domainList"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="configuration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="beanProcessing"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

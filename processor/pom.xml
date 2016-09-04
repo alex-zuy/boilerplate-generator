@@ -17,6 +17,7 @@
         <checkstyle.version>7.1</checkstyle.version>
         <maven.pmd.plugin.version>3.6</maven.pmd.plugin.version>
         <maven.checktyle.plugin.version>2.17</maven.checktyle.plugin.version>
+        <jaxb2.maven.plugin.version>2.2</jaxb2.maven.plugin.version>
     </properties>
 
     <build>
@@ -30,27 +31,6 @@
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                     </configuration>
-                    <executions>
-                        <!-- configure maven-compiler-plugin to disable auto detection of
-                        annotation processors during compilation of main project sources
-                        to prevent our annotation processor from being auto-detected before
-                        it is actually compiled -->
-                        <execution>
-                            <id>default-compile</id>
-                            <configuration>
-                                <compilerArgs>
-                                    <arg>-proc:none</arg>
-                                </compilerArgs>
-                            </configuration>
-                        </execution>
-                        <!--<execution>-->
-                        <!--<id>default-testCompile</id>-->
-                        <!--<phase>compile</phase>-->
-                        <!--<goals>-->
-                        <!--<goal>compile</goal>-->
-                        <!--</goals>-->
-                        <!--</execution>-->
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -65,6 +45,9 @@
                         <rulesets>
                             <ruleset>${project.basedir}/config/pmd.xml</ruleset>
                         </rulesets>
+                        <excludeRoots>
+                            <excludeRoot>target/generated-sources/jaxb</excludeRoot>
+                        </excludeRoots>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -85,11 +68,57 @@
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
                         <linkXRef>false</linkXRef>
+                        <excludes>**/org/alex/zuy/boilerplate/config/generated/*.java</excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxb2-maven-plugin</artifactId>
+                    <version>${jaxb2.maven.plugin.version}</version>
+                    <configuration>
+                        <packageName>org.alex.zuy.boilerplate.config.generated</packageName>
+                        <sources>
+                            <source>
+                                ${project.basedir}/src/main/resources/org/alex/zuy/boilerplate/config-schema.xsd
+                            </source>
+                        </sources>
+                        <xjbSources>
+                            <xjbSource>
+                                ${project.basedir}/src/main/resources/org/alex/zuy/boilerplate/config-schema-binding.xjb
+                            </xjbSource>
+                        </xjbSources>
+                        <extension>true</extension>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <!-- configure maven-compiler-plugin to disable auto detection of
+                    annotation processors during compilation of main project sources
+                    to prevent our annotation processor from being auto-detected before
+                    it is actually compiled -->
+                    <execution>
+                        <id>default-compile</id>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-proc:none</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-proc:none</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -111,6 +140,18 @@
                         <phase>process-classes</phase>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
                         </goals>
                     </execution>
                 </executions>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="config-schema.xsd"
+        xmlns="config-schema.xsd">
+    <beanProcessing>
+        <generationStyles>
+            <style id="main">
+                <supportClasses>
+                    <basePackage>com.example.generated.support</basePackage>
+                </supportClasses>
+                <metadataClasses>
+                    <basePackage>com.example.generated</basePackage>
+                    <propertyClassName>${beanClassName}_p</propertyClassName>
+                    <relationshipClassName>${beanClassName}_r</relationshipClassName>
+                    <stringConstantNameStyle>camelcase</stringConstantNameStyle>
+                </metadataClasses>
+            </style>
+        </generationStyles>
+        <domains>
+            <domain style="main">
+                <includes>
+                    <basePackages>
+                        <package>com.example.first</package>
+                        <package>com.example.second</package>
+                        <package>com.example.third</package>
+                    </basePackages>
+                    <typeAnnotations>
+                        <annotation>com.example.MarkerFirst</annotation>
+                        <annotation>com.example.MarkerSecond</annotation>
+                    </typeAnnotations>
+                    <packageInfoAnnotations>
+                        <annotation>com.example.MarkerFirst</annotation>
+                        <annotation>com.example.MarkerSecond</annotation>
+                    </packageInfoAnnotations>
+                </includes>
+                <excludes>
+                    <typeAnnotations>
+                        <annotation>com.example.ExcludeMarkerFirst</annotation>
+                        <annotation>com.example.ExcludeMarkerSecond</annotation>
+                    </typeAnnotations>
+                    <patterns>
+                        <pattern>regex to exclude classes by FQN</pattern>
+                        <pattern>regex to exclude classes by FQN</pattern>
+                    </patterns>
+                </excludes>
+            </domain>
+        </domains>
+    </beanProcessing>
+</configuration>
