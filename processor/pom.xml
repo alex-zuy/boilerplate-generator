@@ -20,6 +20,27 @@
         <jaxb2.maven.plugin.version>2.2</jaxb2.maven.plugin.version>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.1.0-RC.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+            <version>1.0.0.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -104,17 +125,25 @@
                     <execution>
                         <id>default-compile</id>
                         <configuration>
-                            <compilerArgs>
-                                <arg>-proc:none</arg>
-                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.immutables</groupId>
+                                    <artifactId>value</artifactId>
+                                    <version>2.3</version>
+                                </path>
+                            </annotationProcessorPaths>
                         </configuration>
                     </execution>
                     <execution>
                         <id>default-testCompile</id>
                         <configuration>
-                            <compilerArgs>
-                                <arg>-proc:none</arg>
-                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.immutables</groupId>
+                                    <artifactId>value</artifactId>
+                                    <version>2.3</version>
+                                </path>
+                            </annotationProcessorPaths>
                         </configuration>
                     </execution>
                 </executions>
