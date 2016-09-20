@@ -1,5 +1,6 @@
 package org.alex.zuy.boilerplate.config;
 
+import static org.alex.zuy.boilerplate.config.ElementTestUtils.makeElementOfKind;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -60,12 +61,12 @@ public class BasePackageClassesCollectorTest {
 
     private void givenPackageWithDifferentTypesOfElements() {
         List<Element> packageElements = Arrays.asList(
-            makeElementMock(TypeElement.class, ElementKind.CLASS),
-            makeElementMock(TypeElement.class, ElementKind.INTERFACE),
-            makeElementMock(TypeElement.class, ElementKind.ENUM),
-            makeElementMock(TypeElement.class, ElementKind.ANNOTATION_TYPE),
-            makeElementMock(ExecutableElement.class, ElementKind.METHOD),
-            makeElementMock(ExecutableElement.class, ElementKind.CONSTRUCTOR)
+            makeElementOfKind(TypeElement.class, ElementKind.CLASS),
+            makeElementOfKind(TypeElement.class, ElementKind.INTERFACE),
+            makeElementOfKind(TypeElement.class, ElementKind.ENUM),
+            makeElementOfKind(TypeElement.class, ElementKind.ANNOTATION_TYPE),
+            makeElementOfKind(ExecutableElement.class, ElementKind.METHOD),
+            makeElementOfKind(ExecutableElement.class, ElementKind.CONSTRUCTOR)
         );
         PackageElement packageElement = mock(PackageElement.class);
         doReturn(packageElements).when(packageElement).getEnclosedElements();
@@ -79,11 +80,5 @@ public class BasePackageClassesCollectorTest {
     private void thenCollectorShouldContainOnlyClass() {
         assertThat(collectedClasses, hasSize(1));
         assertEquals(ElementKind.CLASS, CollectionUtils.getFirst(collectedClasses).getKind());
-    }
-
-    private static <T extends Element> T makeElementMock(Class<T> clazz, ElementKind kind) {
-        T elementMock = mock(clazz);
-        when(elementMock.getKind()).thenReturn(kind);
-        return elementMock;
     }
 }
