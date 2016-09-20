@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 
@@ -52,7 +53,8 @@ public class PackageInfoAnnotatedClassesCollectorTest {
     private void givenPackageAnnotatedWithMarkerAnnotation() {
         List<Element> packageEnclosedElements = Arrays.asList(
             makeElementOfKind(TypeElement.class, ElementKind.CLASS),
-            makeElementOfKind(TypeElement.class, ElementKind.INTERFACE));
+            makeElementOfKind(TypeElement.class, ElementKind.INTERFACE),
+            makeElementOfKind(ExecutableElement.class, ElementKind.METHOD));
 
         PackageElement packageElement = makeElementOfKind(PackageElement.class, ElementKind.PACKAGE);
         doReturn(packageEnclosedElements).when(packageElement).getEnclosedElements();
