@@ -1,4 +1,4 @@
-package org.alex.zuy.boilerplate.config;
+package org.alex.zuy.boilerplate.collector;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

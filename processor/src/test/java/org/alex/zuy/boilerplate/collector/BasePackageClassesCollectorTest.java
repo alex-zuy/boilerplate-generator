@@ -1,6 +1,6 @@
-package org.alex.zuy.boilerplate.config;
+package org.alex.zuy.boilerplate.collector;
 
-import static org.alex.zuy.boilerplate.config.ElementTestUtils.makeElementOfKind;
+import static org.alex.zuy.boilerplate.collector.ElementTestUtils.makeElementOfKind;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -18,7 +18,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 
 import org.alex.zuy.boilerplate.ProcessorContextImpl;
-import org.alex.zuy.boilerplate.collector.BasePackageClassesCollector;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.utils.CollectionUtils;
 import org.junit.Before;
