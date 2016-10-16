@@ -306,7 +306,7 @@
             <property name="max" value="30"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="100"/>
+            <property name="max" value="120"/>
             <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
         </module>
         <module name="MethodCount">

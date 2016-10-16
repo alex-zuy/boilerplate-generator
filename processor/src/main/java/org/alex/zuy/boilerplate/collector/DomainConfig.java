@@ -2,7 +2,6 @@
 package org.alex.zuy.boilerplate.collector;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.immutables.value.Value;
 
@@ -13,6 +12,7 @@ public interface DomainConfig {
 
     ExcludesConfig excludes();
 
+    @Value.Immutable
     interface IncludesConfig {
 
         List<String> basePackages();
@@ -20,12 +20,5 @@ public interface DomainConfig {
         List<String> typeAnnotations();
 
         List<String> packageInfoAnnotations();
-    }
-
-    interface ExcludesConfig {
-
-        List<String> typeAnnotations();
-
-        List<Pattern> patterns();
     }
 }
