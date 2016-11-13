@@ -1,73 +1,120 @@
 package org.alex.zuy.boilerplate.collector;
 
+import static org.alex.zuy.boilerplate.collector.support.TypeElementsSetMatcher.isSetOfTypeElements;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
-import org.junit.Rule;
+import com.example.ExcludeMarker;
+import org.alex.zuy.boilerplate.collector.DomainConfig.ExcludesConfig;
+import org.alex.zuy.boilerplate.collector.DomainConfig.IncludesConfig;
+import org.alex.zuy.boilerplate.collector.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.collector.support.SingleProcessingRoundAnnotationProcessorWrapper;
+import org.alex.zuy.boilerplate.services.ProcessorContext;
+import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class DomainClassesCollectorTest {
 
-    private static final String INCLUDES_BASE_PACKAGE = "com.example.main";
+    private IncludesConfig includesConfig;
 
-    private static final String INCLUDES_TYPE_ANNOTATION = "com.example.type.Marker";
+    private ExcludesConfig excludesConfig;
 
-    private static final String INCLUDES_PACKAGE_INFO_ANNOTATION = "com.example.package.Marker";
+    private TestBuildSetupBuilder testBuildSetupBuilder;
 
-    private static final String EXCLUDES_TYPE_ANNOTATION = "com.example.type.exclude.Marker";
+    private ProcessorImpl processor;
 
-    private static final String EXCLUDES_PATTERN = "^.*Excluded$";
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @Mock
-    private BasePackageClassesCollector basePackageClassesCollector;
-
-    @Mock
-    private TypeAnnotatedClassesCollector typeAnnotatedClassesCollector;
-
-    @Mock
-    private PackageInfoAnnotatedClassesCollector packageInfoAnnotatedClassesCollector;
-
-    @Mock
-    private CollectorComponentsFactory componentsFactory;
-
-    private ImmutableIncludesConfig includesConfig;
-
-    private ImmutableExcludesConfig excludesConfig;
-
+    private Boolean compileResult;
 
     @Test
     public void testAllCollectorsAreQueriedForDomainClasses() throws Exception {
-        givenIncludesConfigWithBasePackageAndTypeAnnotationAndPackageInfoAnnotation();
-        giveExcludesConfigWithPatternAndTypeAnnotation();
-        givenExistsTwoClassesIncludedByBasePackage();
+        givenExistsThreeClassesIncludedByBasePackage();
+        givenIncludesConfigWithBasePackage("com.example");
+        giveExcludesConfigWithTypeAnnotationAndPattern(ExcludeMarker.class.getName(), "^.*\\.Excluded.*$");
+        whenBuildPerformed();
+        thenOneClassMustBeCollected("com.example.IncludedClass");
     }
 
-    private void givenExistsTwoClassesIncludedByBasePackage() {
-        final TypeElement mock = mock(TypeElement.class);
-    }
-
-    private void givenIncludesConfigWithBasePackageAndTypeAnnotationAndPackageInfoAnnotation() {
+    private void givenIncludesConfigWithBasePackage(String basePackage) {
         includesConfig = ImmutableIncludesConfig.builder()
-            .addBasePackages(INCLUDES_BASE_PACKAGE)
-            .addTypeAnnotations(INCLUDES_TYPE_ANNOTATION)
-            .addPackageInfoAnnotations(INCLUDES_PACKAGE_INFO_ANNOTATION)
+            .addBasePackages(basePackage)
+            .typeAnnotations(Collections.emptyList())
+            .packageInfoAnnotations(Collections.emptyList())
             .build();
     }
 
-    private void giveExcludesConfigWithPatternAndTypeAnnotation() {
+
+    private void giveExcludesConfigWithTypeAnnotationAndPattern(String excludesAnnotation, String excludesPattern) {
         excludesConfig = ImmutableExcludesConfig.builder()
-            .addTypeAnnotations(EXCLUDES_TYPE_ANNOTATION)
-            .addPatterns(Pattern.compile(EXCLUDES_PATTERN))
+            .addTypeAnnotations(excludesAnnotation)
+            .addPatterns(Pattern.compile(excludesPattern))
             .build();
+    }
+
+    private void givenExistsThreeClassesIncludedByBasePackage() throws IOException {
+        testBuildSetupBuilder = TestBuildSetupBuilder.newInstance()
+            .addTestSpecificSources(this.getClass());
+
+    }
+
+    private void whenBuildPerformed() throws Exception {
+        DomainConfig domainConfig = ImmutableDomainConfig.builder()
+            .includes(includesConfig)
+            .excludes(excludesConfig)
+            .build();
+        processor = new ProcessorImpl(domainConfig);
+        compileResult = testBuildSetupBuilder.addAnnotationProcessor(
+            SingleProcessingRoundAnnotationProcessorWrapper.newInstance(processor))
+            .createCompileTask(null)
+            .call();
+    }
+
+    private void thenOneClassMustBeCollected(String includedClass) {
+        assertTrue(compileResult);
+        assertTrue(processor.isWasProcessingInvoked());
+        assertThat(processor.getCollectedElements(), isSetOfTypeElements(includedClass));
+    }
+
+    private static final class ProcessorImpl extends AnnotationProcessorBase {
+
+        private DomainConfig domainConfig;
+
+        private DomainClassesCollector collector;
+
+        private Set<TypeElement> collectedElements;
+
+        private ProcessorImpl(DomainConfig domainConfig) {
+            this.domainConfig = domainConfig;
+        }
+
+        public Set<TypeElement> getCollectedElements() {
+            return collectedElements;
+        }
+
+        @Override
+        protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
+            super.afterInit(processingEnvironment, processorContext);
+            collector = new DomainClassesCollector(domainConfig, new CollectorComponentsFactory(processorContext));
+        }
+
+        @Override
+        public boolean processImpl(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+            collectedElements = collector.collect(roundEnvironment);
+            return true;
+        }
+
+        @Override
+        public Set<String> getSupportedAnnotationTypes() {
+            return Collections.singleton("*");
+        }
     }
 }

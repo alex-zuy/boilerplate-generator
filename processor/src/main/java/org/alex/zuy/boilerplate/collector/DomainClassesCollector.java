@@ -52,7 +52,7 @@ public class DomainClassesCollector {
                 .flatMap(annotationName ->
                     typeAnnotationCollector.collect(annotationName, environment).stream())
         ).flatMap(Function.identity())
-            .filter(typeElement -> classFilters.stream().anyMatch(filter -> filter.filter(typeElement)))
+            .filter(typeElement -> classFilters.stream().allMatch(filter -> filter.filter(typeElement)))
             .collect(Collectors.toSet());
     }
 }
