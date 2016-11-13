@@ -1,6 +1,5 @@
 package org.alex.zuy.boilerplate.support;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -9,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringBufferInputStream;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
@@ -19,13 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Processor;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
@@ -44,7 +41,7 @@ public class TestBuildSetupBuilder {
 
     private final InMemoryFileManager fileManager;
 
-    private final Set<AbstractProcessor> annotationProcessors = new HashSet<>();
+    private final Set<Processor> annotationProcessors = new HashSet<>();
 
     private final List<String> options = new ArrayList<>();
 
@@ -92,7 +89,7 @@ public class TestBuildSetupBuilder {
         return this;
     }
 
-    public TestBuildSetupBuilder addAnnotationProcessor(AbstractProcessor processor) {
+    public TestBuildSetupBuilder addAnnotationProcessor(Processor processor) {
         annotationProcessors.add(processor);
         return this;
     }
