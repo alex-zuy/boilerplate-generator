@@ -44,6 +44,12 @@ public class DomainClassesCollectorTest {
         thenOneClassMustBeCollected("com.example.IncludedClass");
     }
 
+    private void givenExistsThreeClassesIncludedByBasePackage() throws IOException {
+        testBuildSetupBuilder = TestBuildSetupBuilder.newInstance()
+            .addTestSpecificSources(this.getClass());
+    }
+
+
     private void givenIncludesConfigWithBasePackage(String basePackage) {
         includesConfig = ImmutableIncludesConfig.builder()
             .addBasePackages(basePackage)
@@ -52,18 +58,11 @@ public class DomainClassesCollectorTest {
             .build();
     }
 
-
     private void giveExcludesConfigWithTypeAnnotationAndPattern(String excludesAnnotation, String excludesPattern) {
         excludesConfig = ImmutableExcludesConfig.builder()
             .addTypeAnnotations(excludesAnnotation)
             .addPatterns(Pattern.compile(excludesPattern))
             .build();
-    }
-
-    private void givenExistsThreeClassesIncludedByBasePackage() throws IOException {
-        testBuildSetupBuilder = TestBuildSetupBuilder.newInstance()
-            .addTestSpecificSources(this.getClass());
-
     }
 
     private void whenBuildPerformed() throws Exception {

@@ -23,7 +23,6 @@ public interface DomainConfig {
         List<String> packageInfoAnnotations();
     }
 
-
     @Value.Immutable
     interface ExcludesConfig {
 
