@@ -1,8 +1,10 @@
 package com.example.second;
 
+import com.example.Marker;
+
 public class ClassC {
 
-    @com.example.primary.Marker
+    @Marker
     public void method() {
 
     }

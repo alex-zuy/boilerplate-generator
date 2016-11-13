@@ -1,4 +1,4 @@
-package com.example.primary;
+package com.example;
 
 public @interface Trigger {
 

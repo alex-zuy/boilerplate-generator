@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.TypeElement;
 
-import org.alex.zuy.boilerplate.collector.BasePackageClassesCollector;
+import com.example.Trigger;
 import org.alex.zuy.boilerplate.services.ImmutableProcessorContext;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 
@@ -14,9 +16,11 @@ public abstract class AnnotationProcessorBase extends AbstractProcessor {
 
     private ProcessingEnvironment processingEnvironment;
 
-    private BasePackageClassesCollector collector;
+    private boolean wasProcessingInvoked;
 
-    private ProcessorContext processorContext;
+    public boolean isWasProcessingInvoked() {
+        return wasProcessingInvoked;
+    }
 
     protected void beforeInit() {
 
@@ -26,6 +30,8 @@ public abstract class AnnotationProcessorBase extends AbstractProcessor {
 
     }
 
+    public abstract boolean processImpl(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment);
+
     @Override
     public final synchronized void init(ProcessingEnvironment processingEnvironment) {
         beforeInit();
@@ -34,7 +40,7 @@ public abstract class AnnotationProcessorBase extends AbstractProcessor {
 
         this.processingEnvironment = processingEnvironment;
 
-        processorContext = ImmutableProcessorContext.builder()
+        ProcessorContext processorContext = ImmutableProcessorContext.builder()
             .elementUtils(processingEnvironment.getElementUtils())
             .filer(processingEnvironment.getFiler())
             .locale(processingEnvironment.getLocale())
@@ -46,8 +52,14 @@ public abstract class AnnotationProcessorBase extends AbstractProcessor {
     }
 
     @Override
+    public final boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        wasProcessingInvoked = true;
+        return processImpl(set, roundEnvironment);
+    }
+
+    @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Collections.singleton(com.example.primary.Trigger.class.getName());
+        return Collections.singleton(Trigger.class.getName());
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.example.first;
 
-@com.example.primary.Marker
+import com.example.Marker;
+
+@Marker
 public interface InterfaceB {
 
 }

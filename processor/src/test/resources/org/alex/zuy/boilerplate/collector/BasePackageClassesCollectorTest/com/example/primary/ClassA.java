@@ -1,6 +1,8 @@
 package com.example.primary;
 
-@com.example.primary.Trigger
+import com.example.Trigger;
+
+@Trigger
 public class ClassA {
 
 }

@@ -1,71 +1,81 @@
 package org.alex.zuy.boilerplate.collector;
 
-import static org.alex.zuy.boilerplate.collector.ElementTestUtils.makeElementOfKind;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.junit.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
+import static org.alex.zuy.boilerplate.collector.support.TypeElementsSetMatcher.isSetOfTypeElements;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
-import org.alex.zuy.boilerplate.utils.CollectionUtils;
-import org.junit.Before;
-import org.junit.Rule;
+import com.example.Marker;
+import org.alex.zuy.boilerplate.collector.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.collector.support.SingleProcessingRoundAnnotationProcessorWrapper;
+import org.alex.zuy.boilerplate.collector.support.TypeElementsSetMatcher;
+import org.alex.zuy.boilerplate.services.ProcessorContext;
+import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class TypeAnnotatedClassesCollectorTest {
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    private TestBuildSetupBuilder testBuildSetupBuilder;
 
-    @Mock
-    private RoundEnvironment roundEnvironment;
+    private Boolean compileResult;
 
-    private TypeAnnotatedClassesCollector collector;
-
-    private Set<TypeElement> collectedClasses;
-
-    @Before
-    public void setUp() {
-        collector = new TypeAnnotatedClassesCollector();
-    }
+    private ProcessorImpl processor;
 
     @Test
-    public void testOnlyClassesAnnotatedWithMarkerAnnotationCollected() throws Exception {
-        givenDifferentElementsAnnotatedWithMarkerAnnotation();
-        whenClassesCollected();
-        thenOnlySingleClassCollected();
+    public void testCollector() throws Exception {
+        givenTestSpecificSourceWillBeBuild();
+        whenBuildPerformed();
+        thenCollectedTypeElementsShouldBe("com.example.marked.ClassA");
     }
 
-    private void givenDifferentElementsAnnotatedWithMarkerAnnotation() {
-        Set<Element> annotatedElements = new HashSet<>(Arrays.asList(
-            makeElementOfKind(TypeElement.class, ElementKind.CLASS),
-            makeElementOfKind(TypeElement.class, ElementKind.INTERFACE),
-            makeElementOfKind(ExecutableElement.class, ElementKind.METHOD)));
-
-        doReturn(annotatedElements).when(roundEnvironment).getElementsAnnotatedWith(Marker.class);
+    private void givenTestSpecificSourceWillBeBuild() throws IOException {
+        processor = new ProcessorImpl();
+        testBuildSetupBuilder = TestBuildSetupBuilder.newInstance()
+            .addTestSpecificSources(this.getClass())
+            .addAnnotationProcessor(SingleProcessingRoundAnnotationProcessorWrapper.newInstance(processor));
     }
 
-    private void whenClassesCollected() {
-        collectedClasses = collector.collect(Marker.class.getName(), roundEnvironment);
+    private void whenBuildPerformed() throws Exception {
+        compileResult = testBuildSetupBuilder.createCompileTask(null).call();
     }
 
-    private void thenOnlySingleClassCollected() {
-        assertThat(collectedClasses, hasSize(1));
-        assertEquals(ElementKind.CLASS, CollectionUtils.getFirst(collectedClasses).getKind());
+    private void thenCollectedTypeElementsShouldBe(String... expected) {
+        assertTrue(compileResult);
+        assertTrue(processor.isWasProcessingInvoked());
+        assertThat(processor.getCollectedTypeElements(), isSetOfTypeElements("com.example.first.ClassA"));
     }
 
-    public @interface Marker {
+    private static final class ProcessorImpl extends AnnotationProcessorBase {
 
+        private TypeAnnotatedClassesCollector collector;
+
+        private Set<TypeElement> collectedTypeElements;
+
+        public Set<TypeElement> getCollectedTypeElements() {
+            return collectedTypeElements;
+        }
+
+        @Override
+        protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
+            super.afterInit(processingEnvironment, processorContext);
+            collector = new TypeAnnotatedClassesCollector();
+        }
+
+        @Override
+        public boolean processImpl(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+            collectedTypeElements = collector.collect(Marker.class.getName(), roundEnvironment);
+            return true;
+        }
+
+        @Override
+        public Set<String> getSupportedAnnotationTypes() {
+            return Collections.singleton(Marker.class.getName());
+        }
     }
 }
