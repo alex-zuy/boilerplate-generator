@@ -1,4 +1,4 @@
-package org.alex.zuy.boilerplate.collector.support;
+package org.alex.zuy.boilerplate.support;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

@@ -18,7 +18,7 @@ import com.example.ExcludeMarker;
 import org.alex.zuy.boilerplate.collector.DomainConfig.ExcludesConfig;
 import org.alex.zuy.boilerplate.collector.DomainConfig.IncludesConfig;
 import org.alex.zuy.boilerplate.collector.support.AnnotationProcessorBase;
-import org.alex.zuy.boilerplate.collector.support.SingleProcessingRoundAnnotationProcessorWrapper;
+import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;

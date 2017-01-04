@@ -122,6 +122,7 @@
     <exclude name="GodClass"/>
     <!-- pointless -->
     <exclude name="AccessorClassGeneration"/>
+      <exclude name="UseLocaleWithCaseConversions"/>
   </rule>
 
   <rule ref="rulesets/java/design.xml/ConfusingTernary">
@@ -180,6 +181,7 @@
   <rule ref="rulesets/java/naming.xml">
     <!-- we use CheckstyleCustomShortVariable, to control lenght (will be fixed in PMD 5.4) and skip Override methods -->
     <exclude name="ShortVariable"/>
+      <exclude name="ShortClassName"/>
   </rule>
 <rule name="CheckstyleCustomShortVariable"
       message="Avoid variables with short names that shorter than 2 symbols: {0}"
@@ -216,12 +218,6 @@
       <property name="minimum" value="45"/>
     </properties>
   </rule>
-  <rule ref="rulesets/java/naming.xml/ShortClassName">
-    <properties>
-      <!-- Main is good name for class containing main method, Tag as inner class name is also fine -->
-      <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@Image='Main' or @Image='Tag']"/>
-    </properties>
-  </rule>
   
   <rule ref="rulesets/java/optimizations.xml">
     <!--produces more false-positives than real problems-->
@@ -233,17 +229,14 @@
     <!--not configurable, decreases readability-->
     <exclude name="UseStringBufferForStringAppends"/>
   </rule>
-  <rule ref="rulesets/java/strictexception.xml"/>
+    <rule ref="rulesets/java/strictexception.xml">
+        <exclude name="AvoidCatchingGenericException"/>
+        <exclude name="AvoidRethrowingException"/>
+    </rule>
   <rule ref="rulesets/java/strictexception.xml/ExceptionAsFlowControl">
     <properties>
       <!-- till #1159 -->
       <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@Image='PackageObjectFactory']"/>
-    </properties>
-  </rule>
-  <rule ref="rulesets/java/strictexception.xml/AvoidCatchingGenericException">
-    <properties>
-      <!-- There is no other way to deliver filename that was under processing -->
-      <property name="violationSuppressXPath" value="//MethodDeclaration[@Name='process' and ../../..[@Image='Checker']]"/>
     </properties>
   </rule>
 

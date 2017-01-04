@@ -62,9 +62,9 @@ public class TestBuildSetupBuilder {
         fileManager = new InMemoryFileManager(standardFileManager);
     }
 
-    public TestBuildSetupBuilder addSourceFile(String packageName, String sourceFileContents) throws IOException {
+    public TestBuildSetupBuilder addSourceFile(String sourceFilePath, String sourceFileContents) throws IOException {
         try (InputStream input = new ByteArrayInputStream(sourceFileContents.getBytes())) {
-            compilationUnits.add(addFileToSourcePath(fileManager, URI.create(packageName), input));
+            compilationUnits.add(addFileToSourcePath(fileManager, URI.create(sourceFilePath), input));
         }
         return this;
     }
