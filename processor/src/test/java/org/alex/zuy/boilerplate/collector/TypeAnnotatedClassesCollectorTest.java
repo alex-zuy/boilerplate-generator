@@ -12,7 +12,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Marker;
-import org.alex.zuy.boilerplate.collector.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;

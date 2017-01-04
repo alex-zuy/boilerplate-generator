@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -15,15 +12,15 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Trigger;
-import org.alex.zuy.boilerplate.collector.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
 import org.alex.zuy.boilerplate.domain.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
+import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.support.ProcessorTestsSteps;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
-import org.alex.zuy.boilerplate.utils.IOUtils;
 import org.junit.Test;
 
 public class BeanClassAnalyserImplTest {
@@ -33,6 +30,8 @@ public class BeanClassAnalyserImplTest {
     private ProcessorImpl processor = new ProcessorImpl();
 
     private TestBuildSetupBuilder testBuildSetupBuilder = TestBuildSetupBuilder.newInstance();
+
+    private ProcessorTestsSteps processorTestsSteps = new ProcessorTestsSteps(testBuildSetupBuilder);
 
     @Test
     public void testSingleGetterAndSetterPerProperty() throws Exception {
@@ -88,14 +87,8 @@ public class BeanClassAnalyserImplTest {
     }
 
     private void givenSourceFiles(String... fileNames) throws IOException {
-        testBuildSetupBuilder = TestBuildSetupBuilder.newInstance();
         for (final String fileName : fileNames) {
-            String fileResourcePath = String.format("%s/%s.java", getClass().getSimpleName(), fileName);
-            String filePath = String.format("%s.%s.java", PACKAGE_NAME, fileName);
-            try (InputStream inputStream = getClass().getResourceAsStream(fileResourcePath);
-                 Reader reader = new InputStreamReader(inputStream)) {
-                testBuildSetupBuilder.addSourceFile(filePath, IOUtils.readToString(reader));
-            }
+            processorTestsSteps.addTestSpecificSourceFile(getClass(), fileName);
         }
     }
 

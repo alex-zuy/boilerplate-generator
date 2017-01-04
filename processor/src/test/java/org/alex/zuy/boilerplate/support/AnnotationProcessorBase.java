@@ -1,4 +1,4 @@
-package org.alex.zuy.boilerplate.collector.support;
+package org.alex.zuy.boilerplate.support;
 
 import java.util.Collections;
 import java.util.Set;
