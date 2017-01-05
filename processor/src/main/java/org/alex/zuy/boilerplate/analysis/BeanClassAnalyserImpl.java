@@ -16,7 +16,7 @@ import javax.lang.model.type.TypeKind;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
-import org.alex.zuy.boilerplate.domain.types.Types;
+import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.utils.CollectionUtils;
 import org.alex.zuy.boilerplate.utils.StringUtils;
 
@@ -76,7 +76,7 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
 
                 if (!gettingMethods.isEmpty() && !settingMethods.isEmpty()) {
                     ExecutableElement gettingMethod = gettingMethods.get(0);
-                    Types.Type<?> propertyType = typeAnalyser.analyse(gettingMethod.getReturnType());
+                    Type<?> propertyType = typeAnalyser.analyse(gettingMethod.getReturnType());
                     properties.add(
                         new BeanProperty(propertyName, propertyType, getPropertyAccessModifier(gettingMethod)));
                 }

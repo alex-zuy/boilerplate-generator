@@ -18,6 +18,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
+import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
@@ -39,7 +40,7 @@ public class TypeAnalyserImplTest {
     @Test
     public void testPrimitiveTypes() throws Exception {
         String className = "PrimitiveTypes";
-        List<Types.Type<?>> expectedTypes = Stream.of("boolean", "byte", "short", "int", "long", "float", "double")
+        List<Type<?>> expectedTypes = Stream.of("boolean", "byte", "short", "int", "long", "float", "double")
             .map(Types::makeExactType)
             .collect(Collectors.toList());
 
@@ -51,7 +52,7 @@ public class TypeAnalyserImplTest {
     @Test
     public void testArrayTypes() throws Exception {
         String className = "ArrayTypes";
-        List<Types.Type<?>> expectedTypes = new ArrayList<>();
+        List<Type<?>> expectedTypes = new ArrayList<>();
         expectedTypes.add(Types.makeArrayType(Types.makeExactType("int")));
         expectedTypes.add(Types.makeArrayType(Types.makeExactType("java.lang.Integer")));
         expectedTypes.add(Types.makeArrayType(Types.makeArrayType(Types.makeExactType("java.lang.Object"))));
@@ -65,7 +66,7 @@ public class TypeAnalyserImplTest {
     @Test
     public void testGenericTypes() throws Exception {
         String className = "GenericTypes";
-        List<Types.Type<?>> expectedTypes = new ArrayList<>();
+        List<Type<?>> expectedTypes = new ArrayList<>();
         expectedTypes.add(Types.makeTypeInstance("java.util.List",
             Arrays.asList(Types.makeExactType("java.lang.Integer"))));
         expectedTypes.add(Types.makeTypeInstance("java.util.Map",
@@ -91,8 +92,8 @@ public class TypeAnalyserImplTest {
         assertTrue(result);
     }
 
-    private void thenCollectedTypesShouldBe(String fullClassName, List<Types.Type<?>> expectedTypes) {
-        List<Types.Type<?>> actualTypes = processor.getTypes().get(fullClassName);
+    private void thenCollectedTypesShouldBe(String fullClassName, List<Type<?>> expectedTypes) {
+        List<Type<?>> actualTypes = processor.getTypes().get(fullClassName);
         assertEquals(expectedTypes, actualTypes);
     }
 
@@ -104,7 +105,7 @@ public class TypeAnalyserImplTest {
 
         private ProcessorContext processorContext;
 
-        private Map<String, List<Types.Type<?>>> types = new HashMap<>();
+        private Map<String, List<Type<?>>> types = new HashMap<>();
 
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
@@ -121,7 +122,7 @@ public class TypeAnalyserImplTest {
                 .filter(element -> elementKinds.contains(element.getKind()))
                 .map(element -> (TypeElement) element)
                 .forEach(typeElement -> {
-                    List<Types.Type<?>> typeList = typeElement.getEnclosedElements().stream()
+                    List<Type<?>> typeList = typeElement.getEnclosedElements().stream()
                         .filter(element -> element.getKind().equals(ElementKind.METHOD))
                         .map(element -> (ExecutableElement) element)
                         .map(method -> analyser.analyse(method.getReturnType()))
@@ -131,7 +132,7 @@ public class TypeAnalyserImplTest {
             return false;
         }
 
-        public Map<String, List<Types.Type<?>>> getTypes() {
+        public Map<String, List<Type<?>>> getTypes() {
             return types;
         }
     }

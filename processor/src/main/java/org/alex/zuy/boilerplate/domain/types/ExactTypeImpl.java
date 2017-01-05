@@ -1,8 +1,8 @@
 package org.alex.zuy.boilerplate.domain.types;
 
-final class ExactTypeImpl extends AbstractType<Types.ExactType> implements Types.ExactType {
+final class ExactTypeImpl extends AbstractType<ExactType> implements ExactType {
 
     ExactTypeImpl(String name) {
-        super(name, Types.TypeKinds.EXACT_TYPE);
+        super(name, TypeKinds.EXACT_TYPE);
     }
 }

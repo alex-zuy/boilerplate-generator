@@ -1,17 +1,17 @@
 package org.alex.zuy.boilerplate.domain;
 
-import org.alex.zuy.boilerplate.domain.types.Types;
+import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
 public class BeanProperty {
 
     private String name;
 
-    private Types.Type<?> type;
+    private Type<?> type;
 
     private AccessModifier accessModifier;
 
-    public BeanProperty(String name, Types.Type<?> type, AccessModifier accessModifier) {
+    public BeanProperty(String name, Type<?> type, AccessModifier accessModifier) {
         this.name = name;
         this.type = type;
         this.accessModifier = accessModifier;
@@ -21,7 +21,7 @@ public class BeanProperty {
         return name;
     }
 
-    public Types.Type<?> getType() {
+    public Type<?> getType() {
         return type;
     }
 

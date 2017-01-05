@@ -4,13 +4,13 @@ import java.util.Objects;
 
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
-abstract class AbstractType<T extends Types.Type<T>> implements Types.Type<T> {
+abstract class AbstractType<T extends Type<T>> implements Type<T> {
 
     private final String name;
 
-    private final Types.TypeKinds<T> kind;
+    private final TypeKinds<T> kind;
 
-    AbstractType(String name, Types.TypeKinds<T> kind) {
+    AbstractType(String name, TypeKinds<T> kind) {
         this.name = name;
         this.kind = kind;
     }
@@ -21,17 +21,17 @@ abstract class AbstractType<T extends Types.Type<T>> implements Types.Type<T> {
     }
 
     @Override
-    public Types.TypeKinds<T> getKind() {
+    public TypeKinds<T> getKind() {
         return kind;
     }
 
     @Override
-    public boolean isOfKind(Types.TypeKinds<?> otherKind) {
+    public boolean isOfKind(TypeKinds<?> otherKind) {
         return this.kind.equals(otherKind);
     }
 
     @Override
-    public <S extends Types.Type<S>> S getAs(Types.TypeKinds<S> otherKind) {
+    public <S extends Type<S>> S getAs(TypeKinds<S> otherKind) {
         return (S) this;
     }
 

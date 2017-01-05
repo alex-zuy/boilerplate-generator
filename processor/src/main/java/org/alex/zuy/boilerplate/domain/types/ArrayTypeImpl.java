@@ -4,19 +4,19 @@ import java.util.Objects;
 
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
-final class ArrayTypeImpl extends AbstractType<Types.ArrayType> implements Types.ArrayType {
+final class ArrayTypeImpl extends AbstractType<ArrayType> implements ArrayType {
 
     private static final String ARRAY_TYPE_NAME = "array";
 
-    private Types.Type<?> elementType;
+    private Type<?> elementType;
 
-    ArrayTypeImpl(Types.Type<?> elementType) {
-        super(ARRAY_TYPE_NAME, Types.TypeKinds.ARRAY_TYPE);
+    ArrayTypeImpl(Type<?> elementType) {
+        super(ARRAY_TYPE_NAME, TypeKinds.ARRAY_TYPE);
         this.elementType = elementType;
     }
 
     @Override
-    public Types.Type<?> getElementType() {
+    public Type<?> getElementType() {
         return elementType;
     }
 

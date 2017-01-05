@@ -7,21 +7,21 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.alex.zuy.boilerplate.domain.types.Types;
+import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
 public class BeanClass {
 
-    private Types.Type<?> type;
+    private Type<?> type;
 
     private Map<String, BeanProperty> properties;
 
-    public BeanClass(Types.Type<?> type, List<BeanProperty> properties) {
+    public BeanClass(Type<?> type, List<BeanProperty> properties) {
         this.type = type;
         this.properties = Collections.unmodifiableMap(convertToMap(properties));
     }
 
-    public Types.Type<?> getType() {
+    public Type<?> getType() {
         return type;
     }
 

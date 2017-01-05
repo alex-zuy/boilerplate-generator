@@ -7,17 +7,17 @@ import java.util.Objects;
 
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
-final class TypeInstanceImpl extends AbstractType<Types.TypeInstance> implements Types.TypeInstance {
+final class TypeInstanceImpl extends AbstractType<TypeInstance> implements TypeInstance {
 
-    private List<Types.Type<?>> parameters;
+    private List<Type<?>> parameters;
 
-    TypeInstanceImpl(String name, List<Types.Type<?>> parameters) {
-        super(name, Types.TypeKinds.TYPE_INSTANCE);
+    TypeInstanceImpl(String name, List<Type<?>> parameters) {
+        super(name, TypeKinds.TYPE_INSTANCE);
         this.parameters = Collections.unmodifiableList(new ArrayList<>(parameters));
     }
 
     @Override
-    public List<Types.Type<?>> getParameters() {
+    public List<Type<?>> getParameters() {
         return parameters;
     }
 

@@ -11,6 +11,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
+import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.utils.CollectionUtils;
 
@@ -35,7 +36,7 @@ public class TypeAnalyserImpl implements TypeAnalyser {
     }
 
     @Override
-    public Types.Type<?> analyse(TypeMirror typeMirror) {
+    public Type<?> analyse(TypeMirror typeMirror) {
         TypeKind kind = typeMirror.getKind();
         switch (kind) {
             case ARRAY:
@@ -52,12 +53,12 @@ public class TypeAnalyserImpl implements TypeAnalyser {
         }
     }
 
-    private Types.Type<?> analyseDeclaredType(DeclaredType declaredType) {
+    private Type<?> analyseDeclaredType(DeclaredType declaredType) {
         TypeElement typeElement = (TypeElement) typeUtils.asElement(declaredType);
         String qualifiedTypeName = typeElement.getQualifiedName().toString();
 
         if (isGenericType(declaredType)) {
-            List<Types.Type<?>> typeArguments = declaredType.getTypeArguments().stream()
+            List<Type<?>> typeArguments = declaredType.getTypeArguments().stream()
                 .map(this::analyse)
                 .collect(Collectors.toList());
             return Types.makeTypeInstance(qualifiedTypeName, typeArguments);
