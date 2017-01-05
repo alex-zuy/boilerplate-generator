@@ -20,7 +20,7 @@ public class TypeAnnotatedClassesCollector {
                 .collect(Collectors.toSet());
         }
         catch (ClassNotFoundException e) {
-            throw new DomainClassesCollectorException(e);
+            throw new DomainClassesCollector.DomainClassesCollectorException(e);
         }
     }
 }

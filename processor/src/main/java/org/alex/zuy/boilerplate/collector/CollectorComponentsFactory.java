@@ -2,6 +2,8 @@ package org.alex.zuy.boilerplate.collector;
 
 import java.util.regex.Pattern;
 
+import org.alex.zuy.boilerplate.collector.filters.FullyQualifiedNamePatternClassFilter;
+import org.alex.zuy.boilerplate.collector.filters.TypeAnnotatedClassFilter;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 
 public class CollectorComponentsFactory {

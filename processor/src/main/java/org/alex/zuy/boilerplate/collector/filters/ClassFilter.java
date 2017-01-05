@@ -1,4 +1,4 @@
-package org.alex.zuy.boilerplate.collector;
+package org.alex.zuy.boilerplate.collector.filters;
 
 import javax.lang.model.element.TypeElement;
 

@@ -23,7 +23,7 @@ import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;
 
-public class DomainClassesCollectorTest {
+public class DomainClassesCollectorImplTest {
 
     private IncludesConfig includesConfig;
 
@@ -87,7 +87,7 @@ public class DomainClassesCollectorTest {
 
         private DomainConfig domainConfig;
 
-        private DomainClassesCollector collector;
+        private DomainClassesCollectorImpl collector;
 
         private Set<TypeElement> collectedElements;
 
@@ -102,7 +102,7 @@ public class DomainClassesCollectorTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new DomainClassesCollector(domainConfig, new CollectorComponentsFactory(processorContext));
+            collector = new DomainClassesCollectorImpl(domainConfig, new CollectorComponentsFactory(processorContext));
         }
 
         @Override
