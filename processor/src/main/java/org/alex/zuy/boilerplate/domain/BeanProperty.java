@@ -1,5 +1,6 @@
 package org.alex.zuy.boilerplate.domain;
 
+import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
 public class BeanProperty {

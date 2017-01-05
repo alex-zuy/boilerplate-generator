@@ -16,7 +16,7 @@ import javax.lang.model.type.TypeKind;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
-import org.alex.zuy.boilerplate.domain.Types;
+import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.utils.CollectionUtils;
 import org.alex.zuy.boilerplate.utils.StringUtils;
 

@@ -2,7 +2,7 @@ package org.alex.zuy.boilerplate.analysis;
 
 import javax.lang.model.type.TypeMirror;
 
-import org.alex.zuy.boilerplate.domain.Types;
+import org.alex.zuy.boilerplate.domain.types.Types;
 
 public interface TypeAnalyser {
 

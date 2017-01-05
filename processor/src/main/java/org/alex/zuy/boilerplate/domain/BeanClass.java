@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
 public class BeanClass {

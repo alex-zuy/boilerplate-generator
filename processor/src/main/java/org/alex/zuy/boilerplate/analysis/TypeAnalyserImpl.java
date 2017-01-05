@@ -11,7 +11,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import org.alex.zuy.boilerplate.domain.Types;
+import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.utils.CollectionUtils;
 
 public class TypeAnalyserImpl implements TypeAnalyser {
