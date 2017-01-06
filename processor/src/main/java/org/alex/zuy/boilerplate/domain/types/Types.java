@@ -16,12 +16,16 @@ public final class Types {
         return new ExactTypeImpl(name);
     }
 
+    public static ExactType makeExactType(String name, String packageName) {
+        return new ExactTypeImpl(name, packageName);
+    }
+
     public static ArrayType makeArrayType(Type<?> elementType) {
         return new ArrayTypeImpl(elementType);
     }
 
-    public static TypeInstance makeTypeInstance(String name, List<Type<?>> parameters) {
-        return new TypeInstanceImpl(name, parameters);
+    public static TypeInstance makeTypeInstance(String name, String packageName, List<Type<?>> parameters) {
+        return new TypeInstanceImpl(name, packageName, parameters);
     }
 
     public static TypeParameter makeTypeParameter(String name) {

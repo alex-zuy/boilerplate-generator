@@ -2,10 +2,13 @@ package org.alex.zuy.boilerplate.domain.types;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public interface Type<T extends Type<T>> {
 
     String getName();
+
+    Optional<String> getPackageName();
 
     TypeKinds<T> getKind();
 

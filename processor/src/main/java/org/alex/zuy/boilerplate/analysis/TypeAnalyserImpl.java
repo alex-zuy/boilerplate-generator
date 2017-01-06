@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -61,10 +64,23 @@ public class TypeAnalyserImpl implements TypeAnalyser {
             List<Type<?>> typeArguments = declaredType.getTypeArguments().stream()
                 .map(this::analyse)
                 .collect(Collectors.toList());
-            return Types.makeTypeInstance(qualifiedTypeName, typeArguments);
+            return Types.makeTypeInstance(qualifiedTypeName, getEnclosingPackageName(typeElement), typeArguments);
         }
         else {
-            return Types.makeExactType(qualifiedTypeName);
+            return Types.makeExactType(qualifiedTypeName, getEnclosingPackageName(typeElement));
+        }
+    }
+
+    private String getEnclosingPackageName(Element element) {
+        if (element == null) {
+            return null;
+        }
+        else if (element.getKind().equals(ElementKind.PACKAGE)) {
+            PackageElement packageElement = (PackageElement) element;
+            return packageElement.isUnnamed() ? null : packageElement.getQualifiedName().toString();
+        }
+        else {
+            return getEnclosingPackageName(element.getEnclosingElement());
         }
     }
 

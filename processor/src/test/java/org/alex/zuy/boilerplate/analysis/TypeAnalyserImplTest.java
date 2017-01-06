@@ -18,6 +18,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
+import org.alex.zuy.boilerplate.domain.types.ExactType;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
@@ -35,7 +36,7 @@ public class TypeAnalyserImplTest {
 
     private ProcessorImpl processor;
 
-    private ProcessorTestsSteps processorTestsSteps = new ProcessorTestsSteps(testBuildSetupBuilder);
+    private ProcessorTestsSteps processorTestsSteps = new ProcessorTestsSteps(testBuildSetupBuilder, getClass());
 
     @Test
     public void testPrimitiveTypes() throws Exception {
@@ -44,7 +45,7 @@ public class TypeAnalyserImplTest {
             .map(Types::makeExactType)
             .collect(Collectors.toList());
 
-        givenSourceFiles(className);
+        givenSourceFilesInNamedPackage(className);
         whenReturnTypesAnalysed();
         thenCollectedTypesShouldBe(getFullClassName(className), expectedTypes);
     }
@@ -54,32 +55,49 @@ public class TypeAnalyserImplTest {
         String className = "ArrayTypes";
         List<Type<?>> expectedTypes = new ArrayList<>();
         expectedTypes.add(Types.makeArrayType(Types.makeExactType("int")));
-        expectedTypes.add(Types.makeArrayType(Types.makeExactType("java.lang.Integer")));
-        expectedTypes.add(Types.makeArrayType(Types.makeArrayType(Types.makeExactType("java.lang.Object"))));
+        expectedTypes.add(Types.makeArrayType(makeIntegerType()));
+        expectedTypes.add(
+            Types.makeArrayType(Types.makeArrayType(Types.makeExactType("java.lang.Object", "java.lang"))));
 
-        givenSourceFiles(className);
+        givenSourceFilesInNamedPackage(className);
         whenReturnTypesAnalysed();
         thenCollectedTypesShouldBe(getFullClassName(className), expectedTypes);
     }
-
 
     @Test
     public void testGenericTypes() throws Exception {
         String className = "GenericTypes";
         List<Type<?>> expectedTypes = new ArrayList<>();
-        expectedTypes.add(Types.makeTypeInstance("java.util.List",
-            Arrays.asList(Types.makeExactType("java.lang.Integer"))));
-        expectedTypes.add(Types.makeTypeInstance("java.util.Map",
-            Arrays.asList(Types.makeExactType("java.lang.String"), Types.makeExactType("java.lang.Integer"))));
+        expectedTypes.add(Types.makeTypeInstance("java.util.List", "java.util", Arrays.asList(makeIntegerType())));
+        expectedTypes.add(Types.makeTypeInstance("java.util.Map", "java.util",
+            Arrays.asList(makeStringType(), makeIntegerType())));
 
-        givenSourceFiles(className);
+        givenSourceFilesInNamedPackage(className);
         whenReturnTypesAnalysed();
         thenCollectedTypesShouldBe(getFullClassName(className), expectedTypes);
     }
 
-    private void givenSourceFiles(String... fileNames) throws IOException {
+    @Test
+    public void testTypesInUnnamedPackages() throws Exception {
+        String declaredClassName = "DeclaredClass";
+        String referencingClassName = "ReferencingClass";
+        List<Type<?>> expectedTypes = new ArrayList<>();
+        expectedTypes.add(Types.makeExactType("DeclaredClass"));
+
+        givenSourceFilesInUnnamedPackage(declaredClassName, referencingClassName);
+        whenReturnTypesAnalysed();
+        thenCollectedTypesShouldBe(referencingClassName, expectedTypes);
+    }
+
+    private void givenSourceFilesInNamedPackage(String... fileNames) throws IOException {
         for (final String fileName : fileNames) {
-            processorTestsSteps.addTestSpecificSourceFile(getClass(), fileName);
+            processorTestsSteps.addTestSpecificSourceFile(PACKAGE_NAME, fileName);
+        }
+    }
+
+    private void givenSourceFilesInUnnamedPackage(String... fileNames) throws IOException {
+        for (final String fileName : fileNames) {
+            processorTestsSteps.addTestSpecificSourceFile(fileName);
         }
     }
 
@@ -99,6 +117,14 @@ public class TypeAnalyserImplTest {
 
     private String getFullClassName(String simpleName) {
         return String.format("%s.%s", PACKAGE_NAME, simpleName);
+    }
+
+    private ExactType makeIntegerType() {
+        return Types.makeExactType("java.lang.Integer", "java.lang");
+    }
+
+    private ExactType makeStringType() {
+        return Types.makeExactType("java.lang.String", "java.lang");
     }
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {

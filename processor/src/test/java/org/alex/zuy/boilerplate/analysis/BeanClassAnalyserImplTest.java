@@ -15,6 +15,7 @@ import com.example.Trigger;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
+import org.alex.zuy.boilerplate.domain.types.ExactType;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
@@ -31,13 +32,13 @@ public class BeanClassAnalyserImplTest {
 
     private TestBuildSetupBuilder testBuildSetupBuilder = TestBuildSetupBuilder.newInstance();
 
-    private ProcessorTestsSteps processorTestsSteps = new ProcessorTestsSteps(testBuildSetupBuilder);
+    private ProcessorTestsSteps processorTestsSteps = new ProcessorTestsSteps(testBuildSetupBuilder, getClass());
 
     @Test
     public void testSingleGetterAndSetterPerProperty() throws Exception {
         String fileName = "SingleGetterAndSetterPerProperty";
-        BeanProperty heightProperty = new BeanProperty("height", Types.makeExactType("int"), AccessModifier.PUBLIC);
-        BeanClass beanClass = new BeanClass(Types.makeExactType(getClassQualifiedName(fileName)),
+        BeanProperty heightProperty = new BeanProperty("height", makeIntType(), AccessModifier.PUBLIC);
+        BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(heightProperty));
 
         givenSourceFiles(fileName);
@@ -45,11 +46,13 @@ public class BeanClassAnalyserImplTest {
         thenBeanClassShouldBe(beanClass);
     }
 
+    private ExactType makeIntType() {return Types.makeExactType("int");}
+
     @Test
     public void testMultipleSettersPerProperty() throws Exception {
         String fileName = "MultipleSettersPerProperty";
-        BeanProperty widthProperty = new BeanProperty("width", Types.makeExactType("int"), AccessModifier.PROTECTED);
-        BeanClass beanClass = new BeanClass(Types.makeExactType(getClassQualifiedName(fileName)),
+        BeanProperty widthProperty = new BeanProperty("width", makeIntType(), AccessModifier.PROTECTED);
+        BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(widthProperty));
 
         givenSourceFiles(fileName);
@@ -60,7 +63,7 @@ public class BeanClassAnalyserImplTest {
     @Test
     public void testMethodNamesStartWithGetSet() throws Exception {
         String fileName = "MethodNamesStartWithGetSet";
-        BeanClass beanClass = new BeanClass(Types.makeExactType(getClassQualifiedName(fileName)),
+        BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Collections.emptyList());
 
         givenSourceFiles(fileName);
@@ -72,14 +75,18 @@ public class BeanClassAnalyserImplTest {
     public void testBooleanPropertyGetterNameCanStartWith_is() throws Exception {
         String fileName = "BooleanPropertyGetterNameCanStartWith";
         BeanProperty beanProperty = new BeanProperty("bean", Types.makeExactType("boolean"), AccessModifier.PUBLIC);
-        BeanProperty nullableProperty = new BeanProperty("nullable", Types.makeExactType("java.lang.Boolean"),
-            AccessModifier.PUBLIC);
-        BeanClass beanClass = new BeanClass(Types.makeExactType(getClassQualifiedName(fileName)),
+        BeanProperty nullableProperty = new BeanProperty("nullable",
+            Types.makeExactType("java.lang.Boolean", "java.lang"), AccessModifier.PUBLIC);
+        BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(beanProperty, nullableProperty));
 
         givenSourceFiles(fileName);
         whenBeanTypesAnalysed();
         thenBeanClassShouldBe(beanClass);
+    }
+
+    private ExactType makeClassType(String fileName) {
+        return Types.makeExactType(getClassQualifiedName(fileName), PACKAGE_NAME);
     }
 
     private String getClassQualifiedName(String fileName) {
@@ -88,7 +95,7 @@ public class BeanClassAnalyserImplTest {
 
     private void givenSourceFiles(String... fileNames) throws IOException {
         for (final String fileName : fileNames) {
-            processorTestsSteps.addTestSpecificSourceFile(getClass(), fileName);
+            processorTestsSteps.addTestSpecificSourceFile(PACKAGE_NAME, fileName);
         }
     }
 

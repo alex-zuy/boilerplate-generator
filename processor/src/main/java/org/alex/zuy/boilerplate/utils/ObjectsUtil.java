@@ -7,7 +7,7 @@ public final class ObjectsUtil {
     private ObjectsUtil() { }
 
     public static <T> boolean equals(T thisObject, Object otherObject, BiPredicate<T, T> equator) {
-        return otherObject != null && thisObject.getClass().equals(otherObject.getClass())
-            && equator.test(thisObject, (T) otherObject);
+        return otherObject != null && (thisObject == otherObject || thisObject.getClass().equals(otherObject.getClass())
+            && equator.test(thisObject, (T) otherObject));
     }
 }

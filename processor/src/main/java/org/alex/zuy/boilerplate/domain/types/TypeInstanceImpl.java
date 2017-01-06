@@ -11,8 +11,8 @@ final class TypeInstanceImpl extends AbstractType<TypeInstance> implements TypeI
 
     private List<Type<?>> parameters;
 
-    TypeInstanceImpl(String name, List<Type<?>> parameters) {
-        super(name, TypeKinds.TYPE_INSTANCE);
+    TypeInstanceImpl(String name, String packageName, List<Type<?>> parameters) {
+        super(name, packageName, TypeKinds.TYPE_INSTANCE);
         this.parameters = Collections.unmodifiableList(new ArrayList<>(parameters));
     }
 
@@ -25,13 +25,14 @@ final class TypeInstanceImpl extends AbstractType<TypeInstance> implements TypeI
     public boolean equals(Object other) {
         return ObjectsUtil.equals(this, other, (lhs, rhs) ->
             Objects.equals(lhs.getName(), rhs.getName())
+                && lhs.getPackageName().equals(rhs.getPackageName())
                 && Objects.equals(lhs.getKind(), rhs.getKind())
                 && Objects.equals(lhs.parameters, rhs.parameters));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getKind(), parameters);
+        return Objects.hash(getName(), getPackageName(), getKind(), parameters);
     }
 
     @Override
