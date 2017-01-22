@@ -10,10 +10,11 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import org.alex.zuy.boilerplate.collector.filters.ClassFilter;
+import org.alex.zuy.boilerplate.collector.filters.FullyQualifiedNamePatternClassFilter;
+import org.alex.zuy.boilerplate.collector.filters.TypeAnnotatedClassFilter;
+import org.alex.zuy.boilerplate.services.ProcessorContext;
 
 public class DomainClassesCollectorImpl implements DomainClassesCollector {
-
-    private final DomainConfig config;
 
     private final BasePackageClassesCollector basePackageCollector;
 
@@ -21,41 +22,35 @@ public class DomainClassesCollectorImpl implements DomainClassesCollector {
 
     private final PackageInfoAnnotatedClassesCollector packageInfoAnnotationCollector;
 
-    private final List<? extends ClassFilter> classFilters;
-
-    private CollectorComponentsFactory factory;
-
-    public DomainClassesCollectorImpl(DomainConfig config, CollectorComponentsFactory factory) {
-        this.config = config;
-        this.factory = factory;
-        this.basePackageCollector = factory.makeBasePackageClassesCollector();
-        this.typeAnnotationCollector = factory.makeTypeAnnotatedClassesCollector();
-        this.packageInfoAnnotationCollector = factory.makePackageInfoAnnotatedClassesCollector();
-        this.classFilters = initializeClassFilters(config);
-    }
-
-    private List<? extends ClassFilter> initializeClassFilters(DomainConfig domainConfig) {
-        return Stream.concat(
-            domainConfig.excludes().typeAnnotations().stream()
-                .map(factory::makeTypeAnnotatedClassFilter),
-            domainConfig.excludes().patterns().stream()
-                .map(factory::makeFullyQualifiedNamePatternClassFilter)
-        ).collect(Collectors.toList());
+    public DomainClassesCollectorImpl(ProcessorContext processorContext) {
+        this.basePackageCollector = new BasePackageClassesCollector(processorContext);
+        this.typeAnnotationCollector = new TypeAnnotatedClassesCollector();
+        this.packageInfoAnnotationCollector = new PackageInfoAnnotatedClassesCollector();
     }
 
     @Override
-    public Set<TypeElement> collect(RoundEnvironment environment) {
+    public Set<TypeElement> collect(DomainConfig domainConfig, RoundEnvironment environment) {
+        List<ClassFilter> classFilters = instantiateClassFilters(domainConfig);
         return Stream.of(
-            config.includes().basePackages().stream()
+            domainConfig.includes().basePackages().stream()
                 .flatMap(basePackage -> basePackageCollector.collect(basePackage).stream()),
-            config.includes().packageInfoAnnotations().stream()
+            domainConfig.includes().packageInfoAnnotations().stream()
                 .flatMap(annotationName ->
                     packageInfoAnnotationCollector.collect(annotationName, environment).stream()),
-            config.includes().typeAnnotations().stream()
+            domainConfig.includes().typeAnnotations().stream()
                 .flatMap(annotationName ->
                     typeAnnotationCollector.collect(annotationName, environment).stream())
         ).flatMap(Function.identity())
             .filter(typeElement -> classFilters.stream().allMatch(filter -> filter.filter(typeElement)))
             .collect(Collectors.toSet());
+    }
+
+    private List<ClassFilter> instantiateClassFilters(DomainConfig domainConfig) {
+        return Stream.concat(
+            domainConfig.excludes().typeAnnotations().stream()
+                .map(TypeAnnotatedClassFilter::new),
+            domainConfig.excludes().patterns().stream()
+                .map(FullyQualifiedNamePatternClassFilter::new)
+        ).collect(Collectors.toList());
     }
 }

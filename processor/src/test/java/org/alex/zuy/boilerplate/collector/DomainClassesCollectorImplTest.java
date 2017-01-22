@@ -102,12 +102,12 @@ public class DomainClassesCollectorImplTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new DomainClassesCollectorImpl(domainConfig, new CollectorComponentsFactory(processorContext));
+            collector = new DomainClassesCollectorImpl(processorContext);
         }
 
         @Override
         public boolean processImpl(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-            collectedElements = collector.collect(roundEnvironment);
+            collectedElements = collector.collect(domainConfig, roundEnvironment);
             return true;
         }
 

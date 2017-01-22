@@ -6,7 +6,7 @@ import javax.lang.model.element.TypeElement;
 
 public interface DomainClassesCollector {
 
-    Set<TypeElement> collect(RoundEnvironment environment);
+    Set<TypeElement> collect(DomainConfig domainConfig, RoundEnvironment environment);
 
     final class DomainClassesCollectorException extends RuntimeException {
 

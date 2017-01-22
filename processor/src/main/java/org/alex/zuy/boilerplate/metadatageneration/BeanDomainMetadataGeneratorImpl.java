@@ -10,7 +10,6 @@ import org.alex.zuy.boilerplate.analysis.BeanDomainAnalyserImpl;
 import org.alex.zuy.boilerplate.analysis.TypeAnalyser;
 import org.alex.zuy.boilerplate.analysis.TypeAnalyserImpl;
 import org.alex.zuy.boilerplate.codegeneration.TypeGenerator;
-import org.alex.zuy.boilerplate.collector.CollectorComponentsFactory;
 import org.alex.zuy.boilerplate.collector.DomainClassesCollectorImpl;
 import org.alex.zuy.boilerplate.collector.DomainConfig;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
@@ -47,10 +46,10 @@ public class BeanDomainMetadataGeneratorImpl implements BeanDomainMetadataGenera
     @Override
     public void generateDomainMetadataClasses(RoundContext roundContext, DomainConfig domainConfig,
         MetadataGenerationStyle style) {
-        DomainClassesCollectorImpl domainClassesCollector = new DomainClassesCollectorImpl(domainConfig,
-            new CollectorComponentsFactory(processorContext));
+        DomainClassesCollectorImpl domainClassesCollector = new DomainClassesCollectorImpl(processorContext);
 
-        Set<TypeElement> typeElements = domainClassesCollector.collect(roundContext.getRoundEnvironment());
+        Set<TypeElement> typeElements = domainClassesCollector.collect(domainConfig,
+            roundContext.getRoundEnvironment());
         BeanDomain beanDomain = beanDomainAnalyser.analyse(typeElements);
         TypeSetDeclaration typeSetDeclaration = beanDomainProcessor.processDomain(beanDomain);
         for (TypeDeclaration typeDeclaration : typeSetDeclaration.getTypes()) {
