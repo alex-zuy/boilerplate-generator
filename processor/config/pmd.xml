@@ -123,14 +123,10 @@
     <!-- pointless -->
     <exclude name="AccessorClassGeneration"/>
       <exclude name="UseLocaleWithCaseConversions"/>
+      <exclude name="AvoidConstantsInterface"/>
+      <exclude name="ConfusingTernary"/>
   </rule>
 
-  <rule ref="rulesets/java/design.xml/ConfusingTernary">
-    <properties>
-     <!-- false positives on IF_ELSE-IF-ELSE-IF -->
-    <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@Image='XMLLogger']//MethodDeclarator[@Image='isReference'] | //ClassOrInterfaceDeclaration[@Image='DetailAST']//MethodDeclarator[@Image='addPreviousSibling'] | //ClassOrInterfaceDeclaration[@Image='AnnotationLocationCheck']//MethodDeclarator[@Image='checkAnnotations'] | //ClassOrInterfaceDeclaration[@Image='PkgControl']//MethodDeclarator[@Image='checkAccess'] | //ClassOrInterfaceDeclaration[@Image='HandlerFactory']//MethodDeclarator[@Image='getHandler']"/>
-    </properties>
-  </rule>
   <rule ref="rulesets/java/design.xml/PreserveStackTrace">
     <properties>
      <!-- yes we swallow one exception and try to do another attempt, second attempt does not hide cause -->

@@ -29,4 +29,15 @@ public class StringUtilsTest {
         data.put("GeneratedHTML", "generatedHTML");
         data.forEach((input, expected) -> assertEquals(expected, StringUtils.decapitalizeUpperCamelcaseName(input)));
     }
+
+    @Test
+    public void test_camelcaseToUpperSnakeCase() throws Exception {
+        Map<String, String> data = new HashMap<>();
+        data.put("isGood", "IS_GOOD");
+        data.put("is1970", "IS_1970");
+        data.put("HTML", "HTML");
+        data.put("HTMLElement", "HTML_ELEMENT");
+        data.put("stringNumber1truncated", "STRING_NUMBER_1_TRUNCATED");
+        data.forEach((input, expected) -> assertEquals(expected, StringUtils.camelcaseToUpperSnakeCase(input)));
+    }
 }

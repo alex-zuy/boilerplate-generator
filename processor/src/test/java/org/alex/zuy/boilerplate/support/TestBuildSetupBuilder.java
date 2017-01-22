@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import org.alex.zuy.boilerplate.support.compiler.CompileOutputClassLoader;
 import org.alex.zuy.boilerplate.support.compiler.InMemoryFileManager;
 import org.alex.zuy.boilerplate.utils.IOUtils;
 
@@ -51,15 +53,18 @@ public class TestBuildSetupBuilder {
 
     private final AssertingSuccessfulBuildDiagnosticListenerDecorator diagnosticListener;
 
-    private DiagnosticListener<JavaFileObject> userProvidedListener;
+    private final CompileOutputClassLoader compileOutputClassLoader;
 
     private List<JavaFileObject> compilationUnits = new ArrayList<>();
+
+    private DiagnosticListener<JavaFileObject> userProvidedListener;
 
     private TestBuildSetupBuilder() {
         diagnosticListener = new AssertingSuccessfulBuildDiagnosticListenerDecorator();
         compiler = ToolProvider.getSystemJavaCompiler();
         JavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, null);
         fileManager = new InMemoryFileManager(standardFileManager);
+        compileOutputClassLoader = new CompileOutputClassLoader(this.getClass().getClassLoader(), fileManager);
     }
 
     public TestBuildSetupBuilder addSourceFile(String sourceFilePath, String sourceFileContents) throws IOException {
@@ -110,6 +115,10 @@ public class TestBuildSetupBuilder {
             compilationUnits);
         compilerTask.setProcessors(annotationProcessors);
         return compilerTask;
+    }
+
+    public Class<?> getCompiledClass(String className) throws ClassNotFoundException {
+        return compileOutputClassLoader.loadClass(className);
     }
 
     public static TestBuildSetupBuilder newInstance() {
@@ -174,6 +183,21 @@ public class TestBuildSetupBuilder {
                             "Column: %d\n",
                         diagnostic.getMessage(Locale.getDefault()), diagnostic.getCode(), diagnostic.getKind(),
                         diagnostic.getLineNumber(), diagnostic.getColumnNumber());
+                    if (diagnostic.getSource() != null) {
+                        try (Reader reader = diagnostic.getSource().openReader(true)) {
+                            String sourceFileName = diagnostic.getSource().getName();
+                            String separator = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+                            String source = IOUtils.readToString(reader);
+                            System.err.printf("Source:\n" +
+                                    "%s %s\n" +
+                                    "%s\n" +
+                                    "%s\n",
+                                separator, sourceFileName, source, separator);
+                        }
+                        catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                     fail();
                 }
             }

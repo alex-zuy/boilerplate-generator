@@ -38,9 +38,9 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
             .put(Modifier.PUBLIC, AccessModifier.PUBLIC)
             .build();
 
-    private TypeAnalyserImpl typeAnalyser;
+    private TypeAnalyser typeAnalyser;
 
-    public BeanClassAnalyserImpl(TypeAnalyserImpl typeAnalyser) {
+    public BeanClassAnalyserImpl(TypeAnalyser typeAnalyser) {
         this.typeAnalyser = typeAnalyser;
     }
 
