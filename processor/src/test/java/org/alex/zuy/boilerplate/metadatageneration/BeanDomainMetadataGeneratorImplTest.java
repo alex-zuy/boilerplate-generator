@@ -14,10 +14,11 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Marker;
-import org.alex.zuy.boilerplate.codegeneration.TemplateRenderer;
-import org.alex.zuy.boilerplate.codegeneration.TemplateRendererImpl;
-import org.alex.zuy.boilerplate.codegeneration.TypeGenerator;
-import org.alex.zuy.boilerplate.codegeneration.TypeGeneratorImpl;
+import org.alex.zuy.boilerplate.application.BeanDomainAnalysisModule;
+import org.alex.zuy.boilerplate.application.BeanDomainProcessingModule;
+import org.alex.zuy.boilerplate.application.CodeGenerationModule;
+import org.alex.zuy.boilerplate.application.DomainClassesCollectorModule;
+import org.alex.zuy.boilerplate.application.MetadataGenerationModule;
 import org.alex.zuy.boilerplate.collector.DomainConfig;
 import org.alex.zuy.boilerplate.collector.ImmutableDomainConfig;
 import org.alex.zuy.boilerplate.collector.ImmutableExcludesConfig;
@@ -27,6 +28,7 @@ import org.alex.zuy.boilerplate.services.ImmutableRoundContext;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.services.RoundContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.support.ProcessorContextProviderModule;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;
@@ -72,20 +74,22 @@ public class BeanDomainMetadataGeneratorImplTest {
 
     private static class ProcessorImpl extends AnnotationProcessorBase {
 
-        private BeanDomainMetadataGeneratorImpl beanDomainMetadataGenerator;
+        private BeanDomainMetadataGenerator beanDomainMetadataGenerator;
 
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
-            try {
-                super.afterInit(processingEnvironment, processorContext);
-                TemplateRenderer templateRenderer;
-                templateRenderer = new TemplateRendererImpl();
-                TypeGenerator typeGenerator = new TypeGeneratorImpl(templateRenderer, processorContext);
-                beanDomainMetadataGenerator = new BeanDomainMetadataGeneratorImpl(processorContext, typeGenerator);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            super.afterInit(processingEnvironment, processorContext);
+
+            MetadataGenerationComponent generationComponent = DaggerMetadataGenerationComponent.builder()
+                .processorContextProviderModule(new ProcessorContextProviderModule(processorContext))
+                .beanDomainAnalysisModule(new BeanDomainAnalysisModule())
+                .beanDomainProcessingModule(new BeanDomainProcessingModule())
+                .domainClassesCollectorModule(new DomainClassesCollectorModule())
+                .codeGenerationModule(new CodeGenerationModule())
+                .metadataGenerationModule(new MetadataGenerationModule())
+                .build();
+
+            beanDomainMetadataGenerator = generationComponent.metadataGenerator();
         }
 
         @Override

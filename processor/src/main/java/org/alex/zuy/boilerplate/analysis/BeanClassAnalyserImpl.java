@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -40,6 +41,7 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
 
     private TypeAnalyser typeAnalyser;
 
+    @Inject
     public BeanClassAnalyserImpl(TypeAnalyser typeAnalyser) {
         this.typeAnalyser = typeAnalyser;
     }

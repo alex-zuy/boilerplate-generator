@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 
 import org.alex.zuy.boilerplate.domain.BeanClass;
@@ -34,6 +35,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
 
     private BeanMetadataNamesGenerator namesGenerator;
 
+    @Inject
     public BeanDomainProcessorImpl(BeanMetadataNamesGenerator namesGenerator) {
         this.namesGenerator = namesGenerator;
     }

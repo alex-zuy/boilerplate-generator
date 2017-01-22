@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.processing.Filer;
+import javax.inject.Inject;
 import javax.tools.JavaFileObject;
 
 import org.alex.zuy.boilerplate.services.ProcessorContext;
@@ -21,15 +21,17 @@ public class TypeGeneratorImpl implements TypeGenerator {
         String TYPE_FORMATTER = "typeFormatter";
     }
 
-    private TypeFormatter typeFormatter = new TypeFormatter();
+    private final TypeFormatter typeFormatter = new TypeFormatter();
 
-    private final Filer filer;
+    private ProcessorContext processorContext;
 
     private TemplateRenderer templateRenderer;
 
-    public TypeGeneratorImpl(TemplateRenderer templateRenderer, ProcessorContext processorContext) {
+    @Inject
+    public TypeGeneratorImpl(ProcessorContext processorContext,
+        TemplateRenderer templateRenderer) {
+        this.processorContext = processorContext;
         this.templateRenderer = templateRenderer;
-        filer = processorContext.getFiler();
     }
 
     @Override
@@ -40,7 +42,7 @@ public class TypeGeneratorImpl implements TypeGenerator {
         try {
             String generatedSource = templateRenderer.renderTemplate(TEMPLATE_TYPE_DECLARATION, data);
             String fileName = makeTypeSourceFileName(typeDeclaration.getSimpleName(), typeDeclaration.getPackageName());
-            JavaFileObject fileObject = filer.createSourceFile(fileName);
+            JavaFileObject fileObject = processorContext.getFiler().createSourceFile(fileName);
             try (Writer writer = fileObject.openWriter()) {
                 writer.append(generatedSource);
             }

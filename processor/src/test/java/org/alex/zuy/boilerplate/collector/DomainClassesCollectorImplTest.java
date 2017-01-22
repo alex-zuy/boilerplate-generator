@@ -3,7 +3,6 @@ package org.alex.zuy.boilerplate.collector;
 import static org.alex.zuy.boilerplate.collector.support.TypeElementsSetMatcher.isSetOfTypeElements;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -15,9 +14,12 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import com.example.ExcludeMarker;
+import dagger.Component;
+import org.alex.zuy.boilerplate.application.DomainClassesCollectorModule;
 import org.alex.zuy.boilerplate.collector.DomainConfig.ExcludesConfig;
 import org.alex.zuy.boilerplate.collector.DomainConfig.IncludesConfig;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.support.ProcessorContextProviderModule;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
@@ -83,11 +85,17 @@ public class DomainClassesCollectorImplTest {
         assertThat(processor.getCollectedElements(), isSetOfTypeElements(includedClass));
     }
 
+    @Component(modules = {DomainClassesCollectorModule.class, ProcessorContextProviderModule.class})
+    interface DomainClassesCollectorComponent {
+
+        DomainClassesCollector domainClassesCollector();
+    }
+
     private static final class ProcessorImpl extends AnnotationProcessorBase {
 
         private DomainConfig domainConfig;
 
-        private DomainClassesCollectorImpl collector;
+        private DomainClassesCollector collector;
 
         private Set<TypeElement> collectedElements;
 
@@ -102,7 +110,11 @@ public class DomainClassesCollectorImplTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new DomainClassesCollectorImpl(processorContext);
+            DomainClassesCollectorComponent collectorComponent = DaggerDomainClassesCollectorImplTest_DomainClassesCollectorComponent.builder()
+                .domainClassesCollectorModule(new DomainClassesCollectorModule())
+                .processorContextProviderModule(new ProcessorContextProviderModule(processorContext))
+                .build();
+            collector = collectorComponent.domainClassesCollector();
         }
 
         @Override

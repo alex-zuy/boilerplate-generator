@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.processing.RoundEnvironment;
+import javax.inject.Inject;
 import javax.lang.model.element.TypeElement;
 
 import org.alex.zuy.boilerplate.collector.filters.ClassFilter;
@@ -22,6 +23,7 @@ public class DomainClassesCollectorImpl implements DomainClassesCollector {
 
     private final PackageInfoAnnotatedClassesCollector packageInfoAnnotationCollector;
 
+    @Inject
     public DomainClassesCollectorImpl(ProcessorContext processorContext) {
         this.basePackageCollector = new BasePackageClassesCollector(processorContext);
         this.typeAnnotationCollector = new TypeAnnotatedClassesCollector();

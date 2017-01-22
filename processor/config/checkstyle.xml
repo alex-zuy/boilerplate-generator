@@ -253,6 +253,7 @@
         <module name="OuterTypeFilename"/>
         <module name="TodoComment">
             <property name="format" value="(TODO)|(FIXME)"/>
+            <property name="severity" value="warning"/>
         </module>
         <module name="TrailingComment"/>
         <module name="UpperEll"/>

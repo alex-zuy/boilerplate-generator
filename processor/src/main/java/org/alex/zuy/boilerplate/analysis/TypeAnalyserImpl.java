@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
@@ -16,6 +17,7 @@ import javax.lang.model.type.TypeMirror;
 
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
+import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.utils.CollectionUtils;
 
 public class TypeAnalyserImpl implements TypeAnalyser {
@@ -32,10 +34,11 @@ public class TypeAnalyserImpl implements TypeAnalyser {
             .put(TypeKind.DOUBLE, "double")
             .build();
 
-    private javax.lang.model.util.Types typeUtils;
+    private ProcessorContext processorContext;
 
-    public TypeAnalyserImpl(javax.lang.model.util.Types typeUtils) {
-        this.typeUtils = typeUtils;
+    @Inject
+    public TypeAnalyserImpl(ProcessorContext processorContext) {
+        this.processorContext = processorContext;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class TypeAnalyserImpl implements TypeAnalyser {
     }
 
     private Type<?> analyseDeclaredType(DeclaredType declaredType) {
-        TypeElement typeElement = (TypeElement) typeUtils.asElement(declaredType);
+        TypeElement typeElement = (TypeElement) processorContext.getTypeUtils().asElement(declaredType);
         String qualifiedTypeName = typeElement.getQualifiedName().toString();
 
         if (isGenericType(declaredType)) {

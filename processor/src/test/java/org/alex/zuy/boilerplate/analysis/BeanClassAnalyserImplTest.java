@@ -12,6 +12,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Trigger;
+import org.alex.zuy.boilerplate.application.BeanDomainAnalysisModule;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
@@ -19,6 +20,7 @@ import org.alex.zuy.boilerplate.domain.types.ExactType;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.support.ProcessorContextProviderModule;
 import org.alex.zuy.boilerplate.support.ProcessorTestsSteps;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
@@ -117,15 +119,18 @@ public class BeanClassAnalyserImplTest {
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {
 
-        private BeanClassAnalyserImpl analyser;
+        private BeanClassAnalyser analyser;
 
         private BeanClass beanClass;
 
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            TypeAnalyserImpl typeAnalyser = new TypeAnalyserImpl(processingEnvironment.getTypeUtils());
-            analyser = new BeanClassAnalyserImpl(typeAnalyser);
+            BeanDomainAnalysisComponent analysisComponent = DaggerBeanDomainAnalysisComponent.builder()
+                .processorContextProviderModule(new ProcessorContextProviderModule(processorContext))
+                .beanDomainAnalysisModule(new BeanDomainAnalysisModule())
+                .build();
+            analyser = analysisComponent.beanClassAnalyser();
         }
 
         @Override

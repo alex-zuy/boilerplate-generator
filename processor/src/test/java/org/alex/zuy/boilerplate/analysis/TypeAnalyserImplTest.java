@@ -18,11 +18,13 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
+import org.alex.zuy.boilerplate.application.BeanDomainAnalysisModule;
 import org.alex.zuy.boilerplate.domain.types.ExactType;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
+import org.alex.zuy.boilerplate.support.ProcessorContextProviderModule;
 import org.alex.zuy.boilerplate.support.ProcessorTestsSteps;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
@@ -129,19 +131,22 @@ public class TypeAnalyserImplTest {
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {
 
-        private ProcessorContext processorContext;
-
         private Map<String, List<Type<?>>> types = new HashMap<>();
+
+        private TypeAnalyser analyser;
 
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
-            this.processorContext = processorContext;
             super.afterInit(processingEnvironment, processorContext);
+            BeanDomainAnalysisComponent analysisComponent = DaggerBeanDomainAnalysisComponent.builder()
+                .processorContextProviderModule(new ProcessorContextProviderModule(processorContext))
+                .beanDomainAnalysisModule(new BeanDomainAnalysisModule())
+                .build();
+            analyser = analysisComponent.typeAnalyser();
         }
 
         @Override
         public boolean processImpl(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-            TypeAnalyserImpl analyser = new TypeAnalyserImpl(processorContext.getTypeUtils());
             List<ElementKind> elementKinds = Arrays.asList(ElementKind.CLASS, ElementKind.INTERFACE);
             set.stream()
                 .flatMap(annotation -> roundEnvironment.getElementsAnnotatedWith(annotation).stream())

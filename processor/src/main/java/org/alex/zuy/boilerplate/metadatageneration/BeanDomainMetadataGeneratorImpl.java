@@ -1,30 +1,20 @@
 package org.alex.zuy.boilerplate.metadatageneration;
 
 import java.util.Set;
+import javax.inject.Inject;
 import javax.lang.model.element.TypeElement;
 
-import org.alex.zuy.boilerplate.analysis.BeanClassAnalyser;
-import org.alex.zuy.boilerplate.analysis.BeanClassAnalyserImpl;
 import org.alex.zuy.boilerplate.analysis.BeanDomainAnalyser;
-import org.alex.zuy.boilerplate.analysis.BeanDomainAnalyserImpl;
-import org.alex.zuy.boilerplate.analysis.TypeAnalyser;
-import org.alex.zuy.boilerplate.analysis.TypeAnalyserImpl;
 import org.alex.zuy.boilerplate.codegeneration.TypeGenerator;
-import org.alex.zuy.boilerplate.collector.DomainClassesCollectorImpl;
+import org.alex.zuy.boilerplate.collector.DomainClassesCollector;
 import org.alex.zuy.boilerplate.collector.DomainConfig;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.processor.BeanDomainProcessor;
-import org.alex.zuy.boilerplate.processor.BeanDomainProcessorImpl;
-import org.alex.zuy.boilerplate.processor.BeanMetadataNamesGenerator;
-import org.alex.zuy.boilerplate.processor.BeanMetadataNamesGeneratorImpl;
-import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.services.RoundContext;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
 import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
 
 public class BeanDomainMetadataGeneratorImpl implements BeanDomainMetadataGenerator {
-
-    private ProcessorContext processorContext;
 
     private TypeGenerator typeGenerator;
 
@@ -32,21 +22,20 @@ public class BeanDomainMetadataGeneratorImpl implements BeanDomainMetadataGenera
 
     private BeanDomainProcessor beanDomainProcessor;
 
-    public BeanDomainMetadataGeneratorImpl(ProcessorContext processorContext, TypeGenerator typeGenerator) {
-        this.processorContext = processorContext;
-        this.typeGenerator = typeGenerator;
+    private DomainClassesCollector domainClassesCollector;
 
-        TypeAnalyser typeAnalyser = new TypeAnalyserImpl(processorContext.getTypeUtils());
-        BeanClassAnalyser beanClassAnalyser = new BeanClassAnalyserImpl(typeAnalyser);
-        beanDomainAnalyser = new BeanDomainAnalyserImpl(beanClassAnalyser);
-        BeanMetadataNamesGenerator beanMetadataNamesGenerator = new BeanMetadataNamesGeneratorImpl();
-        beanDomainProcessor = new BeanDomainProcessorImpl(beanMetadataNamesGenerator);
+    @Inject
+    public BeanDomainMetadataGeneratorImpl(TypeGenerator typeGenerator, BeanDomainAnalyser beanDomainAnalyser,
+        BeanDomainProcessor beanDomainProcessor, DomainClassesCollector domainClassesCollector) {
+        this.typeGenerator = typeGenerator;
+        this.beanDomainAnalyser = beanDomainAnalyser;
+        this.beanDomainProcessor = beanDomainProcessor;
+        this.domainClassesCollector = domainClassesCollector;
     }
 
     @Override
     public void generateDomainMetadataClasses(RoundContext roundContext, DomainConfig domainConfig,
         MetadataGenerationStyle style) {
-        DomainClassesCollectorImpl domainClassesCollector = new DomainClassesCollectorImpl(processorContext);
 
         Set<TypeElement> typeElements = domainClassesCollector.collect(domainConfig,
             roundContext.getRoundEnvironment());

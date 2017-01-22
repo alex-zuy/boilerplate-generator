@@ -2,6 +2,7 @@ package org.alex.zuy.boilerplate.analysis;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.lang.model.element.TypeElement;
 
 import org.alex.zuy.boilerplate.domain.BeanClass;
@@ -11,6 +12,7 @@ public class BeanDomainAnalyserImpl implements BeanDomainAnalyser {
 
     private BeanClassAnalyser classAnalyser;
 
+    @Inject
     public BeanDomainAnalyserImpl(BeanClassAnalyser classAnalyser) {
         this.classAnalyser = classAnalyser;
     }
