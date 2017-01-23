@@ -11,6 +11,7 @@ import org.alex.zuy.boilerplate.config.generated.Domain;
 import org.alex.zuy.boilerplate.config.generated.DomainList;
 import org.alex.zuy.boilerplate.config.generated.GenerationStyleList;
 import org.alex.zuy.boilerplate.config.generated.Style;
+import org.alex.zuy.boilerplate.config.generated.SupportClasses;
 import org.junit.Test;
 
 public class ConfigLoaderTest {
@@ -20,8 +21,13 @@ public class ConfigLoaderTest {
         final URL url = getClass().getResource("config.xml");
         final Configuration config = new ConfigLoader().loadConfig(url);
         assertEquals(1, config.getBeanProcessing().getDomains().getDomains().size());
+        assertSupportClassesCorrect(config.getBeanProcessing().getSupportClasses());
         assertGenerationStylesCorrect(config.getBeanProcessing().getGenerationStyles());
         assertDomainsCorrect(config.getBeanProcessing().getDomains());
+    }
+
+    private void assertSupportClassesCorrect(SupportClasses supportClasses) {
+        assertEquals("com.example.generated.support", supportClasses.getBasePackage());
     }
 
     private void assertGenerationStylesCorrect(GenerationStyleList styles) {
@@ -31,8 +37,6 @@ public class ConfigLoaderTest {
 
     private void assertGenerationStyleMainCorrect(Style style) {
         assertEquals("main", style.getId());
-        assertEquals("com.example.generated.support", style.getSupportClasses().getBasePackage());
-        assertEquals("com.example.generated", style.getMetadataClasses().getBasePackage());
         assertEquals("${beanClassName}_p", style.getMetadataClasses().getPropertyClassName());
         assertEquals("${beanClassName}_r", style.getMetadataClasses().getRelationshipClassName());
         assertEquals("camelcase", style.getMetadataClasses().getStringConstantNameStyle().value());

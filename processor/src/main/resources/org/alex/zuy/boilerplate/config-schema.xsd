@@ -42,7 +42,6 @@
     <xs:element name="metadataClasses">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="basePackage"/>
                 <xs:element name="propertyClassName" type="identifierTemplateType"
                             default="${beanClassName}_p" minOccurs="0"/>
                 <xs:element name="relationshipClassName" type="identifierTemplateType"
@@ -56,7 +55,6 @@
     <xs:element name="style">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="supportClasses"/>
                 <xs:element ref="metadataClasses"/>
             </xs:sequence>
             <xs:attribute name="id" type="xs:ID" use="required"/>
@@ -129,6 +127,7 @@
     <xs:element name="beanProcessing">
         <xs:complexType>
             <xs:sequence>
+                <xs:element ref="supportClasses"/>
                 <xs:element name="generationStyles" type="generationStyleList"/>
                 <xs:element name="domains" type="domainList"/>
             </xs:sequence>

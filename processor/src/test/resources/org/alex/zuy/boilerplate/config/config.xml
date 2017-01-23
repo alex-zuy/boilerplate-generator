@@ -4,13 +4,12 @@
         xsi:schemaLocation="config-schema.xsd"
         xmlns="config-schema.xsd">
     <beanProcessing>
+        <supportClasses>
+            <basePackage>com.example.generated.support</basePackage>
+        </supportClasses>
         <generationStyles>
             <style id="main">
-                <supportClasses>
-                    <basePackage>com.example.generated.support</basePackage>
-                </supportClasses>
                 <metadataClasses>
-                    <basePackage>com.example.generated</basePackage>
                     <propertyClassName>${beanClassName}_p</propertyClassName>
                     <relationshipClassName>${beanClassName}_r</relationshipClassName>
                     <stringConstantNameStyle>camelcase</stringConstantNameStyle>
