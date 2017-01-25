@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.tools.JavaFileObject;
 
+import org.alex.zuy.boilerplate.codegeneration.TemplateRenderer.TemplateRenderingTask;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
 
@@ -40,11 +41,28 @@ public class TypeGeneratorImpl implements TypeGenerator {
         data.put(ModelRefs.TYPE_DECLARATION, typeDeclaration);
         data.put(ModelRefs.TYPE_FORMATTER, typeFormatter);
         try {
-            String generatedSource = templateRenderer.renderTemplate(TEMPLATE_TYPE_DECLARATION, data);
-            String fileName = makeTypeSourceFileName(typeDeclaration.getSimpleName(), typeDeclaration.getPackageName());
+            TemplateRenderingTask task = ImmutableTemplateRenderingTask.of(TEMPLATE_TYPE_DECLARATION, data);
+            String generatedSource = templateRenderer.renderTemplate(task);
+            TypeImplementation implementation = ImmutableTypeImplementation.builder()
+                .sourceCode(generatedSource)
+                .simpleName(typeDeclaration.getSimpleName())
+                .packageName(typeDeclaration.getPackageName())
+                .build();
+            generateType(implementation);
+        }
+        catch (IOException e) {
+            throw new TypeGenerationException(e);
+        }
+    }
+
+    @Override
+    public void generateType(TypeImplementation typeImplementation) {
+        try {
+            String fileName = makeTypeSourceFileName(typeImplementation.getSimpleName(),
+                typeImplementation.getPackageName());
             JavaFileObject fileObject = processorContext.getFiler().createSourceFile(fileName);
             try (Writer writer = fileObject.openWriter()) {
-                writer.append(generatedSource);
+                writer.append(typeImplementation.getSourceCode());
             }
         }
         catch (IOException e) {

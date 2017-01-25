@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Map;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -29,10 +28,10 @@ public class TemplateRendererImpl implements TemplateRenderer {
     }
 
     @Override
-    public String renderTemplate(String templateName, Map<String, ?> data) throws IOException {
+    public String renderTemplate(TemplateRenderingTask task) throws IOException {
         try (Writer writer = new StringWriter()) {
-            Template template = configuration.getTemplate(templateName);
-            template.process(data, writer);
+            Template template = configuration.getTemplate(task.getTemplateName());
+            template.process(task.getData(), writer);
             return writer.toString();
         }
         catch (TemplateException e) {
