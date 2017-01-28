@@ -12,6 +12,9 @@ import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
+import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator;
+import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator.SupportClassesConfig;
+import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator.SupportClassesTypes;
 import org.alex.zuy.boilerplate.sourcemodel.FieldDeclaration;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableFieldDeclaration;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableMethodDeclaration;
@@ -64,36 +67,30 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         String PARAMETER_CHAIN_TAIL_NODE = "chainTailNodeParameter";
     }
 
-    /* Hardcoded support class names. TODO */
-    private interface SupportClassProperties {
-
-        String PROPERTY_CHAIN_NODE_CLASS_PACKAGE = "com.example";
-
-        String PROPERTY_CHAIN_NODE_CLASS_NAME = "PropertyChainNode";
-    }
-
     private BeanMetadataNamesGenerator namesGenerator;
 
+    private SupportClassesGenerator supportClassesGenerator;
+
     @Inject
-    public BeanDomainProcessorImpl(BeanMetadataNamesGenerator namesGenerator) {
+    public BeanDomainProcessorImpl(BeanMetadataNamesGenerator namesGenerator,
+        SupportClassesGenerator supportClassesGenerator) {
         this.namesGenerator = namesGenerator;
+        this.supportClassesGenerator = supportClassesGenerator;
     }
 
     @Override
-    public TypeSetDeclaration processDomain(BeanDomain beanDomain) {
+    public TypeSetDeclaration processDomain(BeanDomain beanDomain, SupportClassesConfig supportClassesConfig) {
         Set<TypeDeclaration> metadataClasses = new HashSet<>();
 
         Set<Type<?>> domainClassesTypes = beanDomain.getBeanClasses().stream()
             .map(BeanClass::getType)
             .collect(Collectors.toSet());
 
-        Type<?> propertyChainNodeType = Types.makeExactType(
-            makeClassQualifiedName(SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_NAME,
-                SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_PACKAGE),
-            SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_PACKAGE);
+        SupportClassesTypes supportClassesTypes = supportClassesGenerator.getSupportClassesTypes(supportClassesConfig);
 
         for (BeanClass beanClass : beanDomain.getBeanClasses()) {
-            BeanClassProcessor beanClassProcessor = new BeanClassProcessor(beanClass, propertyChainNodeType);
+            BeanClassProcessor beanClassProcessor = new BeanClassProcessor(beanClass,
+                supportClassesTypes.getPropertyChainNodeType());
             metadataClasses.add(makeBeanPropertiesClass(beanClass, domainClassesTypes, beanClassProcessor));
             metadataClasses.add(makeBeanRelationshipsClass(beanClass, domainClassesTypes, beanClassProcessor));
         }

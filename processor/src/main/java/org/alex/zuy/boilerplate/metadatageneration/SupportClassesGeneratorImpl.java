@@ -6,6 +6,8 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 
+import org.alex.zuy.boilerplate.domain.types.Type;
+import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeDefinition;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDefinition;
 import org.alex.zuy.boilerplate.utils.IoUtils;
@@ -43,5 +45,14 @@ public class SupportClassesGeneratorImpl implements SupportClassesGenerator {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public SupportClassesTypes getSupportClassesTypes(SupportClassesConfig config) {
+        String qualifiedName = String.format("%s.%s", config.getBasePackage(), PROPERTY_CHAIN_NODE_CLASS_NAME);
+        Type<?> propertyChainNodeType = Types.makeExactType(qualifiedName, config.getBasePackage());
+        return ImmutableSupportClassesTypes.builder()
+            .propertyChainNodeType(propertyChainNodeType)
+            .build();
     }
 }

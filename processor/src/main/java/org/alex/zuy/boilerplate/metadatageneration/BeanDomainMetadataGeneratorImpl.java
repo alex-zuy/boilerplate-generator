@@ -54,7 +54,7 @@ public class BeanDomainMetadataGeneratorImpl implements BeanDomainMetadataGenera
         Set<TypeElement> typeElements = domainClassesCollector.collect(domainConfig,
             roundContext.getRoundEnvironment());
         BeanDomain beanDomain = beanDomainAnalyser.analyse(typeElements);
-        TypeSetDeclaration typeSetDeclaration = beanDomainProcessor.processDomain(beanDomain);
+        TypeSetDeclaration typeSetDeclaration = beanDomainProcessor.processDomain(beanDomain, supportClassesConfig);
 
         if (!wasSupportClassesGenerated) {
             List<TypeDefinition> typeDefinitions = supportClassesGenerator.generateSupportClasses(supportClassesConfig);

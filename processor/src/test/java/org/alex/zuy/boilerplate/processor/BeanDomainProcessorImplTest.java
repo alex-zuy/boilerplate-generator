@@ -1,9 +1,7 @@
 package org.alex.zuy.boilerplate.processor;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -14,10 +12,12 @@ import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
+import org.alex.zuy.boilerplate.metadatageneration.ImmutableSupportClassesConfig;
+import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator;
+import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGeneratorImpl;
 import org.alex.zuy.boilerplate.sourcemodel.FieldDeclaration;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
 import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
-import org.alex.zuy.boilerplate.utils.CollectionUtils;
 import org.alex.zuy.boilerplate.utils.CollectionsUtil;
 import org.junit.Test;
 
@@ -50,7 +50,7 @@ public class BeanDomainProcessorImplTest {
         TypeDeclaration typeDeclaration = getTypeBySimpleName(typeSetDeclaration, "SingletonDomainProperties");
         thenTypeShouldContainCountOfFields(typeDeclaration, 2);
         thenTypeShouldHaveQualifiedName(typeDeclaration, "com.example.SingletonDomainProperties");
-        thenTypeShouldHaveSimpleNameAndPackageName(typeDeclaration, "SingletonDomainProperties", "com.example");
+        thenTypeShouldHaveSimpleNameAndPackageName(typeDeclaration, "SingletonDomainProperties", EXAMPLE_PACKAGE_NAME);
         thenShouldHaveFieldsNamed(typeDeclaration, PropertyNames.NAME.toUpperCase(), PropertyNames.WIDTH.toUpperCase());
         thenFieldsShouldHaveType(typeDeclaration, TestTypes.STRING);
     }
@@ -74,8 +74,14 @@ public class BeanDomainProcessorImplTest {
 
     private TypeSetDeclaration whenBeanDomainProcessed(BeanClass... beanClass) {
         BeanMetadataNamesGenerator namesGenerator = new BeanMetadataNamesGeneratorImpl();
-        BeanDomainProcessorImpl beanDomainProcessor = new BeanDomainProcessorImpl(namesGenerator);
-        return beanDomainProcessor.processDomain(new BeanDomain(CollectionsUtil.asSet(beanClass)));
+        SupportClassesGenerator supportClassesGenerator = new SupportClassesGeneratorImpl();
+        BeanDomainProcessorImpl beanDomainProcessor = new BeanDomainProcessorImpl(namesGenerator,
+            supportClassesGenerator);
+        SupportClassesGenerator.SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
+            .basePackage(EXAMPLE_PACKAGE_NAME)
+            .build();
+        return beanDomainProcessor.processDomain(new BeanDomain(CollectionsUtil.asSet(beanClass)),
+            supportClassesConfig);
     }
 
     private void thenTypeSetShouldContainCountOfTypeDefinitions(TypeSetDeclaration typeSetDeclaration, int count) {
