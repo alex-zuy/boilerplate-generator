@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 
-import org.alex.zuy.boilerplate.utils.IOUtils;
+import org.alex.zuy.boilerplate.utils.IoUtils;
 
 public class ProcessorTestsSteps {
 
@@ -43,7 +43,7 @@ public class ProcessorTestsSteps {
     private static String getFileContents(URL resourceUrl) throws IOException {
         try (InputStream inputStream = resourceUrl.openStream();
              Reader reader = new InputStreamReader(inputStream)) {
-            return IOUtils.readToString(reader);
+            return IoUtils.readToString(reader);
         }
     }
 }

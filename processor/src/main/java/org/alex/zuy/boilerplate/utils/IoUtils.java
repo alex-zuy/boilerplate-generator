@@ -7,10 +7,15 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-public class IOUtils {
+public final class IoUtils {
 
     private static final int BUFFER_SIZE = 1024 * 4;
 
+    private IoUtils() {
+
+    }
+
+    @SuppressWarnings("PMD.AssignmentInOperand")
     public static void copy(InputStream in, OutputStream out) throws IOException {
         final byte[] buffer = new byte[BUFFER_SIZE];
         int bytesRead;
@@ -19,6 +24,7 @@ public class IOUtils {
         }
     }
 
+    @SuppressWarnings("PMD.AssignmentInOperand")
     public static void copy(Reader in, Writer out) throws IOException {
         final char[] buffer = new char[BUFFER_SIZE];
         int bytesRead;

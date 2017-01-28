@@ -88,8 +88,8 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
             .collect(Collectors.toSet());
 
         Type<?> propertyChainNodeType = Types.makeExactType(
-            makeClassQualifiedName(SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_PACKAGE,
-                SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_NAME),
+            makeClassQualifiedName(SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_NAME,
+                SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_PACKAGE),
             SupportClassProperties.PROPERTY_CHAIN_NODE_CLASS_PACKAGE);
 
         for (BeanClass beanClass : beanDomain.getBeanClasses()) {
@@ -168,16 +168,16 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
     private Type<?> makeRelationshipsClassType(Type<?> type) {
         String simpleName = namesGenerator.makeBeanRelationshipsClassName(makeTypeSimpleName(type));
         String packageName = type.getPackageName().orElse(null);
-        return Types.makeExactType(makeClassQualifiedName(packageName, simpleName), packageName);
+        return Types.makeExactType(makeClassQualifiedName(simpleName, packageName), packageName);
     }
 
     private Type<?> makePropertiesClassType(Type<?> beanType) {
         String simpleName = namesGenerator.makeBeanPropertiesClassName(makeTypeSimpleName(beanType));
         String packageName = beanType.getPackageName().orElse(null);
-        return Types.makeExactType(makeClassQualifiedName(packageName, simpleName), packageName);
+        return Types.makeExactType(makeClassQualifiedName(simpleName, packageName), packageName);
     }
 
-    private String makeClassQualifiedName(String packageName, String simpleName) {
+    private String makeClassQualifiedName(String simpleName, String packageName) {
         return packageName != null
             ? String.format("%s.%s", packageName, simpleName)
             : simpleName;

@@ -8,7 +8,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
 
-import org.alex.zuy.boilerplate.utils.IOUtils;
+import org.alex.zuy.boilerplate.utils.IoUtils;
 
 public class CompileOutputClassLoader extends ClassLoader {
 
@@ -46,7 +46,7 @@ public class CompileOutputClassLoader extends ClassLoader {
         if (classFile != null) {
             try (InputStream in = classFile.openInputStream();
                  ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                IOUtils.copy(in, outputStream);
+                IoUtils.copy(in, outputStream);
                 return outputStream.toByteArray();
             }
         }

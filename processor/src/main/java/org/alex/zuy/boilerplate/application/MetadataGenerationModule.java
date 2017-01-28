@@ -16,7 +16,7 @@ public class MetadataGenerationModule {
     }
 
     @Provides
-    SupportClassesGenerator provideSupportClassesGenerator(SupportClassesGeneratorImpl impl) {
-        return impl;
+    SupportClassesGenerator provideSupportClassesGenerator() {
+        return new SupportClassesGeneratorImpl();
     }
 }

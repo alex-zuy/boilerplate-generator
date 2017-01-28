@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ import javax.tools.ToolProvider;
 
 import org.alex.zuy.boilerplate.support.compiler.CompileOutputClassLoader;
 import org.alex.zuy.boilerplate.support.compiler.InMemoryFileManager;
-import org.alex.zuy.boilerplate.utils.IOUtils;
+import org.alex.zuy.boilerplate.utils.IoUtils;
 
 public class TestBuildSetupBuilder {
 
@@ -147,7 +146,7 @@ public class TestBuildSetupBuilder {
             stripExtension(filePath.getPath()), JavaFileObject.Kind.SOURCE, null);
 
         try (OutputStream outputStream = javaSourceObject.openOutputStream()) {
-            IOUtils.copy(contents, outputStream);
+            IoUtils.copy(contents, outputStream);
         }
 
         return javaSourceObject;
@@ -191,7 +190,7 @@ public class TestBuildSetupBuilder {
                             System.err.printf("Source:\n%s %s\n", separator, sourceFileName);
                             int lineNumber = 1;
                             while (scanner.hasNextLine()) {
-                                System.err.printf("%d|%s\n", lineNumber, scanner.nextLine());
+                                System.err.printf("%3d|%s\n", lineNumber, scanner.nextLine());
                                 lineNumber++;
                             }
                         }

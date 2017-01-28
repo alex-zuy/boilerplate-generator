@@ -16,7 +16,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileObject;
 
-import org.alex.zuy.boilerplate.utils.IOUtils;
+import org.alex.zuy.boilerplate.utils.IoUtils;
 
 public class InMemoryJavaFileObject implements JavaFileObject {
 
@@ -124,7 +124,7 @@ public class InMemoryJavaFileObject implements JavaFileObject {
     @Override
     public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
         try (Reader reader = openReader(true)) {
-            return IOUtils.readToString(reader);
+            return IoUtils.readToString(reader);
         }
     }
 
