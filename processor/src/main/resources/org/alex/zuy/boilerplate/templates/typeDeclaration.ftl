@@ -9,12 +9,12 @@
 ${type.kind}
 ${type.simpleName}
 <#if type.extendedType??>
-    extends ${type.extendedType}
+extends ${util.formatType(type.extendedType)}
 </#if>
 <#list type.implementedTypes>
     implements
         <#items as implementedType>
-            ${implementedType}<#sep>, </#sep>
+        ${util.formatType(implementedType)}<#sep>, </#sep>
         </#items>
 </#list>
 
@@ -35,7 +35,9 @@ ${type.simpleName}
 <#list type.methods as method>
 
     <@util.printModifiers modifiers=method.modifiers/>
+    <#if method.returnType??>
     ${util.formatType(method.returnType)}
+    </#if>
     ${method.name}
     (
         <#list method.parameters as parameter>

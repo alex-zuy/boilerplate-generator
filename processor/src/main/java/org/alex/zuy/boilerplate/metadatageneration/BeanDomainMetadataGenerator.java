@@ -7,7 +7,7 @@ import org.immutables.value.Value;
 public interface BeanDomainMetadataGenerator {
 
     void generateDomainMetadataClasses(RoundContext roundContext, DomainConfig domainConfig,
-        MetadataGenerationStyle style);
+        MetadataGenerationStyle style, SupportClassesGenerator.SupportClassesConfig supportClassesConfig);
 
     @Value.Immutable
     interface MetadataGenerationStyle {

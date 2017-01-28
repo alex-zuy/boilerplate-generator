@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -184,15 +185,15 @@ public class TestBuildSetupBuilder {
                         diagnostic.getMessage(Locale.getDefault()), diagnostic.getCode(), diagnostic.getKind(),
                         diagnostic.getLineNumber(), diagnostic.getColumnNumber());
                     if (diagnostic.getSource() != null) {
-                        try (Reader reader = diagnostic.getSource().openReader(true)) {
+                        try (Scanner scanner = new Scanner(diagnostic.getSource().openReader(true))) {
                             String sourceFileName = diagnostic.getSource().getName();
                             String separator = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>";
-                            String source = IOUtils.readToString(reader);
-                            System.err.printf("Source:\n" +
-                                    "%s %s\n" +
-                                    "%s\n" +
-                                    "%s\n",
-                                separator, sourceFileName, source, separator);
+                            System.err.printf("Source:\n%s %s\n", separator, sourceFileName);
+                            int lineNumber = 1;
+                            while (scanner.hasNextLine()) {
+                                System.err.printf("%d|%s\n", lineNumber, scanner.nextLine());
+                                lineNumber++;
+                            }
                         }
                         catch (IOException e) {
                             throw new RuntimeException(e);

@@ -45,9 +45,9 @@ public class BeanDomainProcessorImplTest {
 
         TypeSetDeclaration typeSetDeclaration = whenBeanDomainProcessed(beanClass);
 
-        thenTypeSetShouldContainCountOfTypeDefinitions(typeSetDeclaration, 1);
+        thenTypeSetShouldContainCountOfTypeDefinitions(typeSetDeclaration, 2);
 
-        TypeDeclaration typeDeclaration = CollectionUtils.getFirst(typeSetDeclaration.getTypes());
+        TypeDeclaration typeDeclaration = getTypeBySimpleName(typeSetDeclaration, "SingletonDomainProperties");
         thenTypeShouldContainCountOfFields(typeDeclaration, 2);
         thenTypeShouldHaveQualifiedName(typeDeclaration, "com.example.SingletonDomainProperties");
         thenTypeShouldHaveSimpleNameAndPackageName(typeDeclaration, "SingletonDomainProperties", "com.example");
@@ -101,5 +101,12 @@ public class BeanDomainProcessorImplTest {
 
     private static BeanProperty makePublicProperty(String name, Type<?> type) {
         return new BeanProperty(name, type, AccessModifier.PUBLIC);
+    }
+
+    private static TypeDeclaration getTypeBySimpleName(TypeSetDeclaration typeSetDeclaration, String simpleName) {
+        return typeSetDeclaration.getTypes().stream()
+            .filter(type -> simpleName.equals(type.getSimpleName()))
+            .findFirst()
+            .orElseThrow(IllegalStateException::new);
     }
 }
