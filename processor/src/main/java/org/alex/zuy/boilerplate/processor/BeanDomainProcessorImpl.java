@@ -146,6 +146,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         Type<?> relationshipsClassType = beanClassProcessor.getRelationshipsClassType();
 
         return ImmutableTypeDeclaration.builder()
+            .addModifiers(Modifier.PUBLIC)
             .kind(TypeKind.CLASS)
             .packageName(relationshipsClassType.getPackageName().orElse(null))
             .simpleName(makeTypeSimpleName(relationshipsClassType))

@@ -166,7 +166,6 @@ public class BeanDomainMetadataGeneratorImplTest {
         public MethodChainEvaluator evaluate(String methodName)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             Method method = clazz.getMethod(methodName);
-            method.setAccessible(true);
             Object resultInstance = method.invoke(instance);
             return new MethodChainEvaluator(method.getReturnType(), resultInstance);
         }
