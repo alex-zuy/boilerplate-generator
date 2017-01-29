@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
@@ -80,8 +82,13 @@ public class BeanDomainProcessorImplTest {
         SupportClassesGenerator.SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
             .basePackage(EXAMPLE_PACKAGE_NAME)
             .build();
+        MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
+            .propertyClassNameTemplate("")
+            .relationshipsClassNameTemplate("")
+            .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.CAMELCASE)
+            .build();
         return beanDomainProcessor.processDomain(new BeanDomain(CollectionsUtil.asSet(beanClass)),
-            supportClassesConfig);
+            supportClassesConfig, generationStyle);
     }
 
     private void thenTypeSetShouldContainCountOfTypeDefinitions(TypeSetDeclaration typeSetDeclaration, int count) {

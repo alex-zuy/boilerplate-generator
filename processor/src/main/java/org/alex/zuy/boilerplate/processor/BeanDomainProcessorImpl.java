@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 
+import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
@@ -79,7 +80,8 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
     }
 
     @Override
-    public TypeSetDeclaration processDomain(BeanDomain beanDomain, SupportClassesConfig supportClassesConfig) {
+    public TypeSetDeclaration processDomain(BeanDomain beanDomain, SupportClassesConfig supportClassesConfig,
+        MetadataGenerationStyle style) {
         Set<TypeDeclaration> metadataClasses = new HashSet<>();
 
         Set<Type<?>> domainClassesTypes = beanDomain.getBeanClasses().stream()
@@ -89,7 +91,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         SupportClassesTypes supportClassesTypes = supportClassesGenerator.getSupportClassesTypes(supportClassesConfig);
 
         for (BeanClass beanClass : beanDomain.getBeanClasses()) {
-            BeanClassProcessor beanClassProcessor = new BeanClassProcessor(beanClass,
+            BeanClassProcessor beanClassProcessor = new BeanClassProcessor(beanClass, style,
                 supportClassesTypes.getPropertyChainNodeType());
             metadataClasses.add(makeBeanPropertiesClass(beanClass, domainClassesTypes, beanClassProcessor));
             metadataClasses.add(makeBeanRelationshipsClass(beanClass, domainClassesTypes, beanClassProcessor));
@@ -163,14 +165,14 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
             .orElse(type.getName());
     }
 
-    private Type<?> makeRelationshipsClassType(Type<?> type) {
-        String simpleName = namesGenerator.makeBeanRelationshipsClassName(makeTypeSimpleName(type));
+    private Type<?> makeRelationshipsClassType(Type<?> type, MetadataGenerationStyle style) {
+        String simpleName = namesGenerator.makeBeanRelationshipsClassName(makeTypeSimpleName(type), style);
         String packageName = type.getPackageName().orElse(null);
         return Types.makeExactType(makeClassQualifiedName(simpleName, packageName), packageName);
     }
 
-    private Type<?> makePropertiesClassType(Type<?> beanType) {
-        String simpleName = namesGenerator.makeBeanPropertiesClassName(makeTypeSimpleName(beanType));
+    private Type<?> makePropertiesClassType(Type<?> beanType, MetadataGenerationStyle style) {
+        String simpleName = namesGenerator.makeBeanPropertiesClassName(makeTypeSimpleName(beanType), style);
         String packageName = beanType.getPackageName().orElse(null);
         return Types.makeExactType(makeClassQualifiedName(simpleName, packageName), packageName);
     }
@@ -189,9 +191,12 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
 
         private Type<?> propertyChainNodeType;
 
-        BeanClassProcessor(BeanClass beanClass, Type<?> propertyChainNodeType) {
-            relationshipsClassType = makeRelationshipsClassType(beanClass.getType());
-            propertiesClassType = makePropertiesClassType(beanClass.getType());
+        private MetadataGenerationStyle style;
+
+        BeanClassProcessor(BeanClass beanClass, MetadataGenerationStyle style, Type<?> propertyChainNodeType) {
+            relationshipsClassType = makeRelationshipsClassType(beanClass.getType(), style);
+            propertiesClassType = makePropertiesClassType(beanClass.getType(), style);
+            this.style = style;
             this.propertyChainNodeType = propertyChainNodeType;
         }
 
@@ -208,7 +213,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         }
 
         FieldDeclaration buildConstantFieldForPropertyName(BeanProperty property) {
-            String constantName = namesGenerator.makeBeanPropertyConstantName(property.getName());
+            String constantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
             return ImmutableFieldDeclaration.builder()
                 .name(constantName)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
@@ -220,8 +225,8 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         }
 
         MethodDeclaration buildPropertyRelationshipAccessorMethod(BeanProperty property) {
-            Type<?> propertyRelationshipClassType = makeRelationshipsClassType(property.getType());
-            String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName());
+            Type<?> propertyRelationshipClassType = makeRelationshipsClassType(property.getType(), style);
+            String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
 
             return ImmutableMethodDeclaration.builder()
                 .name(property.getName())
@@ -258,8 +263,8 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         }
 
         MethodDeclaration buildRelationshipContinuationMethod(BeanProperty property) {
-            String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName());
-            Type<?> propertyRelationshipClassType = makeRelationshipsClassType(property.getType());
+            String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
+            Type<?> propertyRelationshipClassType = makeRelationshipsClassType(property.getType(), style);
             return ImmutableMethodDeclaration.builder()
                 .name(property.getName())
                 .addModifiers(Modifier.PUBLIC)
@@ -272,7 +277,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         }
 
         MethodDeclaration buildRelationshipTerminalMethod(BeanProperty property) {
-            String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName());
+            String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
             return ImmutableMethodDeclaration.builder()
                 .name(property.getName())
                 .addModifiers(Modifier.PUBLIC)

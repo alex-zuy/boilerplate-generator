@@ -16,8 +16,15 @@ import javax.lang.model.element.TypeElement;
 import com.example.ExcludeMarker;
 import dagger.Component;
 import org.alex.zuy.boilerplate.application.DomainClassesCollectorModule;
-import org.alex.zuy.boilerplate.collector.DomainConfig.ExcludesConfig;
-import org.alex.zuy.boilerplate.collector.DomainConfig.IncludesConfig;
+import org.alex.zuy.boilerplate.config.DomainConfig;
+import org.alex.zuy.boilerplate.config.DomainConfig.ExcludesConfig;
+import org.alex.zuy.boilerplate.config.DomainConfig.IncludesConfig;
+import org.alex.zuy.boilerplate.config.ImmutableDomainConfig;
+import org.alex.zuy.boilerplate.config.ImmutableExcludesConfig;
+import org.alex.zuy.boilerplate.config.ImmutableIncludesConfig;
+import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.generated.Domain;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.support.ProcessorContextProviderModule;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
@@ -68,9 +75,15 @@ public class DomainClassesCollectorImplTest {
     }
 
     private void whenBuildPerformed() throws Exception {
+        MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
+            .propertyClassNameTemplate("")
+            .relationshipsClassNameTemplate("")
+            .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.CAMELCASE)
+            .build();
         DomainConfig domainConfig = ImmutableDomainConfig.builder()
             .includes(includesConfig)
             .excludes(excludesConfig)
+            .generationStyle(generationStyle)
             .build();
         processor = new ProcessorImpl(domainConfig);
         compileResult = testBuildSetupBuilder.addAnnotationProcessor(

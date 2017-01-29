@@ -1,5 +1,5 @@
 
-package org.alex.zuy.boilerplate.collector;
+package org.alex.zuy.boilerplate.config;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -12,6 +12,8 @@ public interface DomainConfig {
     IncludesConfig includes();
 
     ExcludesConfig excludes();
+
+    MetadataGenerationStyle generationStyle();
 
     @Value.Immutable
     interface IncludesConfig {

@@ -9,7 +9,7 @@ import org.alex.zuy.boilerplate.analysis.BeanDomainAnalyser;
 import org.alex.zuy.boilerplate.codegeneration.SourceFilePublisher;
 import org.alex.zuy.boilerplate.codegeneration.TypeDefinitionGenerator;
 import org.alex.zuy.boilerplate.collector.DomainClassesCollector;
-import org.alex.zuy.boilerplate.collector.DomainConfig;
+import org.alex.zuy.boilerplate.config.DomainConfig;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator.SupportClassesConfig;
 import org.alex.zuy.boilerplate.processor.BeanDomainProcessor;
@@ -49,12 +49,13 @@ public class BeanDomainMetadataGeneratorImpl implements BeanDomainMetadataGenera
 
     @Override
     public void generateDomainMetadataClasses(RoundContext roundContext, DomainConfig domainConfig,
-        MetadataGenerationStyle style, SupportClassesConfig supportClassesConfig) {
+        SupportClassesConfig supportClassesConfig) {
 
         Set<TypeElement> typeElements = domainClassesCollector.collect(domainConfig,
             roundContext.getRoundEnvironment());
         BeanDomain beanDomain = beanDomainAnalyser.analyse(typeElements);
-        TypeSetDeclaration typeSetDeclaration = beanDomainProcessor.processDomain(beanDomain, supportClassesConfig);
+        TypeSetDeclaration typeSetDeclaration = beanDomainProcessor.processDomain(beanDomain, supportClassesConfig,
+            domainConfig.generationStyle());
 
         if (!wasSupportClassesGenerated) {
             List<TypeDefinition> typeDefinitions = supportClassesGenerator.generateSupportClasses(supportClassesConfig);

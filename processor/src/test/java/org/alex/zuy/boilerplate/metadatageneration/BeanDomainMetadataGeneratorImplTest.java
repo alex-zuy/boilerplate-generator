@@ -23,11 +23,12 @@ import org.alex.zuy.boilerplate.application.BeanDomainProcessingModule;
 import org.alex.zuy.boilerplate.application.CodeGenerationModule;
 import org.alex.zuy.boilerplate.application.DomainClassesCollectorModule;
 import org.alex.zuy.boilerplate.application.MetadataGenerationModule;
-import org.alex.zuy.boilerplate.collector.DomainConfig;
-import org.alex.zuy.boilerplate.collector.ImmutableDomainConfig;
-import org.alex.zuy.boilerplate.collector.ImmutableExcludesConfig;
-import org.alex.zuy.boilerplate.collector.ImmutableIncludesConfig;
-import org.alex.zuy.boilerplate.metadatageneration.BeanDomainMetadataGenerator.MetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.DomainConfig;
+import org.alex.zuy.boilerplate.config.ImmutableDomainConfig;
+import org.alex.zuy.boilerplate.config.ImmutableExcludesConfig;
+import org.alex.zuy.boilerplate.config.ImmutableIncludesConfig;
+import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
 import org.alex.zuy.boilerplate.services.ImmutableRoundContext;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.services.RoundContext;
@@ -121,6 +122,12 @@ public class BeanDomainMetadataGeneratorImplTest {
                 .roundEnvironment(roundEnvironment)
                 .annotations(set)
                 .build();
+            //TODO: options are not set because it`s support is not implemented
+            MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
+                .propertyClassNameTemplate("")
+                .relationshipsClassNameTemplate("")
+                .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.CAMELCASE)
+                .build();
             DomainConfig.IncludesConfig includesConfig = ImmutableIncludesConfig.builder()
                 .addTypeAnnotations(Marker.class.getName())
                 .build();
@@ -129,18 +136,12 @@ public class BeanDomainMetadataGeneratorImplTest {
             DomainConfig domainConfig = ImmutableDomainConfig.builder()
                 .includes(includesConfig)
                 .excludes(excludesConfig)
-                .build();
-
-            //TODO: options are not set because it`s support is not implemented
-            MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
-                .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.UPPERCASE)
-                .propertyClassNameTemplate("")
-                .relationshipsClassNameTemplate("")
+                .generationStyle(generationStyle)
                 .build();
 
             SupportClassesGenerator.SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
                 .basePackage("com.example").build();
-            beanDomainMetadataGenerator.generateDomainMetadataClasses(roundContext, domainConfig, generationStyle,
+            beanDomainMetadataGenerator.generateDomainMetadataClasses(roundContext, domainConfig,
                 supportClassesConfig);
 
             return false;

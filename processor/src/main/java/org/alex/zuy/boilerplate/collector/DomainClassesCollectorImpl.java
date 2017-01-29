@@ -13,6 +13,7 @@ import javax.lang.model.element.TypeElement;
 import org.alex.zuy.boilerplate.collector.filters.ClassFilter;
 import org.alex.zuy.boilerplate.collector.filters.FullyQualifiedNamePatternClassFilter;
 import org.alex.zuy.boilerplate.collector.filters.TypeAnnotatedClassFilter;
+import org.alex.zuy.boilerplate.config.DomainConfig;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 
 public class DomainClassesCollectorImpl implements DomainClassesCollector {
