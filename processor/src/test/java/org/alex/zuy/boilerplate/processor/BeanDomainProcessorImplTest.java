@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.alex.zuy.boilerplate.application.BeanDomainProcessingModule;
+import org.alex.zuy.boilerplate.application.StringTemplateModule;
 import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
 import org.alex.zuy.boilerplate.domain.BeanClass;
@@ -20,6 +22,8 @@ import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGeneratorImpl;
 import org.alex.zuy.boilerplate.sourcemodel.FieldDeclaration;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
 import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
+import org.alex.zuy.boilerplate.stringtemplate.StringTemplateRenderer;
+import org.alex.zuy.boilerplate.stringtemplate.StringTemplateRendererImpl;
 import org.alex.zuy.boilerplate.utils.CollectionsUtil;
 import org.junit.Test;
 
@@ -75,18 +79,19 @@ public class BeanDomainProcessorImplTest {
     }
 
     private TypeSetDeclaration whenBeanDomainProcessed(BeanClass... beanClass) {
-        BeanMetadataNamesGenerator namesGenerator = new BeanMetadataNamesGeneratorImpl();
-        SupportClassesGenerator supportClassesGenerator = new SupportClassesGeneratorImpl();
-        BeanDomainProcessorImpl beanDomainProcessor = new BeanDomainProcessorImpl(namesGenerator,
-            supportClassesGenerator);
         SupportClassesGenerator.SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
             .basePackage(EXAMPLE_PACKAGE_NAME)
             .build();
         MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
-            .propertyClassNameTemplate("")
-            .relationshipsClassNameTemplate("")
-            .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.CAMELCASE)
+            .propertyClassNameTemplate("${beanClassName}Properties")
+            .relationshipsClassNameTemplate("${beanClassName}Relationships")
+            .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.UPPERCASE)
             .build();
+        BeanDomainProcessor beanDomainProcessor = DaggerBeanDomainProcessorComponent.builder()
+            .beanDomainProcessingModule(new BeanDomainProcessingModule())
+            .stringTemplateModule(new StringTemplateModule())
+            .build()
+            .getBeanDomainProcessor();
         return beanDomainProcessor.processDomain(new BeanDomain(CollectionsUtil.asSet(beanClass)),
             supportClassesConfig, generationStyle);
     }

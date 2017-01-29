@@ -122,11 +122,10 @@ public class BeanDomainMetadataGeneratorImplTest {
                 .roundEnvironment(roundEnvironment)
                 .annotations(set)
                 .build();
-            //TODO: options are not set because it`s support is not implemented
             MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
-                .propertyClassNameTemplate("")
-                .relationshipsClassNameTemplate("")
-                .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.CAMELCASE)
+                .propertyClassNameTemplate("${beanClassName}Properties")
+                .relationshipsClassNameTemplate("${beanClassName}Relationships")
+                .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.UPPERCASE)
                 .build();
             DomainConfig.IncludesConfig includesConfig = ImmutableIncludesConfig.builder()
                 .addTypeAnnotations(Marker.class.getName())
