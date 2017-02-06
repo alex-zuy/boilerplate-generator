@@ -7,7 +7,7 @@ import org.alex.zuy.boilerplate.domain.types.Type;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface MethodDeclaration extends AbstractDeclaration, WithCustomTemplateDeclaration {
+public interface MethodDescription extends AbstractDescription, TemplateDescription {
 
     String getName();
 

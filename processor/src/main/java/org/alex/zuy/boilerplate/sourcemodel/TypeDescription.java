@@ -7,7 +7,7 @@ import org.alex.zuy.boilerplate.domain.types.Type;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface TypeDeclaration extends AbstractDeclaration {
+public interface TypeDescription extends AbstractDescription {
 
     String getSimpleName();
 
@@ -23,9 +23,9 @@ public interface TypeDeclaration extends AbstractDeclaration {
 
     List<Type<?>> getImplementedTypes();
 
-    List<FieldDeclaration> getFields();
+    List<FieldDescription> getFields();
 
-    List<MethodDeclaration> getMethods();
+    List<MethodDescription> getMethods();
 
-    List<TypeDeclaration> getNestedTypes();
+    List<TypeDescription> getNestedTypes();
 }

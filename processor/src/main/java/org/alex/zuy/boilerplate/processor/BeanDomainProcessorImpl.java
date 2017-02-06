@@ -16,15 +16,15 @@ import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator;
 import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator.SupportClassesConfig;
 import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator.SupportClassesTypes;
-import org.alex.zuy.boilerplate.sourcemodel.FieldDeclaration;
-import org.alex.zuy.boilerplate.sourcemodel.ImmutableFieldDeclaration;
-import org.alex.zuy.boilerplate.sourcemodel.ImmutableMethodDeclaration;
+import org.alex.zuy.boilerplate.sourcemodel.FieldDescription;
+import org.alex.zuy.boilerplate.sourcemodel.ImmutableFieldDescription;
+import org.alex.zuy.boilerplate.sourcemodel.ImmutableMethodDescription;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableMethodParameterDeclaration;
-import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeDeclaration;
+import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeDescription;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeSetDeclaration;
-import org.alex.zuy.boilerplate.sourcemodel.MethodDeclaration;
-import org.alex.zuy.boilerplate.sourcemodel.MethodDeclaration.MethodParameterDeclaration;
-import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
+import org.alex.zuy.boilerplate.sourcemodel.MethodDescription;
+import org.alex.zuy.boilerplate.sourcemodel.MethodDescription.MethodParameterDeclaration;
+import org.alex.zuy.boilerplate.sourcemodel.TypeDescription;
 import org.alex.zuy.boilerplate.sourcemodel.TypeKind;
 import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
 
@@ -82,7 +82,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
     @Override
     public TypeSetDeclaration processDomain(BeanDomain beanDomain, SupportClassesConfig supportClassesConfig,
         MetadataGenerationStyle style) {
-        Set<TypeDeclaration> metadataClasses = new HashSet<>();
+        Set<TypeDescription> metadataClasses = new HashSet<>();
 
         Set<Type<?>> domainClassesTypes = beanDomain.getBeanClasses().stream()
             .map(BeanClass::getType)
@@ -102,21 +102,21 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
             .build();
     }
 
-    private TypeDeclaration makeBeanPropertiesClass(BeanClass beanClass, Set<Type<?>> domainClassesTypes,
+    private TypeDescription makeBeanPropertiesClass(BeanClass beanClass, Set<Type<?>> domainClassesTypes,
         BeanClassProcessor beanClassProcessor) {
 
-        List<FieldDeclaration> fieldDeclarations = beanClass.getProperties().values().stream()
+        List<FieldDescription> fieldDeclarations = beanClass.getProperties().values().stream()
             .map(beanClassProcessor::buildConstantFieldForPropertyName)
             .collect(Collectors.toList());
 
-        List<MethodDeclaration> propertyClassRelationshipAccessors = beanClass.getProperties().values().stream()
+        List<MethodDescription> propertyClassRelationshipAccessors = beanClass.getProperties().values().stream()
             .filter(beanProperty -> domainClassesTypes.contains(beanProperty.getType()))
             .map(beanClassProcessor::buildPropertyRelationshipAccessorMethod)
             .collect(Collectors.toList());
 
         Type<?> propertiesClassType = beanClassProcessor.getPropertiesClassType();
 
-        return ImmutableTypeDeclaration.builder()
+        return ImmutableTypeDescription.builder()
             .addModifiers(Modifier.PUBLIC)
             .kind(TypeKind.CLASS)
             .packageName(propertiesClassType.getPackageName().orElse(null))
@@ -127,14 +127,14 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
             .build();
     }
 
-    private TypeDeclaration makeBeanRelationshipsClass(BeanClass beanClass, Set<Type<?>> domainClassesTypes,
+    private TypeDescription makeBeanRelationshipsClass(BeanClass beanClass, Set<Type<?>> domainClassesTypes,
         BeanClassProcessor beanClassProcessor) {
 
-        MethodDeclaration chainStartCtor = beanClassProcessor.buildRelationshipStartCtor();
+        MethodDescription chainStartCtor = beanClassProcessor.buildRelationshipStartCtor();
 
-        MethodDeclaration chainContinuationCtor = beanClassProcessor.buildRelationshipContinuationCtor();
+        MethodDescription chainContinuationCtor = beanClassProcessor.buildRelationshipContinuationCtor();
 
-        List<MethodDeclaration> relationshipsMethods = beanClass.getProperties().values().stream()
+        List<MethodDescription> relationshipsMethods = beanClass.getProperties().values().stream()
             .map(property -> {
                 if (domainClassesTypes.contains(property.getType())) {
                     return beanClassProcessor.buildRelationshipContinuationMethod(property);
@@ -147,7 +147,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
 
         Type<?> relationshipsClassType = beanClassProcessor.getRelationshipsClassType();
 
-        return ImmutableTypeDeclaration.builder()
+        return ImmutableTypeDescription.builder()
             .addModifiers(Modifier.PUBLIC)
             .kind(TypeKind.CLASS)
             .packageName(relationshipsClassType.getPackageName().orElse(null))
@@ -212,9 +212,9 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
             return propertyChainNodeType;
         }
 
-        FieldDeclaration buildConstantFieldForPropertyName(BeanProperty property) {
+        FieldDescription buildConstantFieldForPropertyName(BeanProperty property) {
             String constantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
-            return ImmutableFieldDeclaration.builder()
+            return ImmutableFieldDescription.builder()
                 .name(constantName)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .type(TYPE_STRING)
@@ -224,11 +224,11 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
                 .build();
         }
 
-        MethodDeclaration buildPropertyRelationshipAccessorMethod(BeanProperty property) {
+        MethodDescription buildPropertyRelationshipAccessorMethod(BeanProperty property) {
             Type<?> propertyRelationshipClassType = makeRelationshipsClassType(property.getType(), style);
             String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
 
-            return ImmutableMethodDeclaration.builder()
+            return ImmutableMethodDescription.builder()
                 .name(property.getName())
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returnType(propertyRelationshipClassType)
@@ -238,9 +238,9 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
                 .build();
         }
 
-        MethodDeclaration buildRelationshipStartCtor() {
+        MethodDescription buildRelationshipStartCtor() {
             MethodParameterDeclaration propertyParameter = makePropertyParameterDeclaration();
-            return ImmutableMethodDeclaration.builder()
+            return ImmutableMethodDescription.builder()
                 .name(makeTypeSimpleName(relationshipsClassType))
                 .addParameters(propertyParameter)
                 .templateName(RelationshipClassMethodBodyTemplates.FORWARD_SUPER_CTOR_ONE_PARAMETER)
@@ -248,11 +248,11 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
                 .build();
         }
 
-        MethodDeclaration buildRelationshipContinuationCtor() {
+        MethodDescription buildRelationshipContinuationCtor() {
             MethodParameterDeclaration propertyParameter = makePropertyParameterDeclaration();
             MethodParameterDeclaration chainTailNodeParameter = ImmutableMethodParameterDeclaration.builder()
                 .name("tail").type(propertyChainNodeType).build();
-            return ImmutableMethodDeclaration.builder()
+            return ImmutableMethodDescription.builder()
                 .name(makeTypeSimpleName(relationshipsClassType))
                 .addParameters(chainTailNodeParameter)
                 .addParameters(propertyParameter)
@@ -262,10 +262,10 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
                 .build();
         }
 
-        MethodDeclaration buildRelationshipContinuationMethod(BeanProperty property) {
+        MethodDescription buildRelationshipContinuationMethod(BeanProperty property) {
             String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
             Type<?> propertyRelationshipClassType = makeRelationshipsClassType(property.getType(), style);
-            return ImmutableMethodDeclaration.builder()
+            return ImmutableMethodDescription.builder()
                 .name(property.getName())
                 .addModifiers(Modifier.PUBLIC)
                 .returnType(propertyRelationshipClassType)
@@ -276,9 +276,9 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
                 .build();
         }
 
-        MethodDeclaration buildRelationshipTerminalMethod(BeanProperty property) {
+        MethodDescription buildRelationshipTerminalMethod(BeanProperty property) {
             String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
-            return ImmutableMethodDeclaration.builder()
+            return ImmutableMethodDescription.builder()
                 .name(property.getName())
                 .addModifiers(Modifier.PUBLIC)
                 .returnType(TYPE_STRING)

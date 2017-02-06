@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import org.alex.zuy.boilerplate.codegeneration.TemplateRenderer.TemplateRenderingTask;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeDefinition;
-import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
+import org.alex.zuy.boilerplate.sourcemodel.TypeDescription;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDefinition;
 
 public class TypeDefinitionGeneratorImpl implements TypeDefinitionGenerator {
@@ -31,7 +31,7 @@ public class TypeDefinitionGeneratorImpl implements TypeDefinitionGenerator {
     }
 
     @Override
-    public TypeDefinition generateType(TypeDeclaration typeDeclaration) {
+    public TypeDefinition generateType(TypeDescription typeDeclaration) {
         Map<String, Object> data = new HashMap<>();
         data.put(ModelRefs.TYPE_DECLARATION, typeDeclaration);
         data.put(ModelRefs.TYPE_FORMATTER, typeFormatter);

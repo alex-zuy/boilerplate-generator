@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="type" type="org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration" -->
+<#-- @ftlvariable name="type" type="org.alex.zuy.boilerplate.sourcemodel.TypeDescription" -->
 <#import "utility.ftl" as util>
 
 <#if type.packageName??>

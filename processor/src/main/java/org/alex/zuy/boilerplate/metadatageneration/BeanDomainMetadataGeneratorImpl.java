@@ -14,7 +14,7 @@ import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator.SupportClassesConfig;
 import org.alex.zuy.boilerplate.processor.BeanDomainProcessor;
 import org.alex.zuy.boilerplate.services.RoundContext;
-import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
+import org.alex.zuy.boilerplate.sourcemodel.TypeDescription;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDefinition;
 import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
 
@@ -63,7 +63,7 @@ public class BeanDomainMetadataGeneratorImpl implements BeanDomainMetadataGenera
             wasSupportClassesGenerated = true;
         }
 
-        for (TypeDeclaration typeDeclaration : typeSetDeclaration.getTypes()) {
+        for (TypeDescription typeDeclaration : typeSetDeclaration.getTypes()) {
             TypeDefinition typeDefinition = typeDefinitionGenerator.generateType(typeDeclaration);
             sourceFilePublisher.publish(typeDefinition);
         }

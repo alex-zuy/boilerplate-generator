@@ -18,12 +18,9 @@ import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.metadatageneration.ImmutableSupportClassesConfig;
 import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator;
-import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGeneratorImpl;
-import org.alex.zuy.boilerplate.sourcemodel.FieldDeclaration;
-import org.alex.zuy.boilerplate.sourcemodel.TypeDeclaration;
+import org.alex.zuy.boilerplate.sourcemodel.FieldDescription;
+import org.alex.zuy.boilerplate.sourcemodel.TypeDescription;
 import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
-import org.alex.zuy.boilerplate.stringtemplate.StringTemplateRenderer;
-import org.alex.zuy.boilerplate.stringtemplate.StringTemplateRendererImpl;
 import org.alex.zuy.boilerplate.utils.CollectionsUtil;
 import org.junit.Test;
 
@@ -53,7 +50,7 @@ public class BeanDomainProcessorImplTest {
 
         thenTypeSetShouldContainCountOfTypeDefinitions(typeSetDeclaration, 2);
 
-        TypeDeclaration typeDeclaration = getTypeBySimpleName(typeSetDeclaration, "SingletonDomainProperties");
+        TypeDescription typeDeclaration = getTypeBySimpleName(typeSetDeclaration, "SingletonDomainProperties");
         thenTypeShouldContainCountOfFields(typeDeclaration, 2);
         thenTypeShouldHaveQualifiedName(typeDeclaration, "com.example.SingletonDomainProperties");
         thenTypeShouldHaveSimpleNameAndPackageName(typeDeclaration, "SingletonDomainProperties", EXAMPLE_PACKAGE_NAME);
@@ -61,13 +58,13 @@ public class BeanDomainProcessorImplTest {
         thenFieldsShouldHaveType(typeDeclaration, TestTypes.STRING);
     }
 
-    private void thenTypeShouldHaveSimpleNameAndPackageName(TypeDeclaration typeDeclaration, String expectedSimpleName,
+    private void thenTypeShouldHaveSimpleNameAndPackageName(TypeDescription typeDeclaration, String expectedSimpleName,
         String expectedPackageName) {
         assertEquals(expectedSimpleName, typeDeclaration.getSimpleName());
         assertEquals(expectedPackageName, typeDeclaration.getPackageName());
     }
 
-    private void thenTypeShouldHaveQualifiedName(TypeDeclaration typeDeclaration, String expectedQualifiedName) {
+    private void thenTypeShouldHaveQualifiedName(TypeDescription typeDeclaration, String expectedQualifiedName) {
         assertEquals(expectedQualifiedName, typeDeclaration.getQualifiedName());
     }
 
@@ -100,20 +97,20 @@ public class BeanDomainProcessorImplTest {
         assertThat(typeSetDeclaration.getTypes(), hasSize(count));
     }
 
-    private void thenTypeShouldContainCountOfFields(TypeDeclaration declaration, int count) {
+    private void thenTypeShouldContainCountOfFields(TypeDescription declaration, int count) {
         assertThat(declaration.getFields(), hasSize(count));
     }
 
-    private void thenShouldHaveFieldsNamed(TypeDeclaration typeDeclaration, String... names) {
+    private void thenShouldHaveFieldsNamed(TypeDescription typeDeclaration, String... names) {
         for (final String name : names) {
-            Optional<FieldDeclaration> field = typeDeclaration.getFields().stream()
+            Optional<FieldDescription> field = typeDeclaration.getFields().stream()
                 .filter(fieldDeclaration -> name.equals(fieldDeclaration.getName()))
                 .findFirst();
             assertTrue(field.isPresent());
         }
     }
 
-    private void thenFieldsShouldHaveType(TypeDeclaration typeDeclaration, Type<?> type) {
+    private void thenFieldsShouldHaveType(TypeDescription typeDeclaration, Type<?> type) {
         typeDeclaration.getFields().forEach(field -> assertEquals(field.getType(), type));
     }
 
@@ -121,7 +118,7 @@ public class BeanDomainProcessorImplTest {
         return new BeanProperty(name, type, AccessModifier.PUBLIC);
     }
 
-    private static TypeDeclaration getTypeBySimpleName(TypeSetDeclaration typeSetDeclaration, String simpleName) {
+    private static TypeDescription getTypeBySimpleName(TypeSetDeclaration typeSetDeclaration, String simpleName) {
         return typeSetDeclaration.getTypes().stream()
             .filter(type -> simpleName.equals(type.getSimpleName()))
             .findFirst()

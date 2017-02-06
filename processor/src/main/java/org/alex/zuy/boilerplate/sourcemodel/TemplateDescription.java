@@ -2,7 +2,7 @@ package org.alex.zuy.boilerplate.sourcemodel;
 
 import java.util.Map;
 
-public interface WithCustomTemplateDeclaration {
+public interface TemplateDescription {
 
     String getTemplateName();
 

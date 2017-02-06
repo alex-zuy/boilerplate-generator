@@ -7,5 +7,5 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface TypeSetDeclaration {
 
-    Set<TypeDeclaration> getTypes();
+    Set<TypeDescription> getTypes();
 }
