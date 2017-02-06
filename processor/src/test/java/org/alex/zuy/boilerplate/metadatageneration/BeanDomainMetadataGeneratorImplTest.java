@@ -28,7 +28,9 @@ import org.alex.zuy.boilerplate.config.ImmutableDomainConfig;
 import org.alex.zuy.boilerplate.config.ImmutableExcludesConfig;
 import org.alex.zuy.boilerplate.config.ImmutableIncludesConfig;
 import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.ImmutableSupportClassesConfig;
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.SupportClassesConfig;
 import org.alex.zuy.boilerplate.services.ImmutableRoundContext;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.services.RoundContext;
@@ -138,7 +140,7 @@ public class BeanDomainMetadataGeneratorImplTest {
                 .generationStyle(generationStyle)
                 .build();
 
-            SupportClassesGenerator.SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
+            SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
                 .basePackage("com.example").build();
             beanDomainMetadataGenerator.generateDomainMetadataClasses(roundContext, domainConfig,
                 supportClassesConfig);

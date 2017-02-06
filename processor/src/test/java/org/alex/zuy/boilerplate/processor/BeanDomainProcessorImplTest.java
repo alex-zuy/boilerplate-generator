@@ -9,15 +9,15 @@ import java.util.Optional;
 import org.alex.zuy.boilerplate.application.BeanDomainProcessingModule;
 import org.alex.zuy.boilerplate.application.StringTemplateModule;
 import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.ImmutableSupportClassesConfig;
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.SupportClassesConfig;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
-import org.alex.zuy.boilerplate.metadatageneration.ImmutableSupportClassesConfig;
-import org.alex.zuy.boilerplate.metadatageneration.SupportClassesGenerator;
 import org.alex.zuy.boilerplate.sourcemodel.FieldDescription;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDescription;
 import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
@@ -76,7 +76,7 @@ public class BeanDomainProcessorImplTest {
     }
 
     private TypeSetDeclaration whenBeanDomainProcessed(BeanClass... beanClass) {
-        SupportClassesGenerator.SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
+        SupportClassesConfig supportClassesConfig = ImmutableSupportClassesConfig.builder()
             .basePackage(EXAMPLE_PACKAGE_NAME)
             .build();
         MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()

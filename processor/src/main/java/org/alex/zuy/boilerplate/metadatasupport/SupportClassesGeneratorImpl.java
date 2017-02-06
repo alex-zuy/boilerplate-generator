@@ -1,4 +1,4 @@
-package org.alex.zuy.boilerplate.metadatageneration;
+package org.alex.zuy.boilerplate.metadatasupport;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 
+import org.alex.zuy.boilerplate.config.SupportClassesConfig;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeDefinition;

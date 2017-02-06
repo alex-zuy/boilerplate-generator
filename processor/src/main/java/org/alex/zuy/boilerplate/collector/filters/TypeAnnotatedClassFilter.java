@@ -3,7 +3,7 @@ package org.alex.zuy.boilerplate.collector.filters;
 import java.lang.annotation.Annotation;
 import javax.lang.model.element.TypeElement;
 
-import org.alex.zuy.boilerplate.collector.DomainClassesCollector;
+import org.alex.zuy.boilerplate.collector.DomainClassesCollectorException;
 
 public class TypeAnnotatedClassFilter implements ClassFilter {
 
@@ -14,7 +14,7 @@ public class TypeAnnotatedClassFilter implements ClassFilter {
             this.annotation = Class.forName(annotation).asSubclass(Annotation.class);
         }
         catch (ClassNotFoundException e) {
-            throw new DomainClassesCollector.DomainClassesCollectorException(e);
+            throw new DomainClassesCollectorException(e);
         }
     }
 
