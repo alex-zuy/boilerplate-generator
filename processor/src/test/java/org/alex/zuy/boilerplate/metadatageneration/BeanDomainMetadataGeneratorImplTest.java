@@ -61,7 +61,8 @@ public class BeanDomainMetadataGeneratorImplTest {
         Class<?> personProperties = whenCompiledClassLoaded("com.example.PersonProperties");
         thenClassShouldHavePublicStaticFinalField(personProperties, "FULL_NAME", "fullName");
         thenClassShouldHavePublicStaticFinalField(personProperties, "ADDRESS", "address");
-        thenEvaluatingMethodChainShouldYield(personProperties, Arrays.asList("address", "street"), "address.street");
+        thenEvaluatingMethodChainShouldYield(personProperties, Arrays.asList("address", "streetProperty"),
+            "address.street");
     }
 
     private void givenSourceFilesFromTestSpecificSubdirectory(String subdirectory) throws IOException {
@@ -127,6 +128,7 @@ public class BeanDomainMetadataGeneratorImplTest {
             MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
                 .propertyClassNameTemplate("${beanClassName}Properties")
                 .relationshipsClassNameTemplate("${beanClassName}Relationships")
+                .relationshipsClassTerminalMethodName("${beanPropertyName}Property")
                 .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.UPPERCASE)
                 .build();
             DomainConfig.IncludesConfig includesConfig = ImmutableIncludesConfig.builder()

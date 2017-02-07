@@ -78,6 +78,7 @@ public class DomainClassesCollectorImplTest {
         MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
             .propertyClassNameTemplate("")
             .relationshipsClassNameTemplate("")
+            .relationshipsClassTerminalMethodName("")
             .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.CAMELCASE)
             .build();
         DomainConfig domainConfig = ImmutableDomainConfig.builder()

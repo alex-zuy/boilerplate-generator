@@ -9,6 +9,8 @@ public interface MetadataGenerationStyle {
 
     String getRelationshipsClassNameTemplate();
 
+    String getRelationshipsClassTerminalMethodName();
+
     StringConstantStyle getStringConstantStyle();
 
     enum StringConstantStyle {

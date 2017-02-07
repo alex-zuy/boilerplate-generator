@@ -12,6 +12,8 @@ public class BeanMetadataNamesGeneratorImpl implements BeanMetadataNamesGenerato
 
     private static final String PLACEHOLDER_BEAN_CLASS_NAME = "beanClassName";
 
+    private static final String PLACEHOLDER_BEAN_PROPERTY_NAME = "beanPropertyName";
+
     private StringTemplateRenderer templateRenderer;
 
     @Inject
@@ -29,6 +31,12 @@ public class BeanMetadataNamesGeneratorImpl implements BeanMetadataNamesGenerato
     public String makeBeanRelationshipsClassName(String simpleBeanClassName, MetadataGenerationStyle style) {
         Map<String, String> data = Collections.singletonMap(PLACEHOLDER_BEAN_CLASS_NAME, simpleBeanClassName);
         return templateRenderer.render(style.getRelationshipsClassNameTemplate(), data);
+    }
+
+    @Override
+    public String makeBeanRelationshipsTerminalMethodName(String propertyName, MetadataGenerationStyle style) {
+        Map<String, String> data = Collections.singletonMap(PLACEHOLDER_BEAN_PROPERTY_NAME, propertyName);
+        return templateRenderer.render(style.getRelationshipsClassTerminalMethodName(), data);
     }
 
     @Override

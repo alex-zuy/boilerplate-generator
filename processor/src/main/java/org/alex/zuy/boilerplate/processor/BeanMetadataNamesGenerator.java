@@ -8,5 +8,7 @@ public interface BeanMetadataNamesGenerator {
 
     String makeBeanRelationshipsClassName(String simpleBeanClassName, MetadataGenerationStyle style);
 
+    String makeBeanRelationshipsTerminalMethodName(String propertyName, MetadataGenerationStyle style);
+
     String makeBeanPropertyConstantName(String propertyName, MetadataGenerationStyle style);
 }

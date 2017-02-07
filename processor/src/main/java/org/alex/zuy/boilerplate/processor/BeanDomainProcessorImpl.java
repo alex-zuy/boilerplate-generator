@@ -1,5 +1,6 @@
 package org.alex.zuy.boilerplate.processor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -134,16 +135,13 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
 
         MethodDescription chainContinuationCtor = beanClassProcessor.buildRelationshipContinuationCtor();
 
-        List<MethodDescription> relationshipsMethods = beanClass.getProperties().values().stream()
-            .map(property -> {
-                if (domainClassesTypes.contains(property.getType())) {
-                    return beanClassProcessor.buildRelationshipContinuationMethod(property);
-                }
-                else {
-                    return beanClassProcessor.buildRelationshipTerminalMethod(property);
-                }
-            })
-            .collect(Collectors.toList());
+        List<MethodDescription> relationshipsMethods = new ArrayList<>();
+        beanClass.getProperties().forEach((propertyName, property) -> {
+            relationshipsMethods.add(beanClassProcessor.buildRelationshipTerminalMethod(property));
+            if (domainClassesTypes.contains(property.getType())) {
+                relationshipsMethods.add(beanClassProcessor.buildRelationshipContinuationMethod(property));
+            }
+        });
 
         Type<?> relationshipsClassType = beanClassProcessor.getRelationshipsClassType();
 
@@ -278,8 +276,9 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
 
         MethodDescription buildRelationshipTerminalMethod(BeanProperty property) {
             String propertyConstantName = namesGenerator.makeBeanPropertyConstantName(property.getName(), style);
+            String methodName = namesGenerator.makeBeanRelationshipsTerminalMethodName(property.getName(), style);
             return ImmutableMethodDescription.builder()
-                .name(property.getName())
+                .name(methodName)
                 .addModifiers(Modifier.PUBLIC)
                 .returnType(TYPE_STRING)
                 .templateName(RelationshipClassMethodBodyTemplates.RELATIONSHIP_TERMINATOR)
