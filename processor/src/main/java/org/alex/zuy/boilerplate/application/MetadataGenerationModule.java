@@ -5,7 +5,11 @@ import dagger.Provides;
 import org.alex.zuy.boilerplate.metadatageneration.BeanDomainMetadataGenerator;
 import org.alex.zuy.boilerplate.metadatageneration.BeanDomainMetadataGeneratorImpl;
 
-@Module(includes = {CodeGenerationModule.class, BeanDomainProcessingModule.class, DomainClassesCollectorModule.class})
+@Module(includes = {
+    CodeGenerationModule.class,
+    BeanDomainProcessingModule.class,
+    DomainClassesCollectorModule.class,
+    MetadataSupportModule.class})
 public class MetadataGenerationModule {
 
     @Provides
