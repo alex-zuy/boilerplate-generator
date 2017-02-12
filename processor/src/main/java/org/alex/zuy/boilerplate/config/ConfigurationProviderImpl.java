@@ -27,7 +27,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
     @Override
     @SuppressWarnings("PMD.NPathComplexity")
     public DomainConfig getDomainConfig() {
-        Domain domain = configuration.getBeanProcessing().getDomains().getDomains().get(0);
+        Domain domain = configuration.getBeanProcessing().getDomain();
 
         Includes includes = domain.getIncludes();
         DomainConfig.IncludesConfig includesConfig = ImmutableIncludesConfig.builder()

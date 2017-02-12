@@ -15,14 +15,12 @@
                     <relationshipsClassTerminalMethodNameTemplate>${beanPropertyName}Property</relationshipsClassTerminalMethodNameTemplate>
                 </metadataClasses>
         </generationStyle>
-        <domains>
-            <domain>
-                <includes>
-                    <typeAnnotations>
-                        <annotation>org.alex.zuy.boilerplate.test.IncludeMarker</annotation>
-                    </typeAnnotations>
-                </includes>
-            </domain>
-        </domains>
+        <domain>
+            <includes>
+                <typeAnnotations>
+                    <annotation>org.alex.zuy.boilerplate.test.IncludeMarker</annotation>
+                </typeAnnotations>
+            </includes>
+        </domain>
     </beanProcessing>
 </configuration>

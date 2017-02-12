@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.alex.zuy.boilerplate.config.generated.Configuration;
 import org.alex.zuy.boilerplate.config.generated.Domain;
-import org.alex.zuy.boilerplate.config.generated.DomainList;
 import org.alex.zuy.boilerplate.config.generated.GenerationStyle;
 import org.alex.zuy.boilerplate.config.generated.SupportClasses;
 import org.junit.Test;
@@ -19,10 +18,9 @@ public class ConfigLoaderTest {
     public void testLoadingConfig() throws Exception {
         final URL url = getClass().getResource("config.xml");
         final Configuration config = new ConfigLoader().loadConfig(url);
-        assertEquals(1, config.getBeanProcessing().getDomains().getDomains().size());
         assertSupportClassesCorrect(config.getBeanProcessing().getSupportClasses());
         assertGenerationStyleCorrect(config.getBeanProcessing().getGenerationStyle());
-        assertDomainsCorrect(config.getBeanProcessing().getDomains());
+        assertDomainCorrect(config.getBeanProcessing().getDomain());
     }
 
     private void assertSupportClassesCorrect(SupportClasses supportClasses) {
@@ -34,11 +32,6 @@ public class ConfigLoaderTest {
         assertEquals("${beanClassName}_r", style.getMetadataClasses().getRelationshipClassName());
         assertEquals("camelcase", style.getMetadataClasses().getStringConstantNameStyle().value());
         //assertEquals("${beanPropertyName}Property", style.getMetadataClasses());
-    }
-
-    private void assertDomainsCorrect(DomainList domains) {
-        assertEquals(1, domains.getDomains().size());
-        assertDomainCorrect(domains.getDomains().get(0));
     }
 
     private void assertDomainCorrect(final Domain domain) {

@@ -112,18 +112,12 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="domainList">
-        <xs:sequence>
-            <xs:element ref="domain" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:element name="beanProcessing">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="supportClasses"/>
                 <xs:element ref="generationStyle"/>
-                <xs:element name="domains" type="domainList"/>
+                <xs:element ref="domain"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
