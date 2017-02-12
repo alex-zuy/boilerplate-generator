@@ -1,7 +1,6 @@
 
 package org.alex.zuy.boilerplate.collector;
 
-import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,19 +9,27 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 
+import org.alex.zuy.boilerplate.services.ProcessorContext;
+
 public class PackageInfoAnnotatedClassesCollector {
 
+    private ProcessorContext processorContext;
+
+    public PackageInfoAnnotatedClassesCollector(ProcessorContext processorContext) {
+        this.processorContext = processorContext;
+    }
+
     public Set<TypeElement> collect(String annotationName, RoundEnvironment environment) {
-        try {
-            final Class<? extends Annotation> annotationClass =
-                Class.forName(annotationName).asSubclass(Annotation.class);
-            return environment.getElementsAnnotatedWith(annotationClass).stream()
+        TypeElement annotationElement = processorContext.getElementUtils().getTypeElement(annotationName);
+        if (annotationElement != null) {
+            return environment.getElementsAnnotatedWith(annotationElement).stream()
                 .filter(element -> ElementKind.PACKAGE.equals(element.getKind()))
                 .flatMap(element -> getPackageClasses((PackageElement) element))
                 .collect(Collectors.toSet());
         }
-        catch (ClassNotFoundException e) {
-            throw new DomainClassesCollectorException(e);
+        else {
+            throw new DomainClassesCollectorException(
+                String.format("Annotation '%s' does not exists.", annotationName));
         }
     }
 

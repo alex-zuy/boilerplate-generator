@@ -18,6 +18,8 @@ import org.alex.zuy.boilerplate.services.ProcessorContext;
 
 public class DomainClassesCollectorImpl implements DomainClassesCollector {
 
+    private ProcessorContext processorContext;
+
     private final BasePackageClassesCollector basePackageCollector;
 
     private final TypeAnnotatedClassesCollector typeAnnotationCollector;
@@ -27,8 +29,9 @@ public class DomainClassesCollectorImpl implements DomainClassesCollector {
     @Inject
     public DomainClassesCollectorImpl(ProcessorContext processorContext) {
         this.basePackageCollector = new BasePackageClassesCollector(processorContext);
-        this.typeAnnotationCollector = new TypeAnnotatedClassesCollector();
-        this.packageInfoAnnotationCollector = new PackageInfoAnnotatedClassesCollector();
+        this.typeAnnotationCollector = new TypeAnnotatedClassesCollector(processorContext);
+        this.packageInfoAnnotationCollector = new PackageInfoAnnotatedClassesCollector(processorContext);
+        this.processorContext = processorContext;
     }
 
     @Override
@@ -51,7 +54,7 @@ public class DomainClassesCollectorImpl implements DomainClassesCollector {
     private List<ClassFilter> instantiateClassFilters(DomainConfig domainConfig) {
         return Stream.concat(
             domainConfig.excludes().typeAnnotations().stream()
-                .map(TypeAnnotatedClassFilter::new),
+                .map(annotation -> new TypeAnnotatedClassFilter(processorContext, annotation)),
             domainConfig.excludes().patterns().stream()
                 .map(FullyQualifiedNamePatternClassFilter::new)
         ).collect(Collectors.toList());

@@ -1,5 +1,7 @@
 package org.alex.zuy.boilerplate.application;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import org.alex.zuy.boilerplate.analysis.BeanClassAnalyser;
@@ -13,16 +15,19 @@ import org.alex.zuy.boilerplate.analysis.TypeAnalyserImpl;
 public class BeanDomainAnalysisModule {
 
     @Provides
+    @Singleton
     TypeAnalyser provideTypeAnalyser(TypeAnalyserImpl impl) {
         return impl;
     }
 
     @Provides
+    @Singleton
     BeanClassAnalyser provideBeanClassAnalyser(BeanClassAnalyserImpl impl) {
         return impl;
     }
 
     @Provides
+    @Singleton
     BeanDomainAnalyser provideBeanDomainAnalyser(BeanDomainAnalyserImpl impl) {
         return impl;
     }

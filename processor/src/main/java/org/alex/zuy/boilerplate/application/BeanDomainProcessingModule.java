@@ -1,5 +1,7 @@
 package org.alex.zuy.boilerplate.application;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import org.alex.zuy.boilerplate.processor.BeanDomainProcessor;
@@ -11,11 +13,13 @@ import org.alex.zuy.boilerplate.processor.BeanMetadataNamesGeneratorImpl;
 public class BeanDomainProcessingModule {
 
     @Provides
+    @Singleton
     BeanDomainProcessor provideBeanDomainProcessor(BeanDomainProcessorImpl impl) {
         return impl;
     }
 
     @Provides
+    @Singleton
     BeanMetadataNamesGenerator provideBeanMetadataNamesGenerator(BeanMetadataNamesGeneratorImpl impl) {
         return impl;
     }

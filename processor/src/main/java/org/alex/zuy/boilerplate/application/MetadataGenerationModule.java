@@ -1,5 +1,7 @@
 package org.alex.zuy.boilerplate.application;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import org.alex.zuy.boilerplate.metadatageneration.BeanDomainMetadataGenerator;
@@ -13,6 +15,7 @@ import org.alex.zuy.boilerplate.metadatageneration.BeanDomainMetadataGeneratorIm
 public class MetadataGenerationModule {
 
     @Provides
+    @Singleton
     BeanDomainMetadataGenerator provideMetadataGenerator(BeanDomainMetadataGeneratorImpl impl) {
         return impl;
     }

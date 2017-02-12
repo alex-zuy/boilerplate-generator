@@ -63,7 +63,7 @@ public class TypeAnnotatedClassesCollectorTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new TypeAnnotatedClassesCollector();
+            collector = new TypeAnnotatedClassesCollector(processorContext);
         }
 
         @Override

@@ -63,7 +63,7 @@ public class PackageInfoAnnotatedClassesCollectorTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new PackageInfoAnnotatedClassesCollector();
+            collector = new PackageInfoAnnotatedClassesCollector(processorContext);
         }
 
         @Override

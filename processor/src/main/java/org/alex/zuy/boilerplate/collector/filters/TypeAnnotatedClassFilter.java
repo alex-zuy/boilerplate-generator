@@ -1,25 +1,36 @@
 package org.alex.zuy.boilerplate.collector.filters;
 
-import java.lang.annotation.Annotation;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 
 import org.alex.zuy.boilerplate.collector.DomainClassesCollectorException;
+import org.alex.zuy.boilerplate.services.ProcessorContext;
 
 public class TypeAnnotatedClassFilter implements ClassFilter {
 
-    private final Class<? extends Annotation> annotation;
+    private final TypeElement annotationElement;
 
-    public TypeAnnotatedClassFilter(String annotation) {
-        try {
-            this.annotation = Class.forName(annotation).asSubclass(Annotation.class);
+    private ProcessorContext processorContext;
+
+    public TypeAnnotatedClassFilter(ProcessorContext processorContext, String annotationName) {
+        this.processorContext = processorContext;
+        TypeElement annotation = processorContext.getElementUtils().getTypeElement(annotationName);
+        if (annotation != null) {
+            annotationElement = annotation;
         }
-        catch (ClassNotFoundException e) {
-            throw new DomainClassesCollectorException(e);
+        else {
+            throw new DomainClassesCollectorException(
+                String.format("Annotation '%s' does not exists.", annotationName));
         }
     }
 
     @Override
     public boolean filter(TypeElement typeElement) {
-        return typeElement.getAnnotation(annotation) == null;
+        return typeElement.getAnnotationMirrors().stream()
+            .noneMatch(annotationMirror -> isSameAnnotation(annotationMirror, annotationElement));
+    }
+
+    private boolean isSameAnnotation(AnnotationMirror mirror, TypeElement element) {
+        return processorContext.getTypeUtils().isSameType(mirror.getAnnotationType(), element.asType());
     }
 }

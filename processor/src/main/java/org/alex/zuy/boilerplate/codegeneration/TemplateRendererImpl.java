@@ -1,6 +1,5 @@
 package org.alex.zuy.boilerplate.codegeneration;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -14,14 +13,13 @@ public class TemplateRendererImpl implements TemplateRenderer {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
-    private static final String TEMPLATE_PATH = "org/alex/zuy/boilerplate/templates";
+    private static final String TEMPLATE_PATH = "/org/alex/zuy/boilerplate/templates";
 
     private final Configuration configuration;
 
     public TemplateRendererImpl() throws IOException {
         configuration = new Configuration(Configuration.VERSION_2_3_25);
-        configuration.setDirectoryForTemplateLoading(
-            new File(getClass().getClassLoader().getResource(TEMPLATE_PATH).getFile()));
+        configuration.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), TEMPLATE_PATH);
         configuration.setDefaultEncoding(DEFAULT_ENCODING);
         configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         configuration.setLogTemplateExceptions(true);

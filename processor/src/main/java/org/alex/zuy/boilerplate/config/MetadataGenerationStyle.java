@@ -9,7 +9,7 @@ public interface MetadataGenerationStyle {
 
     String getRelationshipsClassNameTemplate();
 
-    String getRelationshipsClassTerminalMethodName();
+    String getRelationshipsClassTerminalMethodNameTemplate();
 
     StringConstantStyle getStringConstantStyle();
 

@@ -36,7 +36,7 @@ public class BeanMetadataNamesGeneratorImpl implements BeanMetadataNamesGenerato
     @Override
     public String makeBeanRelationshipsTerminalMethodName(String propertyName, MetadataGenerationStyle style) {
         Map<String, String> data = Collections.singletonMap(PLACEHOLDER_BEAN_PROPERTY_NAME, propertyName);
-        return templateRenderer.render(style.getRelationshipsClassTerminalMethodName(), data);
+        return templateRenderer.render(style.getRelationshipsClassTerminalMethodNameTemplate(), data);
     }
 
     @Override

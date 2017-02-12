@@ -43,13 +43,7 @@
             <groupId>com.google.dagger</groupId>
             <artifactId>dagger-compiler</artifactId>
             <version>${dagger.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.1.0-RC.1</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -86,6 +80,7 @@
                         </rulesets>
                         <excludeRoots>
                             <excludeRoot>target/generated-sources/jaxb</excludeRoot>
+                            <excludeRoot>target/generated-sources/annotations</excludeRoot>
                         </excludeRoots>
                     </configuration>
                 </plugin>
@@ -130,53 +125,81 @@
                         <extension>true</extension>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                        <artifactSet>
+                            <includes>
+                                <include>com.google.dagger:dagger</include>
+                                <include>com.google.guava:guava</include>
+                                <include>org.freemarker:freemarker</include>
+                                <include>org.alex.zuy.boilerplate.**</include>
+                            </includes>
+                        </artifactSet>
+                        <relocations>
+                            <relocation>
+                                <pattern>freemarker</pattern>
+                                <shadedPattern>hidden.freemarker</shadedPattern>
+                                <includes>
+                                    <include>freemarker.**</include>
+                                </includes>
+                            </relocation>
+                            <relocation>
+                                <pattern>dagger</pattern>
+                                <shadedPattern>hidden.dagger</shadedPattern>
+                                <includes>
+                                    <include>dagger.**</include>
+                                </includes>
+                            </relocation>
+                            <relocation>
+                                <pattern>com.google</pattern>
+                                <shadedPattern>hidden.com.google</shadedPattern>
+                                <includes>
+                                    <include>com.google.**</include>
+                                </includes>
+                            </relocation>
+                            <relocation>
+                                <pattern>org.alex.zuy.boilerplate</pattern>
+                                <shadedPattern>hidden.org.alex.zuy.boilerplate</shadedPattern>
+                                <includes>
+                                    <include>org.alex.zuy.boilerplate.**</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>org.alex.zuy.boilerplate.generator.**</exclude>
+                                    <exclude>org.alex.zuy.boilerplate.templates.**</exclude>
+                                </excludes>
+                            </relocation>
+                        </relocations>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                    <executions>
+                        <execution>
+                            <id>copy-resources</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${basedir}/target/classes/META-INF/services</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>src/service-descriptor</directory>
+                                        <filtering>false</filtering>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <!-- configure maven-compiler-plugin to disable auto detection of
-                    annotation processors during compilation of main project sources
-                    to prevent our annotation processor from being auto-detected before
-                    it is actually compiled -->
-                    <execution>
-                        <id>default-compile</id>
-                        <configuration>
-                            <annotationProcessorPaths>
-                                <path>
-                                    <groupId>org.immutables</groupId>
-                                    <artifactId>value</artifactId>
-                                    <version>${immutables.version}</version>
-                                </path>
-                                <path>
-                                    <groupId>com.google.dagger</groupId>
-                                    <artifactId>dagger-compiler</artifactId>
-                                    <version>${dagger.version}</version>
-                                </path>
-                            </annotationProcessorPaths>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <configuration>
-                            <annotationProcessorPaths>
-                                <path>
-                                    <groupId>org.immutables</groupId>
-                                    <artifactId>value</artifactId>
-                                    <version>${immutables.version}</version>
-                                </path>
-                                <path>
-                                    <groupId>com.google.dagger</groupId>
-                                    <artifactId>dagger-compiler</artifactId>
-                                    <version>${dagger.version}</version>
-                                </path>
-                            </annotationProcessorPaths>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -211,6 +234,19 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>

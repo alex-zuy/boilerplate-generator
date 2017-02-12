@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.inject.Singleton;
 import javax.lang.model.element.TypeElement;
 
 import com.example.ExcludeMarker;
@@ -78,7 +79,7 @@ public class DomainClassesCollectorImplTest {
         MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
             .propertyClassNameTemplate("")
             .relationshipsClassNameTemplate("")
-            .relationshipsClassTerminalMethodName("")
+            .relationshipsClassTerminalMethodNameTemplate("")
             .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.CAMELCASE)
             .build();
         DomainConfig domainConfig = ImmutableDomainConfig.builder()
@@ -100,6 +101,7 @@ public class DomainClassesCollectorImplTest {
     }
 
     @Component(modules = {DomainClassesCollectorModule.class, ProcessorContextProviderModule.class})
+    @Singleton
     interface DomainClassesCollectorComponent {
 
         DomainClassesCollector domainClassesCollector();

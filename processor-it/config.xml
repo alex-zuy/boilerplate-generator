@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="config-schema.xsd"
+        xmlns="config-schema.xsd">
+    <beanProcessing>
+        <supportClasses>
+            <basePackage>org.alex.zuy.boilerplate.test.generated.support</basePackage>
+        </supportClasses>
+        <generationStyles>
+            <style id="main">
+                <metadataClasses>
+                    <propertyClassName>${beanClassName}Properties</propertyClassName>
+                    <relationshipClassName>${beanClassName}Relationships</relationshipClassName>
+                    <stringConstantNameStyle>uppercase</stringConstantNameStyle>
+                </metadataClasses>
+            </style>
+        </generationStyles>
+        <domains>
+            <domain style="main">
+                <includes>
+                    <typeAnnotations>
+                        <annotation>org.alex.zuy.boilerplate.test.IncludeMarker</annotation>
+                    </typeAnnotations>
+                </includes>
+            </domain>
+        </domains>
+    </beanProcessing>
+</configuration>

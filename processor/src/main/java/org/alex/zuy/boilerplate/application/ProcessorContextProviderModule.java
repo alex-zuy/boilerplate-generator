@@ -1,4 +1,4 @@
-package org.alex.zuy.boilerplate.support;
+package org.alex.zuy.boilerplate.application;
 
 import javax.inject.Singleton;
 
@@ -17,7 +17,7 @@ public class ProcessorContextProviderModule {
 
     @Provides
     @Singleton
-    ProcessorContext provideProcessorContext() {
+    public ProcessorContext provideProcessorContext() {
         return processorContext;
     }
 }

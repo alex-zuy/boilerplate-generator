@@ -82,7 +82,7 @@ public class BeanDomainProcessorImplTest {
         MetadataGenerationStyle generationStyle = ImmutableMetadataGenerationStyle.builder()
             .propertyClassNameTemplate("${beanClassName}Properties")
             .relationshipsClassNameTemplate("${beanClassName}Relationships")
-            .relationshipsClassTerminalMethodName("${beanPropertyName}Property")
+            .relationshipsClassTerminalMethodNameTemplate("${beanPropertyName}Property")
             .stringConstantStyle(MetadataGenerationStyle.StringConstantStyle.UPPERCASE)
             .build();
         BeanDomainProcessor beanDomainProcessor = DaggerBeanDomainProcessorComponent.builder()
