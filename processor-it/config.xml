@@ -7,17 +7,16 @@
         <supportClasses>
             <basePackage>org.alex.zuy.boilerplate.test.generated.support</basePackage>
         </supportClasses>
-        <generationStyles>
-            <style id="main">
+        <generationStyle>
                 <metadataClasses>
                     <propertyClassName>${beanClassName}Properties</propertyClassName>
                     <relationshipClassName>${beanClassName}Relationships</relationshipClassName>
                     <stringConstantNameStyle>uppercase</stringConstantNameStyle>
+                    <relationshipsClassTerminalMethodNameTemplate>${beanPropertyName}Property</relationshipsClassTerminalMethodNameTemplate>
                 </metadataClasses>
-            </style>
-        </generationStyles>
+        </generationStyle>
         <domains>
-            <domain style="main">
+            <domain>
                 <includes>
                     <typeAnnotations>
                         <annotation>org.alex.zuy.boilerplate.test.IncludeMarker</annotation>

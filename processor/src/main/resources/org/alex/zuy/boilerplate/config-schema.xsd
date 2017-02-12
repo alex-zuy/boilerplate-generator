@@ -48,24 +48,19 @@
                             default="${beanClassName}_r" minOccurs="0"/>
                 <xs:element name="stringConstantNameStyle" type="stringConstantNameStyle"
                             default="camelcase" minOccurs="0"/>
+                <xs:element name="relationshipsClassTerminalMethodNameTemplate" type="identifierTemplateType"
+                            default="${beanPropertyName}Property" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="style">
+    <xs:element name="generationStyle">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="metadataClasses"/>
+                <xs:element ref="metadataClasses" maxOccurs="1"/>
             </xs:sequence>
-            <xs:attribute name="id" type="xs:ID" use="required"/>
         </xs:complexType>
     </xs:element>
-
-    <xs:complexType name="generationStyleList">
-        <xs:sequence>
-            <xs:element ref="style" minOccurs="1" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:complexType name="packageList">
         <xs:sequence>
@@ -114,7 +109,6 @@
                 <xs:element ref="includes"/>
                 <xs:element ref="excludes" minOccurs="0"/>
             </xs:sequence>
-            <xs:attribute name="style" type="xs:IDREF" use="required"/>
         </xs:complexType>
     </xs:element>
 
@@ -128,7 +122,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="supportClasses"/>
-                <xs:element name="generationStyles" type="generationStyleList"/>
+                <xs:element ref="generationStyle"/>
                 <xs:element name="domains" type="domainList"/>
             </xs:sequence>
         </xs:complexType>

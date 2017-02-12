@@ -7,17 +7,16 @@
         <supportClasses>
             <basePackage>com.example.generated.support</basePackage>
         </supportClasses>
-        <generationStyles>
-            <style id="main">
+        <generationStyle>
                 <metadataClasses>
                     <propertyClassName>${beanClassName}_p</propertyClassName>
                     <relationshipClassName>${beanClassName}_r</relationshipClassName>
                     <stringConstantNameStyle>camelcase</stringConstantNameStyle>
+                    <relationshipsClassTerminalMethodNameTemplate>${beanPropertyName}Property</relationshipsClassTerminalMethodNameTemplate>
                 </metadataClasses>
-            </style>
-        </generationStyles>
+        </generationStyle>
         <domains>
-            <domain style="main">
+            <domain>
                 <includes>
                     <basePackages>
                         <package>com.example.first</package>

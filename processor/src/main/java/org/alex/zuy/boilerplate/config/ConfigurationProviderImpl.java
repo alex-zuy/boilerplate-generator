@@ -69,13 +69,13 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
 
     @Override
     public MetadataGenerationStyle getMetadataGenerationStyle() {
-        MetadataClasses metadataClasses = configuration.getBeanProcessing().getGenerationStyles().getStyles()
-            .get(0).getMetadataClasses();
+        MetadataClasses metadataClasses = configuration.getBeanProcessing().getGenerationStyle().getMetadataClasses();
         return ImmutableMetadataGenerationStyle.builder()
             .stringConstantStyle(toStingConstantStyle(metadataClasses.getStringConstantNameStyle()))
             .propertyClassNameTemplate(metadataClasses.getPropertyClassName())
             .relationshipsClassNameTemplate(metadataClasses.getRelationshipClassName())
-            /* TODO: stub */
+            .relationshipsClassTerminalMethodNameTemplate(
+                metadataClasses.getRelationshipsClassTerminalMethodNameTemplate())
             .relationshipsClassTerminalMethodNameTemplate("${beanPropertyName}Property")
             .build();
     }

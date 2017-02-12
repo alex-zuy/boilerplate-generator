@@ -9,8 +9,7 @@ import java.util.List;
 import org.alex.zuy.boilerplate.config.generated.Configuration;
 import org.alex.zuy.boilerplate.config.generated.Domain;
 import org.alex.zuy.boilerplate.config.generated.DomainList;
-import org.alex.zuy.boilerplate.config.generated.GenerationStyleList;
-import org.alex.zuy.boilerplate.config.generated.Style;
+import org.alex.zuy.boilerplate.config.generated.GenerationStyle;
 import org.alex.zuy.boilerplate.config.generated.SupportClasses;
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ public class ConfigLoaderTest {
         final Configuration config = new ConfigLoader().loadConfig(url);
         assertEquals(1, config.getBeanProcessing().getDomains().getDomains().size());
         assertSupportClassesCorrect(config.getBeanProcessing().getSupportClasses());
-        assertGenerationStylesCorrect(config.getBeanProcessing().getGenerationStyles());
+        assertGenerationStyleCorrect(config.getBeanProcessing().getGenerationStyle());
         assertDomainsCorrect(config.getBeanProcessing().getDomains());
     }
 
@@ -30,16 +29,11 @@ public class ConfigLoaderTest {
         assertEquals("com.example.generated.support", supportClasses.getBasePackage());
     }
 
-    private void assertGenerationStylesCorrect(GenerationStyleList styles) {
-        assertEquals(1, styles.getStyles().size());
-        assertGenerationStyleMainCorrect(styles.getStyles().get(0));
-    }
-
-    private void assertGenerationStyleMainCorrect(Style style) {
-        assertEquals("main", style.getId());
+    private void assertGenerationStyleCorrect(GenerationStyle style) {
         assertEquals("${beanClassName}_p", style.getMetadataClasses().getPropertyClassName());
         assertEquals("${beanClassName}_r", style.getMetadataClasses().getRelationshipClassName());
         assertEquals("camelcase", style.getMetadataClasses().getStringConstantNameStyle().value());
+        //assertEquals("${beanPropertyName}Property", style.getMetadataClasses());
     }
 
     private void assertDomainsCorrect(DomainList domains) {
@@ -48,7 +42,6 @@ public class ConfigLoaderTest {
     }
 
     private void assertDomainCorrect(final Domain domain) {
-        assertEquals("main", ((Style) domain.getStyle()).getId());
         final List<String> includesBasePackages =
                 domain.getIncludes().getBasePackages().getPackages();
         assertEquals("com.example.first", includesBasePackages.get(0));
