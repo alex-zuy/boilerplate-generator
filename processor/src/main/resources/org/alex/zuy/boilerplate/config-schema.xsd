@@ -54,7 +54,7 @@
     <xs:element name="generationStyle">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="metadataClasses" maxOccurs="1"/>
+                <xs:element ref="metadataClasses" maxOccurs="1" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

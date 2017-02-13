@@ -2,6 +2,7 @@
 package org.alex.zuy.boilerplate.config;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.net.URL;
 import java.util.List;
@@ -13,6 +14,22 @@ import org.alex.zuy.boilerplate.config.generated.SupportClasses;
 import org.junit.Test;
 
 public class ConfigLoaderTest {
+
+    @Test
+    public void testConfigValidationErrorPropagatedToCallee() throws Exception {
+        try {
+            URL url = getClass().getResource("config-invalid.xml");
+            new ConfigLoader().loadConfig(url);
+            fail();
+        }
+        catch (ConfigValidationException e) {
+            assertEquals(6, e.getConfigurationLocation().getLineNumber().getAsInt());
+            assertEquals(17, e.getConfigurationLocation().getColumnNumber().getAsInt());
+        }
+        catch (Throwable e) {
+            fail();
+        }
+    }
 
     @Test
     public void testLoadingConfig() throws Exception {
