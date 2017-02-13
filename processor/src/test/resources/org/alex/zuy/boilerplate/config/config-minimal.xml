@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="config-schema.xsd"
+        xmlns="config-schema.xsd">
+    <beanProcessing>
+        <supportClasses>
+            <basePackage>com.example.generated.support</basePackage>
+        </supportClasses>
+        <generationStyle>
+        </generationStyle>
+        <domain>
+            <includes>
+                <basePackages>
+                    <package>com.example.first</package>
+                </basePackages>
+            </includes>
+        </domain>
+    </beanProcessing>
+</configuration>

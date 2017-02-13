@@ -34,7 +34,7 @@
     <xs:element name="supportClasses">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="basePackage"/>
+                <xs:element ref="basePackage" minOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -42,14 +42,11 @@
     <xs:element name="metadataClasses">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="propertyClassName" type="identifierTemplateType"
-                            default="${beanClassName}_p" minOccurs="0"/>
-                <xs:element name="relationshipClassName" type="identifierTemplateType"
-                            default="${beanClassName}_r" minOccurs="0"/>
-                <xs:element name="stringConstantNameStyle" type="stringConstantNameStyle"
-                            default="camelcase" minOccurs="0"/>
+                <xs:element name="propertyClassName" type="identifierTemplateType" minOccurs="0"/>
+                <xs:element name="relationshipClassName" type="identifierTemplateType" minOccurs="0"/>
+                <xs:element name="stringConstantNameStyle" type="stringConstantNameStyle" minOccurs="0"/>
                 <xs:element name="relationshipsClassTerminalMethodNameTemplate" type="identifierTemplateType"
-                            default="${beanPropertyName}Property" minOccurs="0"/>
+                            minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

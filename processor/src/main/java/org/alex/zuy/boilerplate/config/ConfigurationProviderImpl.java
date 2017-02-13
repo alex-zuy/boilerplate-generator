@@ -11,11 +11,25 @@ import java.util.stream.Collectors;
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle.StringConstantStyle;
 import org.alex.zuy.boilerplate.config.generated.Configuration;
 import org.alex.zuy.boilerplate.config.generated.Domain;
+import org.alex.zuy.boilerplate.config.generated.GenerationStyle;
 import org.alex.zuy.boilerplate.config.generated.Includes;
-import org.alex.zuy.boilerplate.config.generated.MetadataClasses;
 import org.alex.zuy.boilerplate.config.generated.StringConstantNameStyle;
 
 public class ConfigurationProviderImpl implements ConfigurationProvider {
+
+    private interface Defaults {
+
+        interface Style {
+
+            String PROPERTY_CLASS_NAME = "${beanClassName}Properties";
+
+            String RELATIONSHIP_CLASS_NAME = "${beanClassName}Relationships";
+
+            MetadataGenerationStyle.StringConstantStyle STRING_CONSTANT_STYLE = StringConstantStyle.UPPERCASE;
+
+            String RELATIONSHIP_CLASS_TERMINAL_METHOD_NAME = "${beanPropertyName}Property";
+        }
+    }
 
     private Configuration configuration;
 
@@ -69,15 +83,35 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
 
     @Override
     public MetadataGenerationStyle getMetadataGenerationStyle() {
-        MetadataClasses metadataClasses = configuration.getBeanProcessing().getGenerationStyle().getMetadataClasses();
-        return ImmutableMetadataGenerationStyle.builder()
-            .stringConstantStyle(toStingConstantStyle(metadataClasses.getStringConstantNameStyle()))
-            .propertyClassNameTemplate(metadataClasses.getPropertyClassName())
-            .relationshipsClassNameTemplate(metadataClasses.getRelationshipClassName())
-            .relationshipsClassTerminalMethodNameTemplate(
-                metadataClasses.getRelationshipsClassTerminalMethodNameTemplate())
-            .relationshipsClassTerminalMethodNameTemplate("${beanPropertyName}Property")
-            .build();
+        return Optional.ofNullable(configuration.getBeanProcessing().getGenerationStyle())
+            .map(GenerationStyle::getMetadataClasses)
+            .map(metadataClasses -> {
+                return ImmutableMetadataGenerationStyle.builder()
+                    .stringConstantStyle(
+                        Optional.ofNullable(metadataClasses.getStringConstantNameStyle())
+                            .map(ConfigurationProviderImpl::toStingConstantStyle)
+                            .orElse(Defaults.Style.STRING_CONSTANT_STYLE))
+                    .propertyClassNameTemplate(metadataClasses.getPropertyClassName() != null
+                        ? metadataClasses.getPropertyClassName()
+                        : Defaults.Style.PROPERTY_CLASS_NAME)
+                    .relationshipsClassNameTemplate(metadataClasses.getRelationshipClassName() != null
+                        ? metadataClasses.getRelationshipClassName()
+                        : Defaults.Style.RELATIONSHIP_CLASS_NAME)
+                    .relationshipsClassTerminalMethodNameTemplate(
+                        metadataClasses.getRelationshipsClassTerminalMethodNameTemplate() != null
+                            ? metadataClasses.getRelationshipsClassTerminalMethodNameTemplate()
+                            : Defaults.Style.RELATIONSHIP_CLASS_TERMINAL_METHOD_NAME)
+                    .build();
+            })
+            .orElseGet(() -> {
+                return ImmutableMetadataGenerationStyle.builder()
+                    .stringConstantStyle(Defaults.Style.STRING_CONSTANT_STYLE)
+                    .propertyClassNameTemplate(Defaults.Style.PROPERTY_CLASS_NAME)
+                    .relationshipsClassNameTemplate(Defaults.Style.RELATIONSHIP_CLASS_NAME)
+                    .relationshipsClassTerminalMethodNameTemplate(
+                        Defaults.Style.RELATIONSHIP_CLASS_TERMINAL_METHOD_NAME)
+                    .build();
+            });
     }
 
     @Override
