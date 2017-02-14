@@ -4,6 +4,7 @@ package org.alex.zuy.boilerplate.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class ConfigLoaderTest {
     public void testConfigValidationErrorPropagatedToCallee() throws Exception {
         try {
             URL url = getClass().getResource("config-invalid.xml");
-            new ConfigLoader().loadConfig(url);
+            new ConfigLoader().loadConfig(new File(url.toURI()));
             fail();
         }
         catch (ConfigValidationException e) {
@@ -34,7 +35,7 @@ public class ConfigLoaderTest {
     @Test
     public void testLoadingConfig() throws Exception {
         final URL url = getClass().getResource("config.xml");
-        final Configuration config = new ConfigLoader().loadConfig(url);
+        final Configuration config = new ConfigLoader().loadConfig(new File(url.toURI()));
         assertSupportClassesCorrect(config.getBeanProcessing().getSupportClasses());
         assertGenerationStyleCorrect(config.getBeanProcessing().getGenerationStyle());
         assertDomainCorrect(config.getBeanProcessing().getDomain());

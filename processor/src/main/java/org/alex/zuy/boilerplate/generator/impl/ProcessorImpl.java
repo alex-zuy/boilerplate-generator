@@ -1,5 +1,5 @@
 
-package org.alex.zuy.boilerplate.generator;
+package org.alex.zuy.boilerplate.generator.impl;
 
 import java.io.File;
 import java.util.Collections;
@@ -18,64 +18,56 @@ import org.alex.zuy.boilerplate.application.ProcessorContextProviderModule;
 import org.alex.zuy.boilerplate.config.ConfigurationProvider;
 import org.alex.zuy.boilerplate.config.ConfigurationProviderImpl;
 import org.alex.zuy.boilerplate.config.DomainConfig;
+import org.alex.zuy.boilerplate.config.SupportClassesConfig;
 import org.alex.zuy.boilerplate.metadatageneration.BeanDomainMetadataGenerator;
 import org.alex.zuy.boilerplate.services.ImmutableProcessorContext;
 import org.alex.zuy.boilerplate.services.ImmutableRoundContext;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.services.RoundContext;
 
-public class Processor extends AbstractProcessor {
+public class ProcessorImpl extends AbstractProcessor {
 
-    private static final String OPTION_CONFIG_PATH = "configPath";
+    private static final String OPTION_NAME_CONFIG_PATH = "configPath";
 
     private ConfigurationProvider configurationProvider;
 
     private ProcessorComponent processorComponent;
 
-    /* TODO */
-    @SuppressWarnings("PMD.SystemPrintln")
     @Override
     public void init(final ProcessingEnvironment processingEnvironment) {
         Map<String, String> options = processingEnvironment.getOptions();
-        if (options.containsKey(OPTION_CONFIG_PATH)) {
-            String configPath = options.get(OPTION_CONFIG_PATH);
-            try {
-                configurationProvider = new ConfigurationProviderImpl(new File(configPath).toURI().toURL());
+        if (options.containsKey(OPTION_NAME_CONFIG_PATH)) {
+            String configPath = options.get(OPTION_NAME_CONFIG_PATH);
+            configurationProvider = new ConfigurationProviderImpl(new File(configPath));
 
-                ProcessorContext processorContext = ImmutableProcessorContext.builder()
-                    .elementUtils(processingEnvironment.getElementUtils())
-                    .typeUtils(processingEnvironment.getTypeUtils())
-                    .filer(processingEnvironment.getFiler())
-                    .messager(processingEnvironment.getMessager())
-                    .locale(processingEnvironment.getLocale())
-                    .build();
+            ProcessorContext processorContext = ImmutableProcessorContext.builder()
+                .elementUtils(processingEnvironment.getElementUtils())
+                .typeUtils(processingEnvironment.getTypeUtils())
+                .filer(processingEnvironment.getFiler())
+                .messager(processingEnvironment.getMessager())
+                .locale(processingEnvironment.getLocale())
+                .build();
 
-                processorComponent = DaggerProcessorComponent.builder()
-                    .processorContextProviderModule(new ProcessorContextProviderModule(processorContext))
-                    .build();
-            }
-            catch (Exception e) {
-                throw new IllegalArgumentException(e);
-            }
+            processorComponent = DaggerProcessorComponent.builder()
+                .processorContextProviderModule(new ProcessorContextProviderModule(processorContext))
+                .build();
         }
         else {
-            String message = "No config provided!";
-            System.err.println(message);
-            throw new IllegalStateException(message);
+            throw new AbsentOptionException(OPTION_NAME_CONFIG_PATH);
         }
     }
 
     @Override
-    public boolean process(final Set<? extends TypeElement> set,
-        final RoundEnvironment roundEnvironment) {
+    public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         RoundContext roundContext = ImmutableRoundContext.builder()
             .annotations(set)
             .roundEnvironment(roundEnvironment)
             .build();
 
+        DomainConfig domainConfig = configurationProvider.getDomainConfig();
+        SupportClassesConfig supportClassesConfig = configurationProvider.getSupportClassesConfig();
         BeanDomainMetadataGenerator metadataGenerator = processorComponent.getMetadataGenerator();
-        metadataGenerator.generateDomainMetadataClasses(roundContext, configurationProvider.getDomainConfig(),
-            configurationProvider.getSupportClassesConfig());
+        metadataGenerator.generateDomainMetadataClasses(roundContext, domainConfig, supportClassesConfig);
 
         return false;
     }
@@ -92,7 +84,7 @@ public class Processor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedOptions() {
-        return Collections.singleton(OPTION_CONFIG_PATH);
+        return Collections.singleton(OPTION_NAME_CONFIG_PATH);
     }
 
     @Override

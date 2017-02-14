@@ -1,6 +1,7 @@
 
 package org.alex.zuy.boilerplate.config;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import javax.xml.XMLConstants;
@@ -21,14 +22,14 @@ public class ConfigLoader {
 
     private static final String PATH_CONFIGURATION_SCHEMA = "org/alex/zuy/boilerplate/config-schema.xsd";
 
-    public Configuration loadConfig(URL configUrl) {
+    public Configuration loadConfig(File config) {
         CollectingValidationEventHandler validationEventHandler = new CollectingValidationEventHandler();
         try {
             final JAXBContext jaxbContext = JAXBContext.newInstance(Configuration.class);
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             unmarshaller.setSchema(loadConfigurationSchema());
             unmarshaller.setEventHandler(validationEventHandler);
-            return (Configuration) unmarshaller.unmarshal(configUrl);
+            return (Configuration) unmarshaller.unmarshal(config);
         }
         catch (UnmarshalException e) {
             throw validationEventHandler.buildConfigValidationException();

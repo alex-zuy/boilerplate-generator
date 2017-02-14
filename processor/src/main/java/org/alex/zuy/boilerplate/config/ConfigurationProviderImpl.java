@@ -1,6 +1,6 @@
 package org.alex.zuy.boilerplate.config;
 
-import java.net.URL;
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +33,9 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
 
     private Configuration configuration;
 
-    public ConfigurationProviderImpl(URL configurationUrl) {
+    public ConfigurationProviderImpl(File configurationPath) {
         ConfigLoader configLoader = new ConfigLoader();
-        configuration = configLoader.loadConfig(configurationUrl);
+        configuration = configLoader.loadConfig(configurationPath);
     }
 
     @Override

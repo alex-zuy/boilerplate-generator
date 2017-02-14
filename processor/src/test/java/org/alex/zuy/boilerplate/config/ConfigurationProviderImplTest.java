@@ -2,6 +2,9 @@ package org.alex.zuy.boilerplate.config;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.net.URL;
+
 import org.junit.Test;
 
 public class ConfigurationProviderImplTest {
@@ -10,7 +13,8 @@ public class ConfigurationProviderImplTest {
 
     @Test
     public void testMinimalConfiguration() throws Exception {
-        ConfigurationProvider provider = new ConfigurationProviderImpl(getClass().getResource(CONFIGURATION_MINIMAL));
+        URL configUrl = getClass().getResource(CONFIGURATION_MINIMAL);
+        ConfigurationProvider provider = new ConfigurationProviderImpl(new File(configUrl.toURI()));
         DomainConfig domainConfig = provider.getDomainConfig();
         assertNotNull(domainConfig.includes().typeAnnotations());
         assertNotNull(domainConfig.includes().basePackages());
