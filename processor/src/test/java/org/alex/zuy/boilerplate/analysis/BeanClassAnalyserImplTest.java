@@ -17,6 +17,7 @@ import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
 import org.alex.zuy.boilerplate.domain.types.ExactType;
+import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
@@ -28,7 +29,9 @@ import org.junit.Test;
 
 public class BeanClassAnalyserImplTest {
 
-    public static final String PACKAGE_NAME = "com.example";
+    private static final String PACKAGE_NAME = "com.example";
+
+    private static final Type<?> TYPE_OF_STRING = Types.makeExactType("java.lang.String", "java.lang");
 
     private ProcessorImpl processor = new ProcessorImpl();
 
@@ -47,8 +50,6 @@ public class BeanClassAnalyserImplTest {
         whenBeanTypesAnalysed();
         thenBeanClassShouldBe(beanClass);
     }
-
-    private ExactType makeIntType() {return Types.makeExactType("int");}
 
     @Test
     public void testMultipleSettersPerProperty() throws Exception {
@@ -87,6 +88,56 @@ public class BeanClassAnalyserImplTest {
         thenBeanClassShouldBe(beanClass);
     }
 
+    @Test
+    public void testBeanWithDirectlyInheritedProperties() throws Exception {
+        BeanClass beanClass = makeBeanClassWithSingleNameProperty();
+
+        givenSourceFilesInDirectory("directlyInheritedProperties");
+        whenBeanTypesAnalysed();
+        thenBeanClassShouldBe(beanClass);
+    }
+
+    @Test
+    public void testBeanWithPropertiesInheritedFromSuperSuperType() throws Exception {
+        BeanClass beanClass = makeBeanClassWithSingleNameProperty();
+
+        givenSourceFilesInDirectory("propertiesInheritedFromSuperSuperType");
+        whenBeanTypesAnalysed();
+        thenBeanClassShouldBe(beanClass);
+    }
+
+    @Test
+    public void testBeanWithPropertiesInheritedFromInterface() throws Exception {
+        BeanClass beanClass = makeBeanClassWithSingleNameProperty();
+
+        givenSourceFilesInDirectory("propertiesInheritedFromInterface");
+        whenBeanTypesAnalysed();
+        thenBeanClassShouldBe(beanClass);
+    }
+
+    @Test
+    public void testBeanImplementsInterfaceWithProperties() throws Exception {
+        BeanClass beanClass = makeBeanClassWithSingleNameProperty();
+
+        givenSourceFilesInDirectory("beanImplementsInterfaceWithProperties");
+        whenBeanTypesAnalysed();
+        thenBeanClassShouldBe(beanClass);
+    }
+
+
+    @Test
+    public void testBeanImplementsInterfaceUsingInheritedMethods() throws Exception {
+        BeanClass beanClass = makeBeanClassWithSingleNameProperty();
+
+        givenSourceFilesInDirectory("beanImplementsInterfaceUsingInheritedMethods");
+        whenBeanTypesAnalysed();
+        thenBeanClassShouldBe(beanClass);
+    }
+
+    private void givenSourceFilesInDirectory(String directory) throws IOException {
+        processorTestsSteps.addTestSpecificSourceFilesInDirectory(directory);
+    }
+
     private ExactType makeClassType(String fileName) {
         return Types.makeExactType(getClassQualifiedName(fileName), PACKAGE_NAME);
     }
@@ -110,11 +161,19 @@ public class BeanClassAnalyserImplTest {
         assertTrue(result);
     }
 
-
     private void thenBeanClassShouldBe(BeanClass expectedBeanClass) {
         BeanClass actualBeanClass = processor.getBeanClass();
         assertEquals(expectedBeanClass.getType(), actualBeanClass.getType());
         assertEquals(expectedBeanClass.getProperties(), actualBeanClass.getProperties());
+    }
+
+    private BeanClass makeBeanClassWithSingleNameProperty() {
+        return new BeanClass(makeClassType("Bean"),
+            Collections.singletonList(new BeanProperty("name", TYPE_OF_STRING, AccessModifier.PUBLIC)));
+    }
+
+    private ExactType makeIntType() {
+        return Types.makeExactType("int");
     }
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {

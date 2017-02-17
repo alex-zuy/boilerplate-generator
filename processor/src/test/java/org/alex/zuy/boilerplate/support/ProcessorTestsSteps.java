@@ -19,6 +19,11 @@ public class ProcessorTestsSteps {
         this.testClass = testClass;
     }
 
+    public ProcessorTestsSteps addTestSpecificSourceFilesInDirectory(String directory) throws IOException {
+        builder.addTestSpecificSources(testClass, directory);
+        return this;
+    }
+
     public ProcessorTestsSteps addTestSpecificSourceFile(String packageName, String fileName)
         throws IOException {
         String filePath = String.format("%s.%s.java", packageName, fileName);
