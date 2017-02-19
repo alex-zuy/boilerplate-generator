@@ -60,40 +60,35 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
         typeUtils = processorContext.getTypeUtils();
     }
 
+    /* will be fixed later */
+    @SuppressWarnings("PMD.AvoidPrintStackTrace")
     @Override
     public BeanClass analyse(TypeElement classElement) {
         try {
-            return analyseImpl(classElement);
+            List<BeanProperty> properties = new ArrayList<>();
+            DeclaredType declaredType = (DeclaredType) classElement.asType();
+
+            List<ExecutableElement> allMethods = getAllMethods(classElement);
+            Map<String, ExecutableElement> gettersByName = collectGetters(allMethods, declaredType);
+
+            gettersByName.forEach((propertyName, getter) -> {
+                try {
+                    ExecutableType gettingMethod = asMemberOf(declaredType, getter);
+                    Type<?> propertyType = typeAnalyser.analyse(gettingMethod.getReturnType());
+                    properties.add(new BeanProperty(propertyName, propertyType, getPropertyAccessModifier(getter)));
+                }
+                catch (UnsupportedTypeException e) {
+                    /* we need to make user aware of this failure but it should not stop entire processing */
+                    e.printStackTrace();
+                }
+            });
+
+            return new BeanClass(typeAnalyser.analyse(classElement.asType()), properties);
         }
-        catch (BeanClassAnalysisException bcae) {
-            throw bcae;
+        catch (UnsupportedTypeException e) {
+            throw new BeanClassAnalysisException("Failed to analyse bean class type", e,
+                classElement.getQualifiedName().toString());
         }
-        catch (Exception e) {
-            throw new BeanClassAnalysisException("Unknown error", e, classElement.getQualifiedName().toString());
-        }
-    }
-
-    /* will be fixed later */
-    @SuppressWarnings("PMD.AvoidPrintStackTrace")
-    private BeanClass analyseImpl(TypeElement classElement) {
-        List<BeanProperty> properties = new ArrayList<>();
-        DeclaredType declaredType = (DeclaredType) classElement.asType();
-
-        List<ExecutableElement> allMethods = getAllMethods(classElement);
-        Map<String, ExecutableElement> gettersByName = collectGetters(allMethods, declaredType);
-
-        gettersByName.forEach((propertyName, getter) -> {
-            try {
-                ExecutableType gettingMethod = asMemberOf(declaredType, getter);
-                Type<?> propertyType = typeAnalyser.analyse(gettingMethod.getReturnType());
-                properties.add(new BeanProperty(propertyName, propertyType, getPropertyAccessModifier(getter)));
-            }
-            catch (TypeAnalyser.UnsupportedTypeException e) {
-                e.printStackTrace();
-            }
-        });
-
-        return new BeanClass(typeAnalyser.analyse(classElement.asType()), properties);
     }
 
     private Map<String, ExecutableElement> collectGetters(List<ExecutableElement> methods, DeclaredType declaredType) {

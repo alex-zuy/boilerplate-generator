@@ -6,23 +6,5 @@ import org.alex.zuy.boilerplate.domain.types.Type;
 
 public interface TypeAnalyser {
 
-    Type<?> analyse(TypeMirror typeMirror);
-
-    final class UnsupportedTypeException extends RuntimeException {
-
-        private final TypeMirror type;
-
-        public UnsupportedTypeException(TypeMirror type) {
-            this.type = type;
-        }
-
-        public UnsupportedTypeException(String message, TypeMirror type) {
-            super(message);
-            this.type = type;
-        }
-
-        public TypeMirror getType() {
-            return type;
-        }
-    }
+    Type<?> analyse(TypeMirror typeMirror) throws UnsupportedTypeException;
 }

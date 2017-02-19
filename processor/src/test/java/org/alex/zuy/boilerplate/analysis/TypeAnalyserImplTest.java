@@ -160,7 +160,14 @@ public class TypeAnalyserImplTest {
                     List<Type<?>> typeList = typeElement.getEnclosedElements().stream()
                         .filter(element -> element.getKind().equals(ElementKind.METHOD))
                         .map(element -> (ExecutableElement) element)
-                        .map(method -> analyser.analyse(method.getReturnType()))
+                        .map(method -> {
+                            try {
+                                return analyser.analyse(method.getReturnType());
+                            }
+                            catch (UnsupportedTypeException e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
                         .collect(Collectors.toList());
                     types.put(typeElement.getQualifiedName().toString(), typeList);
                 });

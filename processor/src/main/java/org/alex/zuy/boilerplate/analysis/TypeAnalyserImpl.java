@@ -1,10 +1,10 @@
 package org.alex.zuy.boilerplate.analysis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -43,7 +43,7 @@ public class TypeAnalyserImpl implements TypeAnalyser {
     }
 
     @Override
-    public Type<?> analyse(TypeMirror typeMirror) {
+    public Type<?> analyse(TypeMirror typeMirror) throws UnsupportedTypeException {
         TypeKind kind = typeMirror.getKind();
         switch (kind) {
             case ARRAY:
@@ -72,14 +72,15 @@ public class TypeAnalyserImpl implements TypeAnalyser {
         return Types.makeTypeParameter(variable.asElement().getSimpleName().toString());
     }
 
-    private Type<?> analyseDeclaredType(DeclaredType declaredType) {
+    private Type<?> analyseDeclaredType(DeclaredType declaredType) throws UnsupportedTypeException {
         TypeElement typeElement = (TypeElement) processorContext.getTypeUtils().asElement(declaredType);
         String qualifiedTypeName = typeElement.getQualifiedName().toString();
 
         if (isGenericType(declaredType)) {
-            List<Type<?>> typeArguments = declaredType.getTypeArguments().stream()
-                .map(this::analyse)
-                .collect(Collectors.toList());
+            List<Type<?>> typeArguments = new ArrayList<>();
+            for (TypeMirror argument : declaredType.getTypeArguments()) {
+                typeArguments.add(analyse(argument));
+            }
             return Types.makeTypeInstance(qualifiedTypeName, getEnclosingPackageName(typeElement), typeArguments);
         }
         else {
