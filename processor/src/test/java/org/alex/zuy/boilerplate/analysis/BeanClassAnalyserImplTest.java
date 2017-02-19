@@ -42,7 +42,7 @@ public class BeanClassAnalyserImplTest {
     @Test
     public void testSingleGetterAndSetterPerProperty() throws Exception {
         String fileName = "SingleGetterAndSetterPerProperty";
-        BeanProperty heightProperty = new BeanProperty("height", makeIntType(), AccessModifier.PUBLIC);
+        BeanProperty heightProperty = new BeanProperty("height", makeIntegerType(), AccessModifier.PUBLIC);
         BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(heightProperty));
 
@@ -54,7 +54,7 @@ public class BeanClassAnalyserImplTest {
     @Test
     public void testMultipleSettersPerProperty() throws Exception {
         String fileName = "MultipleSettersPerProperty";
-        BeanProperty widthProperty = new BeanProperty("width", makeIntType(), AccessModifier.PROTECTED);
+        BeanProperty widthProperty = new BeanProperty("width", Types.makeExactType("int"), AccessModifier.PROTECTED);
         BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(widthProperty));
 
@@ -134,6 +134,15 @@ public class BeanClassAnalyserImplTest {
         thenBeanClassShouldBe(beanClass);
     }
 
+    @Test
+    public void testBeanInheritsGenericBean() throws Exception {
+        BeanClass beanClass = makeBeanClassWithSingleNameProperty();
+
+        givenSourceFilesInDirectory("beanInheritsGenericBean");
+        whenBeanTypesAnalysed();
+        thenBeanClassShouldBe(beanClass);
+    }
+
     private void givenSourceFilesInDirectory(String directory) throws IOException {
         processorTestsSteps.addTestSpecificSourceFilesInDirectory(directory);
     }
@@ -164,7 +173,15 @@ public class BeanClassAnalyserImplTest {
     private void thenBeanClassShouldBe(BeanClass expectedBeanClass) {
         BeanClass actualBeanClass = processor.getBeanClass();
         assertEquals(expectedBeanClass.getType(), actualBeanClass.getType());
-        assertEquals(expectedBeanClass.getProperties(), actualBeanClass.getProperties());
+        assertEquals(expectedBeanClass.getProperties().size(), actualBeanClass.getProperties().size());
+        expectedBeanClass.getProperties().forEach((name, expectedProperty) -> {
+            assertPropertiesEquals(expectedProperty, actualBeanClass.getProperties().get(name));
+        });
+    }
+
+    private void assertPropertiesEquals(BeanProperty expectedProperty, BeanProperty actualProperty) {
+        assertEquals(expectedProperty.getName(), actualProperty.getName());
+        assertEquals(expectedProperty.getType(), actualProperty.getType());
     }
 
     private BeanClass makeBeanClassWithSingleNameProperty() {
@@ -172,8 +189,8 @@ public class BeanClassAnalyserImplTest {
             Collections.singletonList(new BeanProperty("name", TYPE_OF_STRING, AccessModifier.PUBLIC)));
     }
 
-    private ExactType makeIntType() {
-        return Types.makeExactType("int");
+    private ExactType makeIntegerType() {
+        return Types.makeExactType("java.lang.Integer", "java.lang");
     }
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {

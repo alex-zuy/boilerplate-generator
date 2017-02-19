@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,9 @@ public class TypeAnalyserImplTest {
         expectedTypes.add(Types.makeTypeInstance("java.util.List", "java.util", Arrays.asList(makeIntegerType())));
         expectedTypes.add(Types.makeTypeInstance("java.util.Map", "java.util",
             Arrays.asList(makeStringType(), makeIntegerType())));
+        expectedTypes.add(Types.makeTypeInstance("java.util.List", "java.util",
+            Collections.singletonList(Types.makeTypeParameter("T"))));
+        expectedTypes.add(Types.makeTypeParameter("R"));
 
         givenSourceFilesInNamedPackage(className);
         whenReturnTypesAnalysed();

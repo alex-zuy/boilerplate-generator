@@ -14,6 +14,7 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
@@ -52,11 +53,23 @@ public class TypeAnalyserImpl implements TypeAnalyser {
                 return Types.makeVoidType();
             case DECLARED:
                 return analyseDeclaredType((DeclaredType) typeMirror);
+            case TYPEVAR:
+                return analyseTypeVariable((TypeVariable) typeMirror);
             default:
-                return Optional.ofNullable(TYPE_KIND_TO_PRIMITIVE_TYPE_NAME.get(kind))
-                    .map(Types::makeExactType)
-                    .orElseThrow(() -> new UnsupportedTypeException(typeMirror));
+                if (kind.isPrimitive()) {
+                    return Optional.ofNullable(TYPE_KIND_TO_PRIMITIVE_TYPE_NAME.get(kind))
+                        .map(Types::makeExactType)
+                        .orElseThrow(() -> new IllegalArgumentException(
+                            String.format("Unknown primitive type '%s'", typeMirror)));
+                }
+                else {
+                    throw new UnsupportedTypeException(typeMirror);
+                }
         }
+    }
+
+    private Type<?> analyseTypeVariable(TypeVariable variable) {
+        return Types.makeTypeParameter(variable.asElement().getSimpleName().toString());
     }
 
     private Type<?> analyseDeclaredType(DeclaredType declaredType) {

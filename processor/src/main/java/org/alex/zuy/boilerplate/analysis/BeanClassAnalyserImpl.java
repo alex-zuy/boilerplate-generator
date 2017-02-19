@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.inject.Inject;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -31,8 +32,6 @@ import org.alex.zuy.boilerplate.utils.StringUtils;
 public class BeanClassAnalyserImpl implements BeanClassAnalyser {
 
     private static final Pattern GETTER_METHOD_NAME = Pattern.compile("(is|get)[A-Z]\\w*");
-
-    private static final Pattern SETTER_METHOD_NAME = Pattern.compile("set[A-Z]\\w*");
 
     private static final Pattern PATTERN_PROPERTY_NAME_FROM_ACCESSOR_METHOD = Pattern.compile(
         "(?:get|set|is)(?<propertyName>\\w*)");
@@ -78,28 +77,16 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
     @SuppressWarnings("PMD.AvoidPrintStackTrace")
     private BeanClass analyseImpl(TypeElement classElement) {
         List<BeanProperty> properties = new ArrayList<>();
+        DeclaredType declaredType = (DeclaredType) classElement.asType();
 
-        getAllPropertyAccessors(classElement).forEach((propertyName, accessors) -> {
+        List<ExecutableElement> allMethods = getAllMethods(classElement);
+        Map<String, ExecutableElement> gettersByName = collectGetters(allMethods, declaredType);
+
+        gettersByName.forEach((propertyName, getter) -> {
             try {
-                List<ExecutableElement> gettingMethods = accessors.stream().filter(this::isGetterMethod).collect(
-                    Collectors.toList());
-                List<ExecutableElement> settingMethods = accessors.stream().filter(this::isSetterMethod).collect(
-                    Collectors.toList());
-
-                List<ExecutableElement> significantGetterMethods = filterOutOverriddenAndImplementedMethods(
-                    gettingMethods, classElement);
-
-                if (significantGetterMethods.size() > 1) {
-                    throw new BeanClassAnalysisException("Class can`t have multiple getters for the same property",
-                        classElement.getQualifiedName().toString());
-                }
-
-                if (!significantGetterMethods.isEmpty() && !settingMethods.isEmpty()) {
-                    ExecutableElement gettingMethod = significantGetterMethods.get(0);
-                    Type<?> propertyType = typeAnalyser.analyse(gettingMethod.getReturnType());
-                    properties.add(
-                        new BeanProperty(propertyName, propertyType, getPropertyAccessModifier(gettingMethod)));
-                }
+                ExecutableType gettingMethod = asMemberOf(declaredType, getter);
+                Type<?> propertyType = typeAnalyser.analyse(gettingMethod.getReturnType());
+                properties.add(new BeanProperty(propertyName, propertyType, getPropertyAccessModifier(getter)));
             }
             catch (TypeAnalyser.UnsupportedTypeException e) {
                 e.printStackTrace();
@@ -109,42 +96,38 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
         return new BeanClass(typeAnalyser.analyse(classElement.asType()), properties);
     }
 
-    private List<ExecutableElement> filterOutOverriddenAndImplementedMethods(List<ExecutableElement> methods,
-        TypeElement classElement) {
-        return methods.stream()
-            .filter(method -> methods.stream()
-                .noneMatch(overrider -> overrider != method
-                    && elementUtils.overrides(overrider, method, classElement)))
+    private Map<String, ExecutableElement> collectGetters(List<ExecutableElement> methods, DeclaredType declaredType) {
+        TypeElement typeElement = (TypeElement) declaredType.asElement();
+        List<ExecutableElement> getters = methods.stream()
+            .filter(element -> isGetterMethod(asMemberOf(declaredType, element), element))
             .collect(Collectors.toList());
+        return getters.stream()
+            .filter(method -> getters.stream()
+                .noneMatch(overrider -> overrider != method && elementUtils.overrides(overrider, method, typeElement)))
+            .collect(Collectors.toMap(this::getAccessorMethodPropertyName, Function.identity()));
     }
 
-    private Map<String, List<ExecutableElement>> getAllPropertyAccessors(TypeElement classElement) {
+    private List<ExecutableElement> getAllMethods(TypeElement classElement) {
         return Stream.concat(Stream.of(classElement.asType()), collectTypeSupertypes(classElement).stream())
             .map(type -> (DeclaredType) type)
             .filter(type -> !((TypeElement) type.asElement()).getQualifiedName().contentEquals(CLASS_NAME_OBJECT))
-            .map(type -> collectTypeDeclaredPropertyAccessors((TypeElement) type.asElement()))
-            .reduce(new HashMap<>(), (result, accessorsInSuperType) -> {
-                accessorsInSuperType.forEach((propertyName, accessors) -> {
-                    result.computeIfAbsent(propertyName, (key) -> new ArrayList<>()).addAll(accessors);
-                });
-                return result;
-            });
+            .flatMap(type -> collectTypeDeclaredMethods(type).stream())
+            .collect(Collectors.toList());
     }
 
-    private List<TypeMirror> collectTypeSupertypes(TypeElement typeElement) {
+    private List<TypeMirror> collectTypeSupertypes(TypeElement classTypeElement) {
         List<TypeMirror> superTypes = new ArrayList<>();
         new Object() {
 
-            void collectSupertypes(Element element) {
-                TypeElement typeElement = (TypeElement) element;
-                Stream.concat(Stream.of(typeElement.getSuperclass()), typeElement.getInterfaces().stream())
+            void collectSupertypes(DeclaredType declaredType) {
+                typeUtils.directSupertypes(declaredType).stream()
                     .filter(type -> type.getKind() == TypeKind.DECLARED)
                     .forEach(type -> {
                         superTypes.add(type);
-                        collectSupertypes(((DeclaredType) type).asElement());
+                        collectSupertypes((DeclaredType) type);
                     });
             }
-        }.collectSupertypes(typeElement);
+        }.collectSupertypes((DeclaredType) classTypeElement.asType());
 
         return superTypes.stream()
             .filter(type -> superTypes.stream().noneMatch(
@@ -152,12 +135,11 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
             .collect(Collectors.toList());
     }
 
-    private Map<String, List<ExecutableElement>> collectTypeDeclaredPropertyAccessors(TypeElement typeElement) {
-        return typeElement.getEnclosedElements().stream()
+    private List<ExecutableElement> collectTypeDeclaredMethods(DeclaredType declaredType) {
+        return declaredType.asElement().getEnclosedElements().stream()
             .filter(element -> ElementKind.METHOD.equals(element.getKind()))
             .map(element -> (ExecutableElement) element)
-            .filter(executableElement -> isGetterMethod(executableElement) || isSetterMethod(executableElement))
-            .collect(Collectors.groupingBy(this::getAccessorMethodPropertyName));
+            .collect(Collectors.toList());
     }
 
     private AccessModifier getPropertyAccessModifier(ExecutableElement accessorMethod) {
@@ -179,20 +161,18 @@ public class BeanClassAnalyserImpl implements BeanClassAnalyser {
         }
     }
 
-    private boolean isSetterMethod(ExecutableElement executableElement) {
-        return SETTER_METHOD_NAME.matcher(executableElement.getSimpleName().toString()).matches()
-            && isVoidMethod(executableElement) && executableElement.getParameters().size() == 1
-            && isInstanceMethod(executableElement);
-    }
-
-    private boolean isGetterMethod(ExecutableElement executableElement) {
+    private boolean isGetterMethod(ExecutableType executableType, ExecutableElement executableElement) {
         return GETTER_METHOD_NAME.matcher(executableElement.getSimpleName().toString()).matches()
-            && !isVoidMethod(executableElement) && executableElement.getParameters().size() == 0
+            && !isVoidMethod(executableType) && executableElement.getParameters().size() == 0
             && isInstanceMethod(executableElement);
     }
 
-    private boolean isVoidMethod(ExecutableElement element) {
-        return element.getReturnType().getKind().equals(TypeKind.VOID);
+    private ExecutableType asMemberOf(DeclaredType declaredType, ExecutableElement element) {
+        return (ExecutableType) typeUtils.asMemberOf(declaredType, element);
+    }
+
+    private boolean isVoidMethod(ExecutableType executableType) {
+        return executableType.getReturnType().getKind().equals(TypeKind.VOID);
     }
 
     private boolean isInstanceMethod(ExecutableElement element) {

@@ -65,6 +65,15 @@ public class BeanDomainMetadataGeneratorImplTest {
             "address.street");
     }
 
+    @Test
+    public void testBeanInheritsGenericBeanParameterizedByAnotherBeanClass() throws Exception {
+        givenSourceFilesFromTestSpecificSubdirectory("beanInheritsGenericBeanParameterizedByAnotherBeanClass");
+        whenCompilationPerformed();
+        Class<?> beanProperties = whenCompiledClassLoaded("com.example.BeanProperties");
+        thenClassShouldHavePublicStaticFinalField(beanProperties, "BEAN", "bean");
+        thenEvaluatingMethodChainShouldYield(beanProperties, Arrays.asList("bean", "nameProperty"), "bean.name");
+    }
+
     private void givenSourceFilesFromTestSpecificSubdirectory(String subdirectory) throws IOException {
         Processor processor = new ProcessorImpl();
         testBuildSetupBuilder = TestBuildSetupBuilder.newInstance()
