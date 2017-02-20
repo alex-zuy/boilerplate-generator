@@ -18,7 +18,7 @@
         <domain>
             <includes>
                 <typeAnnotations>
-                    <annotation>org.alex.zuy.boilerplate.test.IncludeMarker</annotation>
+                    <annotation>org.alex.zuy.boilerplate.IncludeMarker</annotation>
                 </typeAnnotations>
             </includes>
         </domain>

@@ -1,5 +1,7 @@
 package org.alex.zuy.boilerplate.test;
 
+import org.alex.zuy.boilerplate.IncludeMarker;
+
 @IncludeMarker
 public class Address {
 
