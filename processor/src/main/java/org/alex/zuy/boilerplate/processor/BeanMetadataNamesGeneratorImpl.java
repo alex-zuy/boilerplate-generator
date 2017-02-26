@@ -6,14 +6,11 @@ import javax.inject.Inject;
 
 import org.alex.zuy.boilerplate.UnexpectedEnumValueException;
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.MetadataGenerationStyleStringPlaceholders;
 import org.alex.zuy.boilerplate.stringtemplate.StringTemplateRenderer;
 import org.alex.zuy.boilerplate.utils.StringUtils;
 
 public class BeanMetadataNamesGeneratorImpl implements BeanMetadataNamesGenerator {
-
-    private static final String PLACEHOLDER_BEAN_CLASS_NAME = "beanClassName";
-
-    private static final String PLACEHOLDER_BEAN_PROPERTY_NAME = "beanPropertyName";
 
     private StringTemplateRenderer templateRenderer;
 
@@ -24,19 +21,22 @@ public class BeanMetadataNamesGeneratorImpl implements BeanMetadataNamesGenerato
 
     @Override
     public String makeBeanPropertiesClassName(String simpleBeanClassName, MetadataGenerationStyle style) {
-        Map<String, String> data = Collections.singletonMap(PLACEHOLDER_BEAN_CLASS_NAME, simpleBeanClassName);
+        Map<String, String> data = Collections.singletonMap(
+            MetadataGenerationStyleStringPlaceholders.PLACEHOLDER_BEAN_CLASS_NAME, simpleBeanClassName);
         return templateRenderer.render(style.getPropertyClassNameTemplate(), data);
     }
 
     @Override
     public String makeBeanRelationshipsClassName(String simpleBeanClassName, MetadataGenerationStyle style) {
-        Map<String, String> data = Collections.singletonMap(PLACEHOLDER_BEAN_CLASS_NAME, simpleBeanClassName);
+        Map<String, String> data = Collections.singletonMap(
+            MetadataGenerationStyleStringPlaceholders.PLACEHOLDER_BEAN_CLASS_NAME, simpleBeanClassName);
         return templateRenderer.render(style.getRelationshipsClassNameTemplate(), data);
     }
 
     @Override
     public String makeBeanRelationshipsTerminalMethodName(String propertyName, MetadataGenerationStyle style) {
-        Map<String, String> data = Collections.singletonMap(PLACEHOLDER_BEAN_PROPERTY_NAME, propertyName);
+        Map<String, String> data = Collections.singletonMap(
+            MetadataGenerationStyleStringPlaceholders.PLACEHOLDER_BEAN_PROPERTY_NAME, propertyName);
         return templateRenderer.render(style.getRelationshipsClassTerminalMethodNameTemplate(), data);
     }
 

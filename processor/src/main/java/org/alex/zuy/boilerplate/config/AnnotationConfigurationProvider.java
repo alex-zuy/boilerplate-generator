@@ -1,8 +1,10 @@
 package org.alex.zuy.boilerplate.config;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 
@@ -12,9 +14,14 @@ import org.alex.zuy.boilerplate.api.annotations.DomainConfiguration;
 import org.alex.zuy.boilerplate.api.annotations.GenerationStyle;
 import org.alex.zuy.boilerplate.api.annotations.GenerationStyle.StringConstantStyle;
 import org.alex.zuy.boilerplate.api.annotations.SupportClassesConfiguration;
+import org.alex.zuy.boilerplate.config.validation.ConfigValidator;
+import org.alex.zuy.boilerplate.config.validation.DomainConfigValidator;
+import org.alex.zuy.boilerplate.config.validation.GenerationStyleValidator;
+import org.alex.zuy.boilerplate.config.validation.SupportClassesConfigValidator;
 import org.alex.zuy.boilerplate.services.RoundContext;
 import org.alex.zuy.boilerplate.utils.CollectionUtils;
 
+//CSOFF: ClassFanOutComplexity
 public class AnnotationConfigurationProvider implements ConfigurationProvider {
 
     private static final Class<BeanMetadataConfiguration> CONFIGURATION_ANNOTATION = BeanMetadataConfiguration.class;
@@ -24,6 +31,14 @@ public class AnnotationConfigurationProvider implements ConfigurationProvider {
     private SupportClassesConfig supportClassesConfig;
 
     private MetadataGenerationStyle generationStyle;
+
+    private final ConfigValidator<DomainConfig> domainConfigValidator = new DomainConfigValidator();
+
+    private final ConfigValidator<SupportClassesConfig> supportClassesConfigValidator =
+        new SupportClassesConfigValidator();
+
+    private final ConfigValidator<MetadataGenerationStyle> generationStyleConfigValidator =
+        new GenerationStyleValidator();
 
     public AnnotationConfigurationProvider(RoundContext roundContext) {
         loadConfiguration(roundContext);
@@ -65,33 +80,38 @@ public class AnnotationConfigurationProvider implements ConfigurationProvider {
     private void processConfigurationAnnotation(BeanMetadataConfiguration configuration) {
         generationStyle = processGenerationStyleConfig(configuration.generationStyle());
         supportClassesConfig = processSupportClassesConfig(configuration.supportClassesConfiguration());
-        domainConfig = processDomainConfig(configuration.domainConfiguration(), generationStyle);
+        domainConfig = processDomainConfig(configuration.domainConfiguration());
     }
 
-    private static MetadataGenerationStyle processGenerationStyleConfig(GenerationStyle styleConfig) {
-        return ImmutableMetadataGenerationStyle.builder()
+    private MetadataGenerationStyle processGenerationStyleConfig(GenerationStyle styleConfig) {
+        ImmutableMetadataGenerationStyle style = ImmutableMetadataGenerationStyle.builder()
             .propertyClassNameTemplate(styleConfig.propertiesClassName())
             .relationshipsClassNameTemplate(styleConfig.relationshipsClassName())
             .relationshipsClassTerminalMethodNameTemplate(styleConfig.relationshipsClassTerminalMethodName())
             .stringConstantStyle(toStringConstantStyle(styleConfig.stringConstantStyle()))
             .build();
+        generationStyleConfigValidator.validate(style);
+        return style;
     }
 
-    private static SupportClassesConfig processSupportClassesConfig(SupportClassesConfiguration configuration) {
-        return ImmutableSupportClassesConfig.builder()
+    private SupportClassesConfig processSupportClassesConfig(SupportClassesConfiguration configuration) {
+        ImmutableSupportClassesConfig config = ImmutableSupportClassesConfig.builder()
             .basePackage(configuration.basePackage())
             .build();
+        supportClassesConfigValidator.validate(config);
+        return config;
     }
 
-    private static DomainConfig processDomainConfig(DomainConfiguration domainConfiguration,
-        MetadataGenerationStyle generationStyle) {
+    private DomainConfig processDomainConfig(DomainConfiguration domainConfiguration) {
         DomainConfig.IncludesConfig includesConfig = processIncludesConfig(domainConfiguration.includes());
         DomainConfig.ExcludesConfig excludesConfig = processExcludesConfig(domainConfiguration.excludes());
-        return ImmutableDomainConfig.builder()
+        ImmutableDomainConfig config = ImmutableDomainConfig.builder()
             .includes(includesConfig)
             .excludes(excludesConfig)
             .generationStyle(generationStyle)
             .build();
+        domainConfigValidator.validate(config);
+        return config;
     }
 
     private static DomainConfig.IncludesConfig processIncludesConfig(DomainConfiguration.Includes includes) {
@@ -105,9 +125,17 @@ public class AnnotationConfigurationProvider implements ConfigurationProvider {
     private static DomainConfig.ExcludesConfig processExcludesConfig(DomainConfiguration.Excludes excludes) {
         return ImmutableExcludesConfig.builder()
             .addTypeAnnotations(excludes.typeAnnotations())
-            .addAllPatterns(Arrays.stream(excludes.patterns())
-                .map(Pattern::compile).collect(Collectors.toList()))
+            .addAllPatterns(compilePatterns(excludes.patterns()))
             .build();
+    }
+
+    private static Collection<Pattern> compilePatterns(String... patterns) {
+        try {
+            return Arrays.stream(patterns).map(Pattern::compile).collect(Collectors.toList());
+        }
+        catch (PatternSyntaxException e) {
+            throw new ConfigException(String.format("Invalid pattern provided: \"%s\"", e.getPattern()), e);
+        }
     }
 
     private static MetadataGenerationStyle.StringConstantStyle toStringConstantStyle(StringConstantStyle style) {
@@ -121,3 +149,4 @@ public class AnnotationConfigurationProvider implements ConfigurationProvider {
         }
     }
 }
+//CSON: ClassFanOutComplexity
