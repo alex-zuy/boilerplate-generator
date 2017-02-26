@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 import javax.inject.Inject;
 
+import org.alex.zuy.boilerplate.UnexpectedEnumValueException;
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
 import org.alex.zuy.boilerplate.stringtemplate.StringTemplateRenderer;
 import org.alex.zuy.boilerplate.utils.StringUtils;
@@ -47,9 +48,7 @@ public class BeanMetadataNamesGeneratorImpl implements BeanMetadataNamesGenerato
             case CAMELCASE:
                 return propertyName;
             default:
-                String message = String.format("Unsupported %s enumeration value %s",
-                    MetadataGenerationStyle.StringConstantStyle.class.getName(), style.getStringConstantStyle());
-                throw new IllegalArgumentException(message);
+                throw new UnexpectedEnumValueException(style.getStringConstantStyle());
         }
     }
 }

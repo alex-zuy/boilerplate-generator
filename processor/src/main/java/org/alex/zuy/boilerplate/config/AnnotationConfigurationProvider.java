@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 
+import org.alex.zuy.boilerplate.UnexpectedEnumValueException;
 import org.alex.zuy.boilerplate.api.annotations.BeanMetadataConfiguration;
 import org.alex.zuy.boilerplate.api.annotations.DomainConfiguration;
 import org.alex.zuy.boilerplate.api.annotations.GenerationStyle;
@@ -116,8 +117,7 @@ public class AnnotationConfigurationProvider implements ConfigurationProvider {
             case CAMELCASE:
                 return MetadataGenerationStyle.StringConstantStyle.CAMELCASE;
             default:
-                throw new IllegalArgumentException(
-                    String.format("Illegal string constant style '%s'", style));
+                throw new UnexpectedEnumValueException(style);
         }
     }
 }
