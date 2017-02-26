@@ -34,9 +34,6 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
-                        <compilerArgs>
-                            <arg>-AconfigPath=${project.basedir}/config.xml</arg>
-                        </compilerArgs>
                     </configuration>
                 </plugin>
             </plugins>

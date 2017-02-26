@@ -25,7 +25,6 @@ import org.alex.zuy.boilerplate.config.ImmutableExcludesConfig;
 import org.alex.zuy.boilerplate.config.ImmutableIncludesConfig;
 import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
-import org.alex.zuy.boilerplate.config.generated.Domain;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.support.ProcessorContextProviderModule;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;

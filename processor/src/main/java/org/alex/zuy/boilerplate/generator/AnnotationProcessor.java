@@ -18,9 +18,6 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic.Kind;
 
 import org.alex.zuy.boilerplate.config.ConfigException;
-import org.alex.zuy.boilerplate.config.ConfigValidationException;
-import org.alex.zuy.boilerplate.config.ConfigurationLocation;
-import org.alex.zuy.boilerplate.generator.impl.AbsentOptionException;
 import org.alex.zuy.boilerplate.generator.impl.ProcessorImpl;
 
 public class AnnotationProcessor implements Processor {
@@ -38,23 +35,8 @@ public class AnnotationProcessor implements Processor {
             processor = new ProcessorImpl();
             processor.init(processingEnvironment);
         }
-        catch (ConfigValidationException e) {
-            ConfigurationLocation location = e.getConfigurationLocation();
-            logError("Configuration validation exception!");
-            logError("validation error occurred at:\n\t- line %d\n\t- column %d\n\t- element %s",
-                location.getLineNumber().orElse(UNKNOWN_CONFIG_POSITION),
-                location.getColumnNumber().orElse(UNKNOWN_CONFIG_POSITION),
-                location.getConfigurationElement().orElse("unknown"));
-            logException(e);
-            throw e;
-        }
         catch (ConfigException e) {
             logError("Configuration reading error!");
-            logException(e);
-            throw e;
-        }
-        catch (AbsentOptionException e) {
-            logError("Absent option!");
             logException(e);
             throw e;
         }
