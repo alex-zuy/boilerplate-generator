@@ -2,6 +2,8 @@ package org.alex.zuy.boilerplate.domain.types;
 
 import java.util.List;
 
+import org.alex.zuy.boilerplate.domain.QualifiedName;
+
 public final class Types {
 
     private static final VoidType VOID_TYPE = new VoidTypeImpl();
@@ -12,23 +14,19 @@ public final class Types {
         return VOID_TYPE;
     }
 
-    public static ExactType makeExactType(String name) {
+    public static ExactType makeExactType(QualifiedName name) {
         return new ExactTypeImpl(name);
-    }
-
-    public static ExactType makeExactType(String name, String packageName) {
-        return new ExactTypeImpl(name, packageName);
     }
 
     public static ArrayType makeArrayType(Type<?> elementType) {
         return new ArrayTypeImpl(elementType);
     }
 
-    public static TypeInstance makeTypeInstance(String name, String packageName, List<Type<?>> parameters) {
-        return new TypeInstanceImpl(name, packageName, parameters);
+    public static TypeInstance makeTypeInstance(QualifiedName name, List<Type<?>> parameters) {
+        return new TypeInstanceImpl(name, parameters);
     }
 
-    public static TypeParameter makeTypeParameter(String name) {
+    public static TypeParameter makeTypeParameter(QualifiedName name) {
         return new TypeParameterImpl(name);
     }
 

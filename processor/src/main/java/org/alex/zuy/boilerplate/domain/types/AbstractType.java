@@ -1,36 +1,24 @@
 package org.alex.zuy.boilerplate.domain.types;
 
 import java.util.Objects;
-import java.util.Optional;
 
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
 abstract class AbstractType<T extends Type<T>> implements Type<T> {
 
-    private final String name;
-
-    private final String packageName;
+    private final QualifiedName name;
 
     private final TypeKinds<T> kind;
 
-    AbstractType(String name, String packageName, TypeKinds<T> kind) {
+    AbstractType(QualifiedName name, TypeKinds<T> kind) {
         this.name = name;
-        this.packageName = packageName;
         this.kind = kind;
     }
 
-    AbstractType(String name, TypeKinds<T> kind) {
-        this(name, null, kind);
-    }
-
     @Override
-    public String getName() {
+    public QualifiedName getName() {
         return name;
-    }
-
-    @Override
-    public Optional<String> getPackageName() {
-        return Optional.ofNullable(packageName);
     }
 
     @Override
@@ -51,13 +39,12 @@ abstract class AbstractType<T extends Type<T>> implements Type<T> {
     @Override
     public boolean equals(Object other) {
         return ObjectsUtil.equals(this, other,
-            (lhs, rhs) -> Objects.equals(lhs.kind, rhs.kind) && Objects.equals(lhs.name, rhs.name)
-                && Objects.equals(lhs.packageName, rhs.packageName));
+            (lhs, rhs) -> Objects.equals(lhs.kind, rhs.kind) && Objects.equals(lhs.name, rhs.name));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(kind, name, packageName);
+        return Objects.hash(kind, name);
     }
 
     @Override

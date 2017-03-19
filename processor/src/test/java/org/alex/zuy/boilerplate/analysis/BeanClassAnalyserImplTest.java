@@ -12,12 +12,13 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Trigger;
+import org.alex.zuy.boilerplate.JdkTypes;
 import org.alex.zuy.boilerplate.application.BeanDomainAnalysisModule;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.domain.types.ExactType;
-import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
@@ -31,8 +32,6 @@ public class BeanClassAnalyserImplTest {
 
     private static final String PACKAGE_NAME = "com.example";
 
-    private static final Type<?> TYPE_OF_STRING = Types.makeExactType("java.lang.String", "java.lang");
-
     private ProcessorImpl processor = new ProcessorImpl();
 
     private TestBuildSetupBuilder testBuildSetupBuilder = TestBuildSetupBuilder.newInstance();
@@ -42,7 +41,7 @@ public class BeanClassAnalyserImplTest {
     @Test
     public void testSingleGetterAndSetterPerProperty() throws Exception {
         String fileName = "SingleGetterAndSetterPerProperty";
-        BeanProperty heightProperty = new BeanProperty("height", makeIntegerType(), AccessModifier.PUBLIC);
+        BeanProperty heightProperty = new BeanProperty("height", JdkTypes.JAVA_LANG_INTEGER, AccessModifier.PUBLIC);
         BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(heightProperty));
 
@@ -54,7 +53,7 @@ public class BeanClassAnalyserImplTest {
     @Test
     public void testMultipleSettersPerProperty() throws Exception {
         String fileName = "MultipleSettersPerProperty";
-        BeanProperty widthProperty = new BeanProperty("width", Types.makeExactType("int"), AccessModifier.PROTECTED);
+        BeanProperty widthProperty = new BeanProperty("width", JdkTypes.PRIMITIVE_INT, AccessModifier.PROTECTED);
         BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(widthProperty));
 
@@ -77,9 +76,9 @@ public class BeanClassAnalyserImplTest {
     @Test
     public void testBooleanPropertyGetterNameCanStartWith_is() throws Exception {
         String fileName = "BooleanPropertyGetterNameCanStartWith";
-        BeanProperty beanProperty = new BeanProperty("bean", Types.makeExactType("boolean"), AccessModifier.PUBLIC);
+        BeanProperty beanProperty = new BeanProperty("bean", JdkTypes.PRIMITIVE_BOOLEAN, AccessModifier.PUBLIC);
         BeanProperty nullableProperty = new BeanProperty("nullable",
-            Types.makeExactType("java.lang.Boolean", "java.lang"), AccessModifier.PUBLIC);
+            JdkTypes.JAVA_LANG_BOOLEAN, AccessModifier.PUBLIC);
         BeanClass beanClass = new BeanClass(makeClassType(fileName),
             Arrays.asList(beanProperty, nullableProperty));
 
@@ -148,11 +147,7 @@ public class BeanClassAnalyserImplTest {
     }
 
     private ExactType makeClassType(String fileName) {
-        return Types.makeExactType(getClassQualifiedName(fileName), PACKAGE_NAME);
-    }
-
-    private String getClassQualifiedName(String fileName) {
-        return String.format("%s.%s", PACKAGE_NAME, fileName);
+        return Types.makeExactType(new QualifiedName(fileName, PACKAGE_NAME));
     }
 
     private void givenSourceFiles(String... fileNames) throws IOException {
@@ -186,11 +181,7 @@ public class BeanClassAnalyserImplTest {
 
     private BeanClass makeBeanClassWithSingleNameProperty() {
         return new BeanClass(makeClassType("Bean"),
-            Collections.singletonList(new BeanProperty("name", TYPE_OF_STRING, AccessModifier.PUBLIC)));
-    }
-
-    private ExactType makeIntegerType() {
-        return Types.makeExactType("java.lang.Integer", "java.lang");
+            Collections.singletonList(new BeanProperty("name", JdkTypes.JAVA_LANG_STRING, AccessModifier.PUBLIC)));
     }
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {

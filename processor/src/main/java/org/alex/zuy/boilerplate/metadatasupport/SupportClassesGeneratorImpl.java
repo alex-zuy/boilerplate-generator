@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.alex.zuy.boilerplate.config.SupportClassesConfig;
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeDefinition;
@@ -50,8 +51,8 @@ public class SupportClassesGeneratorImpl implements SupportClassesGenerator {
 
     @Override
     public SupportClassesTypes getSupportClassesTypes(SupportClassesConfig config) {
-        String qualifiedName = String.format("%s.%s", config.getBasePackage(), PROPERTY_CHAIN_NODE_CLASS_NAME);
-        Type<?> propertyChainNodeType = Types.makeExactType(qualifiedName, config.getBasePackage());
+        QualifiedName qualifiedName = new QualifiedName(PROPERTY_CHAIN_NODE_CLASS_NAME, config.getBasePackage());
+        Type<?> propertyChainNodeType = Types.makeExactType(qualifiedName);
         return ImmutableSupportClassesTypes.builder()
             .propertyChainNodeType(propertyChainNodeType)
             .build();

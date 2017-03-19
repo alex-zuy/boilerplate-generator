@@ -16,6 +16,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
@@ -58,7 +59,7 @@ public class TypeAnalyserImpl implements TypeAnalyser {
             default:
                 if (kind.isPrimitive()) {
                     return Optional.ofNullable(TYPE_KIND_TO_PRIMITIVE_TYPE_NAME.get(kind))
-                        .map(Types::makeExactType)
+                        .map(typeName -> Types.makeExactType(new QualifiedName(typeName)))
                         .orElseThrow(() -> new IllegalArgumentException(
                             String.format("Unknown primitive type '%s'", typeMirror)));
                 }
@@ -69,22 +70,24 @@ public class TypeAnalyserImpl implements TypeAnalyser {
     }
 
     private Type<?> analyseTypeVariable(TypeVariable variable) {
-        return Types.makeTypeParameter(variable.asElement().getSimpleName().toString());
+        String simpleName = variable.asElement().getSimpleName().toString();
+        return Types.makeTypeParameter(new QualifiedName(simpleName));
     }
 
     private Type<?> analyseDeclaredType(DeclaredType declaredType) throws UnsupportedTypeException {
         TypeElement typeElement = (TypeElement) processorContext.getTypeUtils().asElement(declaredType);
-        String qualifiedTypeName = typeElement.getQualifiedName().toString();
+        String simpleTypeName = typeElement.getSimpleName().toString();
+        QualifiedName qualifiedName = new QualifiedName(simpleTypeName, getEnclosingPackageName(typeElement));
 
         if (isGenericType(declaredType)) {
             List<Type<?>> typeArguments = new ArrayList<>();
             for (TypeMirror argument : declaredType.getTypeArguments()) {
                 typeArguments.add(analyse(argument));
             }
-            return Types.makeTypeInstance(qualifiedTypeName, getEnclosingPackageName(typeElement), typeArguments);
+            return Types.makeTypeInstance(qualifiedName, typeArguments);
         }
         else {
-            return Types.makeExactType(qualifiedTypeName, getEnclosingPackageName(typeElement));
+            return Types.makeExactType(qualifiedName);
         }
     }
 

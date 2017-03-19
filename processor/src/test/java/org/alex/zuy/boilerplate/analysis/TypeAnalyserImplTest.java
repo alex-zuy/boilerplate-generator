@@ -19,8 +19,9 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
+import org.alex.zuy.boilerplate.JdkTypes;
 import org.alex.zuy.boilerplate.application.BeanDomainAnalysisModule;
-import org.alex.zuy.boilerplate.domain.types.ExactType;
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
@@ -45,7 +46,7 @@ public class TypeAnalyserImplTest {
     public void testPrimitiveTypes() throws Exception {
         String className = "PrimitiveTypes";
         List<Type<?>> expectedTypes = Stream.of("boolean", "byte", "short", "int", "long", "float", "double")
-            .map(Types::makeExactType)
+            .map(primitiveTypeName -> Types.makeExactType(new QualifiedName(primitiveTypeName)))
             .collect(Collectors.toList());
 
         givenSourceFilesInNamedPackage(className);
@@ -57,10 +58,10 @@ public class TypeAnalyserImplTest {
     public void testArrayTypes() throws Exception {
         String className = "ArrayTypes";
         List<Type<?>> expectedTypes = new ArrayList<>();
-        expectedTypes.add(Types.makeArrayType(Types.makeExactType("int")));
-        expectedTypes.add(Types.makeArrayType(makeIntegerType()));
+        expectedTypes.add(Types.makeArrayType(JdkTypes.PRIMITIVE_INT));
+        expectedTypes.add(Types.makeArrayType(JdkTypes.JAVA_LANG_INTEGER));
         expectedTypes.add(
-            Types.makeArrayType(Types.makeArrayType(Types.makeExactType("java.lang.Object", "java.lang"))));
+            Types.makeArrayType(Types.makeArrayType(JdkTypes.JAVA_LANG_OBJECT)));
 
         givenSourceFilesInNamedPackage(className);
         whenReturnTypesAnalysed();
@@ -71,12 +72,13 @@ public class TypeAnalyserImplTest {
     public void testGenericTypes() throws Exception {
         String className = "GenericTypes";
         List<Type<?>> expectedTypes = new ArrayList<>();
-        expectedTypes.add(Types.makeTypeInstance("java.util.List", "java.util", Arrays.asList(makeIntegerType())));
-        expectedTypes.add(Types.makeTypeInstance("java.util.Map", "java.util",
-            Arrays.asList(makeStringType(), makeIntegerType())));
-        expectedTypes.add(Types.makeTypeInstance("java.util.List", "java.util",
-            Collections.singletonList(Types.makeTypeParameter("T"))));
-        expectedTypes.add(Types.makeTypeParameter("R"));
+        expectedTypes.add(Types.makeTypeInstance(new QualifiedName("List", "java.util"), Collections.singletonList(
+            JdkTypes.JAVA_LANG_INTEGER)));
+        expectedTypes.add(Types.makeTypeInstance(new QualifiedName("Map", "java.util"),
+            Arrays.asList(JdkTypes.JAVA_LANG_STRING, JdkTypes.JAVA_LANG_INTEGER)));
+        expectedTypes.add(Types.makeTypeInstance(new QualifiedName("List", "java.util"),
+            Collections.singletonList(Types.makeTypeParameter(new QualifiedName("T")))));
+        expectedTypes.add(Types.makeTypeParameter(new QualifiedName("R")));
 
         givenSourceFilesInNamedPackage(className);
         whenReturnTypesAnalysed();
@@ -88,7 +90,7 @@ public class TypeAnalyserImplTest {
         String declaredClassName = "DeclaredClass";
         String referencingClassName = "ReferencingClass";
         List<Type<?>> expectedTypes = new ArrayList<>();
-        expectedTypes.add(Types.makeExactType("DeclaredClass"));
+        expectedTypes.add(Types.makeExactType(new QualifiedName("DeclaredClass")));
 
         givenSourceFilesInUnnamedPackage(declaredClassName, referencingClassName);
         whenReturnTypesAnalysed();
@@ -123,14 +125,6 @@ public class TypeAnalyserImplTest {
 
     private String getFullClassName(String simpleName) {
         return String.format("%s.%s", PACKAGE_NAME, simpleName);
-    }
-
-    private ExactType makeIntegerType() {
-        return Types.makeExactType("java.lang.Integer", "java.lang");
-    }
-
-    private ExactType makeStringType() {
-        return Types.makeExactType("java.lang.String", "java.lang");
     }
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {

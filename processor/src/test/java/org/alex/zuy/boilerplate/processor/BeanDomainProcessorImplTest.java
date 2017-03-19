@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.alex.zuy.boilerplate.JdkTypes;
 import org.alex.zuy.boilerplate.application.BeanDomainProcessingModule;
 import org.alex.zuy.boilerplate.application.StringTemplateModule;
 import org.alex.zuy.boilerplate.config.ImmutableMetadataGenerationStyle;
@@ -16,6 +17,7 @@ import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.BeanProperty.AccessModifier;
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.sourcemodel.FieldDescription;
@@ -35,16 +37,9 @@ public class BeanDomainProcessorImplTest {
         String NAME = "name";
     }
 
-    private interface TestTypes {
-
-        Type<?> INT = Types.makeExactType("int");
-
-        Type<?> STRING = Types.makeExactType("java.lang.String", "java.lang");
-    }
-
     @Test
     public void testSingletonDomain() throws Exception {
-        BeanClass beanClass = givenBeanClassWithStringAndIntProperties("com.example.SingletonDomain");
+        BeanClass beanClass = givenBeanClassWithStringAndIntProperties("SingletonDomain");
 
         TypeSetDeclaration typeSetDeclaration = whenBeanDomainProcessed(beanClass);
 
@@ -55,7 +50,7 @@ public class BeanDomainProcessorImplTest {
         thenTypeShouldHaveQualifiedName(typeDeclaration, "com.example.SingletonDomainProperties");
         thenTypeShouldHaveSimpleNameAndPackageName(typeDeclaration, "SingletonDomainProperties", EXAMPLE_PACKAGE_NAME);
         thenShouldHaveFieldsNamed(typeDeclaration, PropertyNames.NAME.toUpperCase(), PropertyNames.WIDTH.toUpperCase());
-        thenFieldsShouldHaveType(typeDeclaration, TestTypes.STRING);
+        thenFieldsShouldHaveType(typeDeclaration, JdkTypes.JAVA_LANG_STRING);
     }
 
     private void thenTypeShouldHaveSimpleNameAndPackageName(TypeDescription typeDeclaration, String expectedSimpleName,
@@ -69,9 +64,9 @@ public class BeanDomainProcessorImplTest {
     }
 
     private BeanClass givenBeanClassWithStringAndIntProperties(String beanClassName) {
-        BeanProperty widthProperty = makePublicProperty(PropertyNames.WIDTH, TestTypes.INT);
-        BeanProperty nameProperty = makePublicProperty(PropertyNames.NAME, TestTypes.STRING);
-        return new BeanClass(Types.makeExactType(beanClassName, EXAMPLE_PACKAGE_NAME),
+        BeanProperty widthProperty = makePublicProperty(PropertyNames.WIDTH, JdkTypes.PRIMITIVE_INT);
+        BeanProperty nameProperty = makePublicProperty(PropertyNames.NAME, JdkTypes.JAVA_LANG_STRING);
+        return new BeanClass(Types.makeExactType(new QualifiedName(beanClassName, EXAMPLE_PACKAGE_NAME)),
             Arrays.asList(widthProperty, nameProperty));
     }
 

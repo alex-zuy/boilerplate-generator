@@ -12,6 +12,7 @@ import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
 import org.alex.zuy.boilerplate.config.SupportClassesConfig;
@@ -31,7 +32,7 @@ import org.alex.zuy.boilerplate.sourcemodel.TypeSetDeclaration;
 
 public class BeanDomainProcessorImpl implements BeanDomainProcessor {
 
-    private static final Type<?> TYPE_STRING = Types.makeExactType("java.lang.String", "java.lang");
+    private static final Type<?> TYPE_STRING = Types.makeExactType(new QualifiedName("String", "java.lang"));
 
     private interface Templates {
 
@@ -120,9 +121,9 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         return ImmutableTypeDescription.builder()
             .addModifiers(Modifier.PUBLIC)
             .kind(TypeKind.CLASS)
-            .packageName(propertiesClassType.getPackageName().orElse(null))
-            .simpleName(makeTypeSimpleName(propertiesClassType))
-            .qualifiedName(propertiesClassType.getName())
+            .packageName(propertiesClassType.getName().getPackageName().orElse(null))
+            .simpleName(propertiesClassType.getName().getSimpleName())
+            .qualifiedName(propertiesClassType.getName().asString())
             .addAllFields(fieldDeclarations)
             .addAllMethods(propertyClassRelationshipAccessors)
             .build();
@@ -148,37 +149,29 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         return ImmutableTypeDescription.builder()
             .addModifiers(Modifier.PUBLIC)
             .kind(TypeKind.CLASS)
-            .packageName(relationshipsClassType.getPackageName().orElse(null))
-            .simpleName(makeTypeSimpleName(relationshipsClassType))
-            .qualifiedName(relationshipsClassType.getName())
+            .packageName(relationshipsClassType.getName().getPackageName().orElse(null))
+            .simpleName(relationshipsClassType.getName().getSimpleName())
+            .qualifiedName(relationshipsClassType.getName().asString())
             .extendedType(beanClassProcessor.getPropertyChainNodeType())
             .addMethods(chainStartCtor, chainContinuationCtor)
             .addAllMethods(relationshipsMethods)
             .build();
     }
 
-    private String makeTypeSimpleName(Type<?> type) {
-        return type.getPackageName()
-            .map(packageName -> type.getName().substring(packageName.length() + 1))
-            .orElse(type.getName());
-    }
-
     private Type<?> makeRelationshipsClassType(Type<?> type, MetadataGenerationStyle style) {
-        String simpleName = namesGenerator.makeBeanRelationshipsClassName(makeTypeSimpleName(type), style);
-        String packageName = type.getPackageName().orElse(null);
-        return Types.makeExactType(makeClassQualifiedName(simpleName, packageName), packageName);
+        String simpleName = namesGenerator.makeBeanRelationshipsClassName(type.getName().getSimpleName(), style);
+        QualifiedName qualifiedName = type.getName().getPackageName()
+            .map(packageName -> new QualifiedName(simpleName, packageName))
+            .orElse(new QualifiedName(simpleName));
+        return Types.makeExactType(qualifiedName);
     }
 
     private Type<?> makePropertiesClassType(Type<?> beanType, MetadataGenerationStyle style) {
-        String simpleName = namesGenerator.makeBeanPropertiesClassName(makeTypeSimpleName(beanType), style);
-        String packageName = beanType.getPackageName().orElse(null);
-        return Types.makeExactType(makeClassQualifiedName(simpleName, packageName), packageName);
-    }
-
-    private String makeClassQualifiedName(String simpleName, String packageName) {
-        return packageName != null
-            ? String.format("%s.%s", packageName, simpleName)
-            : simpleName;
+        String simpleName = namesGenerator.makeBeanPropertiesClassName(beanType.getName().getSimpleName(), style);
+        QualifiedName qualifiedName = beanType.getName().getPackageName()
+            .map(packageName -> new QualifiedName(simpleName, packageName))
+            .orElse(new QualifiedName(simpleName));
+        return Types.makeExactType(qualifiedName);
     }
 
     private class BeanClassProcessor {
@@ -239,7 +232,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         MethodDescription buildRelationshipStartCtor() {
             MethodParameterDeclaration propertyParameter = makePropertyParameterDeclaration();
             return ImmutableMethodDescription.builder()
-                .name(makeTypeSimpleName(relationshipsClassType))
+                .name(relationshipsClassType.getName().getSimpleName())
                 .addParameters(propertyParameter)
                 .templateName(RelationshipClassMethodBodyTemplates.FORWARD_SUPER_CTOR_ONE_PARAMETER)
                 .putData(MethodsBodyModelRefs.PARAMETER_PROPERTY, propertyParameter)
@@ -251,7 +244,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
             MethodParameterDeclaration chainTailNodeParameter = ImmutableMethodParameterDeclaration.builder()
                 .name("tail").type(propertyChainNodeType).build();
             return ImmutableMethodDescription.builder()
-                .name(makeTypeSimpleName(relationshipsClassType))
+                .name(relationshipsClassType.getName().getSimpleName())
                 .addParameters(chainTailNodeParameter)
                 .addParameters(propertyParameter)
                 .templateName(RelationshipClassMethodBodyTemplates.FORWARD_SUPER_CTOR_TWO_PARAMETERS)

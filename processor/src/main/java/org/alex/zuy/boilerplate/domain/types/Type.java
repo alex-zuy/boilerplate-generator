@@ -2,13 +2,12 @@ package org.alex.zuy.boilerplate.domain.types;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 
 public interface Type<T extends Type<T>> {
 
-    String getName();
-
-    Optional<String> getPackageName();
+    QualifiedName getName();
 
     TypeKinds<T> getKind();
 

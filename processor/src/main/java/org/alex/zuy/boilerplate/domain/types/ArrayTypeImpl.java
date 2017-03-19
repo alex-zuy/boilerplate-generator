@@ -2,6 +2,7 @@ package org.alex.zuy.boilerplate.domain.types;
 
 import java.util.Objects;
 
+import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.utils.ObjectsUtil;
 
 final class ArrayTypeImpl extends AbstractType<ArrayType> implements ArrayType {
@@ -11,7 +12,7 @@ final class ArrayTypeImpl extends AbstractType<ArrayType> implements ArrayType {
     private Type<?> elementType;
 
     ArrayTypeImpl(Type<?> elementType) {
-        super(ARRAY_TYPE_NAME, TypeKinds.ARRAY_TYPE);
+        super(new QualifiedName(ARRAY_TYPE_NAME), TypeKinds.ARRAY_TYPE);
         this.elementType = elementType;
     }
 
