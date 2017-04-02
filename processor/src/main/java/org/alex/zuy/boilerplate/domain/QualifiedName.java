@@ -33,6 +33,11 @@ public class QualifiedName {
         this(simpleName, packageName, new QualifiedName(enclosingTypeSimpleName, packageName));
     }
 
+    public QualifiedName(String simpleName, QualifiedName enclosingType) {
+        this.simpleName = simpleName;
+        this.enclosingType = enclosingType;
+    }
+
     public String getSimpleName() {
         return simpleName;
     }

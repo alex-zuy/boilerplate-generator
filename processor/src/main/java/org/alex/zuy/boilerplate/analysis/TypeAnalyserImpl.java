@@ -1,10 +1,13 @@
 package org.alex.zuy.boilerplate.analysis;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -35,6 +38,17 @@ public class TypeAnalyserImpl implements TypeAnalyser {
             .put(TypeKind.FLOAT, "float")
             .put(TypeKind.DOUBLE, "double")
             .build();
+
+    private static final Set<ElementKind> ENCLOSING_TYPE_KINDS;
+
+    static {
+        EnumSet<ElementKind> enclosingTypeKinds = EnumSet.noneOf(ElementKind.class);
+        enclosingTypeKinds.add(ElementKind.CLASS);
+        enclosingTypeKinds.add(ElementKind.INTERFACE);
+        enclosingTypeKinds.add(ElementKind.ENUM);
+        enclosingTypeKinds.add(ElementKind.ANNOTATION_TYPE);
+        ENCLOSING_TYPE_KINDS = Collections.unmodifiableSet(enclosingTypeKinds);
+    }
 
     private ProcessorContext processorContext;
 
@@ -76,8 +90,7 @@ public class TypeAnalyserImpl implements TypeAnalyser {
 
     private Type<?> analyseDeclaredType(DeclaredType declaredType) throws UnsupportedTypeException {
         TypeElement typeElement = (TypeElement) processorContext.getTypeUtils().asElement(declaredType);
-        String simpleTypeName = typeElement.getSimpleName().toString();
-        QualifiedName qualifiedName = new QualifiedName(simpleTypeName, getEnclosingPackageName(typeElement));
+        QualifiedName qualifiedName = getTypeQualifiedName(typeElement);
 
         if (isGenericType(declaredType)) {
             List<Type<?>> typeArguments = new ArrayList<>();
@@ -88,6 +101,31 @@ public class TypeAnalyserImpl implements TypeAnalyser {
         }
         else {
             return Types.makeExactType(qualifiedName);
+        }
+    }
+
+    private QualifiedName getTypeQualifiedName(Element typeElement) throws UnsupportedTypeException {
+        String simpleName = typeElement.getSimpleName().toString();
+        String packageName = getEnclosingPackageName(typeElement);
+        if (typeElement.getEnclosingElement().getKind() == ElementKind.PACKAGE) {
+            if (packageName != null) {
+                return new QualifiedName(simpleName, packageName);
+            }
+            else {
+                return new QualifiedName(simpleName);
+            }
+        }
+        else if (ENCLOSING_TYPE_KINDS.contains(typeElement.getEnclosingElement().getKind())) {
+            QualifiedName enclosingTypeName = getTypeQualifiedName(typeElement.getEnclosingElement());
+            if (packageName != null) {
+                return new QualifiedName(simpleName, packageName, enclosingTypeName);
+            }
+            else {
+                return new QualifiedName(simpleName, enclosingTypeName);
+            }
+        }
+        else {
+            throw new UnsupportedTypeException("Unsupported type nesting", typeElement.asType());
         }
     }
 

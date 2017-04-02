@@ -97,6 +97,33 @@ public class TypeAnalyserImplTest {
         thenCollectedTypesShouldBe(referencingClassName, expectedTypes);
     }
 
+    @Test
+    public void testNestedTypesInNamedPackage() throws Exception {
+        String className = "NestedTypesInNamedPackage";
+        QualifiedName enclosingType = new QualifiedName(className, PACKAGE_NAME);
+        QualifiedName innerClassHolder = new QualifiedName("InnerClassHolder", PACKAGE_NAME, enclosingType);
+        List<Type<?>> expectedTypes = new ArrayList<>();
+        expectedTypes.add(Types.makeExactType(new QualifiedName("InnerClass", PACKAGE_NAME, enclosingType)));
+        expectedTypes.add(
+            Types.makeExactType(new QualifiedName("InnerClassHolderInnerClass", PACKAGE_NAME, innerClassHolder)));
+
+        givenSourceFilesInNamedPackage(className);
+        whenReturnTypesAnalysed();
+        thenCollectedTypesShouldBe(getFullClassName(className), expectedTypes);
+    }
+
+    @Test
+    public void testNestedTypesInUnnamedPackage() throws Exception {
+        String className = "NestedTypesInUnnamedPackage";
+        QualifiedName enclosingType = new QualifiedName(className);
+        List<Type<?>> expectedTypes = new ArrayList<>();
+        expectedTypes.add(Types.makeExactType(new QualifiedName("InnerClass", enclosingType)));
+
+        givenSourceFilesInNamedPackage(className);
+        whenReturnTypesAnalysed();
+        thenCollectedTypesShouldBe(className, expectedTypes);
+    }
+
     private void givenSourceFilesInNamedPackage(String... fileNames) throws IOException {
         for (final String fileName : fileNames) {
             processorTestsSteps.addTestSpecificSourceFile(PACKAGE_NAME, fileName);
