@@ -15,14 +15,17 @@ public class BasePackageClassesCollector {
 
     private final Elements elementUtils;
 
-    public BasePackageClassesCollector(final ProcessorContext context) {
+    private Set<ElementKind> supportedElementKinds;
+
+    public BasePackageClassesCollector(ProcessorContext context, Set<ElementKind> supportedElementKinds) {
         this.elementUtils = context.getElementUtils();
+        this.supportedElementKinds = supportedElementKinds;
     }
 
     public Set<TypeElement> collect(String packageName) {
         return Optional.ofNullable(elementUtils.getPackageElement(packageName))
             .map(packageElement -> packageElement.getEnclosedElements().stream()
-                .filter(element -> ElementKind.CLASS.equals(element.getKind()))
+                .filter(element -> supportedElementKinds.contains(element.getKind()))
                 .map(element -> (TypeElement) element)
                 .collect(Collectors.toSet()))
             .orElse(Collections.emptySet());

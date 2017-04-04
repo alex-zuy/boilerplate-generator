@@ -6,9 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Marker;
@@ -30,7 +32,7 @@ public class TypeAnnotatedClassesCollectorTest {
     public void testTopLevelClasses() throws Exception {
         givenTestSpecificSourceWillBeBuild("topLevelClasses");
         whenBuildPerformed();
-        thenCollectedTypeElementsShouldBe("com.example.first.ClassA");
+        thenCollectedTypeElementsShouldBe("com.example.first.ClassA", "com.example.first.InterfaceB");
     }
 
     @Test
@@ -71,7 +73,8 @@ public class TypeAnnotatedClassesCollectorTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new TypeAnnotatedClassesCollector(processorContext);
+            collector = new TypeAnnotatedClassesCollector(processorContext,
+                EnumSet.of(ElementKind.CLASS, ElementKind.INTERFACE));
         }
 
         @Override

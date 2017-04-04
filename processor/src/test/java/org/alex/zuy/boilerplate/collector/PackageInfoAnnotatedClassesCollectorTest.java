@@ -6,15 +6,17 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Marker;
+import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
-import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;
 
@@ -30,7 +32,7 @@ public class PackageInfoAnnotatedClassesCollectorTest {
     public void testCollector() throws Exception {
         givenTestSpecificSourceWillBeBuild();
         whenBuildPerformed();
-        thenCollectedTypeElementsShouldBe("com.example.marked.ClassA");
+        thenCollectedTypeElementsShouldBe("com.example.marked.ClassA", "com.example.marked.ClassB");
     }
 
     private void givenTestSpecificSourceWillBeBuild() throws IOException {
@@ -47,7 +49,7 @@ public class PackageInfoAnnotatedClassesCollectorTest {
     private void thenCollectedTypeElementsShouldBe(String... expected) {
         assertTrue(compileResult);
         assertTrue(processor.isWasProcessingInvoked());
-        assertThat(processor.getCollectedTypeElements(), isSetOfTypeElements("com.example.marked.ClassA"));
+        assertThat(processor.getCollectedTypeElements(), isSetOfTypeElements(expected));
     }
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {
@@ -63,7 +65,8 @@ public class PackageInfoAnnotatedClassesCollectorTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new PackageInfoAnnotatedClassesCollector(processorContext);
+            collector = new PackageInfoAnnotatedClassesCollector(processorContext,
+                EnumSet.of(ElementKind.CLASS, ElementKind.INTERFACE));
         }
 
         @Override

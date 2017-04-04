@@ -15,8 +15,11 @@ public class PackageInfoAnnotatedClassesCollector {
 
     private ProcessorContext processorContext;
 
-    public PackageInfoAnnotatedClassesCollector(ProcessorContext processorContext) {
+    private Set<ElementKind> supportedElementKinds;
+
+    public PackageInfoAnnotatedClassesCollector(ProcessorContext processorContext, Set<ElementKind> elementKinds) {
         this.processorContext = processorContext;
+        this.supportedElementKinds = elementKinds;
     }
 
     public Set<TypeElement> collect(String annotationName, RoundEnvironment environment) {
@@ -35,7 +38,7 @@ public class PackageInfoAnnotatedClassesCollector {
 
     private Stream<TypeElement> getPackageClasses(PackageElement packageElement) {
         return packageElement.getEnclosedElements().stream()
-            .filter(element -> ElementKind.CLASS.equals(element.getKind()))
+            .filter(element -> supportedElementKinds.contains(element.getKind()))
             .map(element -> (TypeElement) element);
     }
 }

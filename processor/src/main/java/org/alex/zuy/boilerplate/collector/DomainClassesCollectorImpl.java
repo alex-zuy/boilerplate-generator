@@ -1,6 +1,8 @@
 
 package org.alex.zuy.boilerplate.collector;
 
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -8,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.processing.RoundEnvironment;
 import javax.inject.Inject;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 import org.alex.zuy.boilerplate.collector.filters.ClassFilter;
@@ -17,6 +20,9 @@ import org.alex.zuy.boilerplate.config.DomainConfig;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
 
 public class DomainClassesCollectorImpl implements DomainClassesCollector {
+
+    private static final Set<ElementKind> ELEMENT_KINDS = Collections.unmodifiableSet(
+        EnumSet.of(ElementKind.CLASS, ElementKind.INTERFACE));
 
     private ProcessorContext processorContext;
 
@@ -28,9 +34,9 @@ public class DomainClassesCollectorImpl implements DomainClassesCollector {
 
     @Inject
     public DomainClassesCollectorImpl(ProcessorContext processorContext) {
-        this.basePackageCollector = new BasePackageClassesCollector(processorContext);
-        this.typeAnnotationCollector = new TypeAnnotatedClassesCollector(processorContext);
-        this.packageInfoAnnotationCollector = new PackageInfoAnnotatedClassesCollector(processorContext);
+        this.basePackageCollector = new BasePackageClassesCollector(processorContext, ELEMENT_KINDS);
+        this.typeAnnotationCollector = new TypeAnnotatedClassesCollector(processorContext, ELEMENT_KINDS);
+        this.packageInfoAnnotationCollector = new PackageInfoAnnotatedClassesCollector(processorContext, ELEMENT_KINDS);
         this.processorContext = processorContext;
     }
 

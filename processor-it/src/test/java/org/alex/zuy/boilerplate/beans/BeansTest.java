@@ -39,6 +39,15 @@ public class BeansTest {
         eq(BeanReferringToNestedBeanProperties.nestedBean().product().idProperty(), "nestedBean.product.id");
     }
 
+    @Test
+    public void testInterface() throws Exception {
+        eq(EntityInterfaceProperties.PRODUCT, "product");
+        eq(EntityInterfaceProperties.product().idProperty(), "product.id");
+        eq(EntityInterfaceHolderProperties.ENTITY, "entity");
+        eq(EntityInterfaceHolderProperties.entity().productProperty(), "entity.product");
+    }
+
+
     private static void eq(Object expected, Object actual) {
         assertEquals(expected, actual);
     }

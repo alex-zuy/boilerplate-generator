@@ -5,13 +5,15 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
-import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.services.ProcessorContext;
+import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;
 
@@ -62,7 +64,8 @@ public class BasePackageClassesCollectorTest {
         @Override
         protected void afterInit(ProcessingEnvironment processingEnvironment, ProcessorContext processorContext) {
             super.afterInit(processingEnvironment, processorContext);
-            collector = new BasePackageClassesCollector(processorContext);
+            collector = new BasePackageClassesCollector(processorContext,
+                EnumSet.of(ElementKind.CLASS, ElementKind.INTERFACE));
         }
 
         @Override

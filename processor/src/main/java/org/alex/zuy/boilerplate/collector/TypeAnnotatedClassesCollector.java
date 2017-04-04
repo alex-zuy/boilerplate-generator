@@ -13,15 +13,18 @@ public class TypeAnnotatedClassesCollector {
 
     private ProcessorContext processorContext;
 
-    public TypeAnnotatedClassesCollector(ProcessorContext processorContext) {
+    private Set<ElementKind> supportedElementKinds;
+
+    public TypeAnnotatedClassesCollector(ProcessorContext processorContext, Set<ElementKind> supportedElementKinds) {
         this.processorContext = processorContext;
+        this.supportedElementKinds = supportedElementKinds;
     }
 
     public Set<TypeElement> collect(String annotationName, RoundEnvironment environment) {
         TypeElement annotationElement = processorContext.getElementUtils().getTypeElement(annotationName);
         if (annotationElement != null) {
             return environment.getElementsAnnotatedWith(annotationElement).stream()
-                .filter(element -> ElementKind.CLASS.equals(element.getKind()))
+                .filter(element -> supportedElementKinds.contains(element.getKind()))
                 .map(element -> (TypeElement) element)
                 .collect(Collectors.toSet());
         }
