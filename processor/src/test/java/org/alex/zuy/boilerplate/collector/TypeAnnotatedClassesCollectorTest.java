@@ -12,9 +12,9 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 
 import com.example.Marker;
+import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.AnnotationProcessorBase;
 import org.alex.zuy.boilerplate.support.SingleProcessingRoundAnnotationProcessorWrapper;
-import org.alex.zuy.boilerplate.services.ProcessorContext;
 import org.alex.zuy.boilerplate.support.TestBuildSetupBuilder;
 import org.junit.Test;
 
@@ -27,16 +27,24 @@ public class TypeAnnotatedClassesCollectorTest {
     private ProcessorImpl processor;
 
     @Test
-    public void testCollector() throws Exception {
-        givenTestSpecificSourceWillBeBuild();
+    public void testTopLevelClasses() throws Exception {
+        givenTestSpecificSourceWillBeBuild("topLevelClasses");
         whenBuildPerformed();
-        thenCollectedTypeElementsShouldBe("com.example.marked.ClassA");
+        thenCollectedTypeElementsShouldBe("com.example.first.ClassA");
     }
 
-    private void givenTestSpecificSourceWillBeBuild() throws IOException {
+    @Test
+    public void testInnerClasses() throws Exception {
+        givenTestSpecificSourceWillBeBuild("innerClasses");
+        whenBuildPerformed();
+        thenCollectedTypeElementsShouldBe("com.example.InnerClassHolder.InnerClass",
+            "com.example.InnerInnerClassHolder.InnerClassHolder.InnerClass");
+    }
+
+    private void givenTestSpecificSourceWillBeBuild(String subdirectory) throws IOException {
         processor = new ProcessorImpl();
         testBuildSetupBuilder = TestBuildSetupBuilder.newInstance()
-            .addTestSpecificSources(this.getClass())
+            .addTestSpecificSources(this.getClass(), subdirectory)
             .addAnnotationProcessor(SingleProcessingRoundAnnotationProcessorWrapper.newInstance(processor));
     }
 
@@ -47,7 +55,7 @@ public class TypeAnnotatedClassesCollectorTest {
     private void thenCollectedTypeElementsShouldBe(String... expected) {
         assertTrue(compileResult);
         assertTrue(processor.isWasProcessingInvoked());
-        assertThat(processor.getCollectedTypeElements(), isSetOfTypeElements("com.example.first.ClassA"));
+        assertThat(processor.getCollectedTypeElements(), isSetOfTypeElements(expected));
     }
 
     private static final class ProcessorImpl extends AnnotationProcessorBase {

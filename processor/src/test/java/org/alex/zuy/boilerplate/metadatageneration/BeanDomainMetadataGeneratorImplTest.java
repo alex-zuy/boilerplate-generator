@@ -74,6 +74,16 @@ public class BeanDomainMetadataGeneratorImplTest {
         thenEvaluatingMethodChainShouldYield(beanProperties, Arrays.asList("bean", "nameProperty"), "bean.name");
     }
 
+    @Test
+    public void testBeanClassIsNestedInsideClass() throws Exception {
+        givenSourceFilesFromTestSpecificSubdirectory("beanClassIsNestedInsideClass");
+        whenCompilationPerformed();
+        Class<?> innerClassProperties = whenCompiledClassLoaded("com.example.InnerClassProperties");
+        thenClassShouldHavePublicStaticFinalField(innerClassProperties, "PERSON", "person");
+        thenEvaluatingMethodChainShouldYield(innerClassProperties, Arrays.asList("person", "nameProperty"),
+            "person.name");
+    }
+
     private void givenSourceFilesFromTestSpecificSubdirectory(String subdirectory) throws IOException {
         Processor processor = new ProcessorImpl();
         testBuildSetupBuilder = TestBuildSetupBuilder.newInstance()
