@@ -7,21 +7,23 @@ import javax.inject.Inject;
 
 import org.alex.zuy.boilerplate.codegeneration.TemplateRenderer.TemplateRenderingTask;
 import org.alex.zuy.boilerplate.sourcemodel.ImmutableTypeDefinition;
-import org.alex.zuy.boilerplate.sourcemodel.TypeDescription;
 import org.alex.zuy.boilerplate.sourcemodel.TypeDefinition;
+import org.alex.zuy.boilerplate.sourcemodel.TypeDescription;
 
 public class TypeDefinitionGeneratorImpl implements TypeDefinitionGenerator {
 
     private static final String TEMPLATE_TYPE_DECLARATION = "typeDeclaration.ftl";
+
+    private static final String TEMPLATE_TYPE_DECLARATION_HEADER = "typeDeclarationHeader.ftl";
 
     private interface ModelRefs {
 
         String TYPE_DECLARATION = "type";
 
         String TYPE_FORMATTER = "typeFormatter";
-    }
 
-    private final TypeFormatter typeFormatter = new TypeFormatter();
+        String TYPES_TO_IMPORT = "typesToImport";
+    }
 
     private TemplateRenderer templateRenderer;
 
@@ -32,14 +34,25 @@ public class TypeDefinitionGeneratorImpl implements TypeDefinitionGenerator {
 
     @Override
     public TypeDefinition generateType(TypeDescription typeDeclaration) {
-        Map<String, Object> data = new HashMap<>();
-        data.put(ModelRefs.TYPE_DECLARATION, typeDeclaration);
-        data.put(ModelRefs.TYPE_FORMATTER, typeFormatter);
         try {
+            TypeImportResolver importResolver = new TypeImportResolver();
+            TypeFormatter typeFormatter = new TypeFormatter(importResolver);
+
+            Map<String, Object> data = new HashMap<>();
+            data.put(ModelRefs.TYPE_DECLARATION, typeDeclaration);
+            data.put(ModelRefs.TYPE_FORMATTER, typeFormatter);
             TemplateRenderingTask task = ImmutableTemplateRenderingTask.of(TEMPLATE_TYPE_DECLARATION, data);
-            String generatedSource = templateRenderer.renderTemplate(task);
+            String typeDeclarationSource = templateRenderer.renderTemplate(task);
+
+            Map<String, Object> headerData = new HashMap<>();
+            headerData.put(ModelRefs.TYPES_TO_IMPORT, importResolver.getImportedTypes());
+            headerData.put(ModelRefs.TYPE_DECLARATION, typeDeclaration);
+            String typeHeaderSource = templateRenderer.renderTemplate(
+                ImmutableTemplateRenderingTask.of(TEMPLATE_TYPE_DECLARATION_HEADER, headerData));
+
+            String completeSource = typeHeaderSource.concat(typeDeclarationSource);
             return ImmutableTypeDefinition.builder()
-                .sourceCode(generatedSource)
+                .sourceCode(completeSource)
                 .simpleName(typeDeclaration.getSimpleName())
                 .packageName(typeDeclaration.getPackageName())
                 .build();

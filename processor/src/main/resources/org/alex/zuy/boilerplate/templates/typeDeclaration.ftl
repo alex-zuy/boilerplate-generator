@@ -1,10 +1,6 @@
 <#-- @ftlvariable name="type" type="org.alex.zuy.boilerplate.sourcemodel.TypeDescription" -->
 <#import "utility.ftl" as util>
 
-<#if type.packageName??>
-    package ${type.packageName};
-</#if>
-
 <@util.printModifiers modifiers=type.modifiers/>
 ${type.kind}
 ${type.simpleName}
