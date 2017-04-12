@@ -9,13 +9,13 @@ import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 
 import org.alex.zuy.boilerplate.config.MetadataGenerationStyle;
+import org.alex.zuy.boilerplate.config.SupportClassesConfig;
 import org.alex.zuy.boilerplate.domain.BeanClass;
 import org.alex.zuy.boilerplate.domain.BeanDomain;
 import org.alex.zuy.boilerplate.domain.BeanProperty;
 import org.alex.zuy.boilerplate.domain.QualifiedName;
 import org.alex.zuy.boilerplate.domain.types.Type;
 import org.alex.zuy.boilerplate.domain.types.Types;
-import org.alex.zuy.boilerplate.config.SupportClassesConfig;
 import org.alex.zuy.boilerplate.metadatasupport.SupportClassesGenerator;
 import org.alex.zuy.boilerplate.metadatasupport.SupportClassesTypes;
 import org.alex.zuy.boilerplate.sourcemodel.FieldDescription;
@@ -232,6 +232,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
         MethodDescription buildRelationshipStartCtor() {
             MethodParameterDeclaration propertyParameter = makePropertyParameterDeclaration();
             return ImmutableMethodDescription.builder()
+                .addModifiers(Modifier.PUBLIC)
                 .name(relationshipsClassType.getName().getSimpleName())
                 .addParameters(propertyParameter)
                 .templateName(RelationshipClassMethodBodyTemplates.FORWARD_SUPER_CTOR_ONE_PARAMETER)
@@ -244,6 +245,7 @@ public class BeanDomainProcessorImpl implements BeanDomainProcessor {
             MethodParameterDeclaration chainTailNodeParameter = ImmutableMethodParameterDeclaration.builder()
                 .name("tail").type(propertyChainNodeType).build();
             return ImmutableMethodDescription.builder()
+                .addModifiers(Modifier.PUBLIC)
                 .name(relationshipsClassType.getName().getSimpleName())
                 .addParameters(chainTailNodeParameter)
                 .addParameters(propertyParameter)
