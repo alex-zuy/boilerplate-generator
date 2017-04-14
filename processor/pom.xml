@@ -34,6 +34,18 @@
             <version>2.3.25-incubating</version>
         </dependency>
         <dependency>
+            <groupId>com.google.googlejavaformat</groupId>
+            <artifactId>google-java-format</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <!-- we are not using guava in this project, but we need
+        this dependency to bump version resolved by different libs -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.dagger</groupId>
             <artifactId>dagger</artifactId>
             <version>${dagger.version}</version>
@@ -115,6 +127,7 @@
                             <includes>
                                 <include>com.google.dagger:dagger</include>
                                 <include>com.google.guava:guava</include>
+                                <include>com.google.googlejavaformat:google-java-format</include>
                                 <include>org.freemarker:freemarker</include>
                                 <include>org.alex.zuy.boilerplate.**</include>
                             </includes>

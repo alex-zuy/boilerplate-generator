@@ -27,9 +27,13 @@ public class TypeDefinitionGeneratorImpl implements TypeDefinitionGenerator {
 
     private TemplateRenderer templateRenderer;
 
+    private SourceCodeFormatter sourceCodeFormatter;
+
     @Inject
-    public TypeDefinitionGeneratorImpl(TemplateRenderer templateRenderer) {
+    public TypeDefinitionGeneratorImpl(TemplateRenderer templateRenderer,
+        SourceCodeFormatter sourceCodeFormatter) {
         this.templateRenderer = templateRenderer;
+        this.sourceCodeFormatter = sourceCodeFormatter;
     }
 
     @Override
@@ -51,8 +55,11 @@ public class TypeDefinitionGeneratorImpl implements TypeDefinitionGenerator {
                 ImmutableTemplateRenderingTask.of(TEMPLATE_TYPE_DECLARATION_HEADER, headerData));
 
             String completeSource = typeHeaderSource.concat(typeDeclarationSource);
+
+            String formattedSource = sourceCodeFormatter.formatSource(completeSource);
+
             return ImmutableTypeDefinition.builder()
-                .sourceCode(completeSource)
+                .sourceCode(formattedSource)
                 .simpleName(typeDeclaration.getSimpleName())
                 .packageName(typeDeclaration.getPackageName())
                 .build();

@@ -1,11 +1,12 @@
 package org.alex.zuy.boilerplate.application;
 
 import java.io.IOException;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import org.alex.zuy.boilerplate.codegeneration.SourceCodeFormatter;
+import org.alex.zuy.boilerplate.codegeneration.SourceCodeFormatterImpl;
 import org.alex.zuy.boilerplate.codegeneration.SourceFilePublisher;
 import org.alex.zuy.boilerplate.codegeneration.SourceFilePublisherImpl;
 import org.alex.zuy.boilerplate.codegeneration.TemplateRenderer;
@@ -39,5 +40,11 @@ public class CodeGenerationModule {
     @Singleton
     SourceFilePublisher provideSourceFilePublisher(SourceFilePublisherImpl impl) {
         return impl;
+    }
+
+    @Provides
+    @Singleton
+    SourceCodeFormatter provideSourceCodeFormatter() {
+        return new SourceCodeFormatterImpl();
     }
 }
