@@ -162,7 +162,6 @@
                                 </includes>
                                 <excludes>
                                     <exclude>org.alex.zuy.boilerplate.generator.**</exclude>
-                                    <exclude>org.alex.zuy.boilerplate.templates.**</exclude>
                                     <exclude>org.alex.zuy.boilerplate.api.**</exclude>
                                 </excludes>
                             </relocation>

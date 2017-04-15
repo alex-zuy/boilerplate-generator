@@ -18,7 +18,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic.Kind;
 
 import org.alex.zuy.boilerplate.config.ConfigException;
-import org.alex.zuy.boilerplate.generator.impl.ProcessorImpl;
+import org.alex.zuy.boilerplate.generatorimpl.ProcessorImpl;
 
 public class AnnotationProcessor implements Processor {
 

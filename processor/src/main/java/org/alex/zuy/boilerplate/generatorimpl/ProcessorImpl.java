@@ -1,5 +1,5 @@
 
-package org.alex.zuy.boilerplate.generator.impl;
+package org.alex.zuy.boilerplate.generatorimpl;
 
 import java.util.Collections;
 import java.util.Set;
