@@ -8,14 +8,14 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>org.alex.zuy.boilerplate</groupId>
+        <groupId>com.github.alex.zuy.boilerplate</groupId>
         <artifactId>boilerplate-generator</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>org.alex.zuy.boilerplate</groupId>
+            <groupId>com.github.alex.zuy.boilerplate</groupId>
             <artifactId>processor</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

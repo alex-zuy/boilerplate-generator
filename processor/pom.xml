@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>org.alex.zuy.boilerplate</groupId>
+        <groupId>com.github.alex.zuy.boilerplate</groupId>
         <artifactId>boilerplate-generator</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -107,7 +107,6 @@
                         <failsOnError>true</failsOnError>
                         <linkXRef>false</linkXRef>
                         <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                        <!--<excludes>**/org/alex/zuy/boilerplate/config/generated/*.java</excludes>-->
                     </configuration>
                 </plugin>
                 <plugin>
@@ -122,7 +121,7 @@
                                 <include>com.google.guava:guava</include>
                                 <include>com.google.googlejavaformat:google-java-format</include>
                                 <include>org.freemarker:freemarker</include>
-                                <include>org.alex.zuy.boilerplate.**</include>
+                                <include>com.github.alex.zuy.boilerplate.boilerplate.**</include>
                             </includes>
                         </artifactSet>
                         <relocations>
@@ -148,14 +147,14 @@
                                 </includes>
                             </relocation>
                             <relocation>
-                                <pattern>org.alex.zuy.boilerplate</pattern>
-                                <shadedPattern>hidden.org.alex.zuy.boilerplate</shadedPattern>
+                                <pattern>com.github.alex.zuy.boilerplate.boilerplate</pattern>
+                                <shadedPattern>hidden.com.github.alex.zuy.boilerplate.boilerplate</shadedPattern>
                                 <includes>
-                                    <include>org.alex.zuy.boilerplate.**</include>
+                                    <include>com.github.alex.zuy.boilerplate.boilerplate.**</include>
                                 </includes>
                                 <excludes>
-                                    <exclude>org.alex.zuy.boilerplate.generator.**</exclude>
-                                    <exclude>org.alex.zuy.boilerplate.api.**</exclude>
+                                    <exclude>com.github.alex.zuy.boilerplate.generator.**</exclude>
+                                    <exclude>com.github.alex.zuy.boilerplate.boilerplate.api.**</exclude>
                                 </excludes>
                             </relocation>
                         </relocations>
