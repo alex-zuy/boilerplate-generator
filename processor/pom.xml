@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>com.github.alex.zuy.boilerplate</groupId>
+        <groupId>com.github.alex-zuy.boilerplate</groupId>
         <artifactId>boilerplate-generator</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -147,14 +147,14 @@
                                 </includes>
                             </relocation>
                             <relocation>
-                                <pattern>com.github.alex.zuy.boilerplate.boilerplate</pattern>
-                                <shadedPattern>hidden.com.github.alex.zuy.boilerplate.boilerplate</shadedPattern>
+                                <pattern>com.github.alex.zuy.boilerplate</pattern>
+                                <shadedPattern>hidden.com.github.alex.zuy.boilerplate</shadedPattern>
                                 <includes>
-                                    <include>com.github.alex.zuy.boilerplate.boilerplate.**</include>
+                                    <include>com.github.alex.zuy.boilerplate.**</include>
                                 </includes>
                                 <excludes>
                                     <exclude>com.github.alex.zuy.boilerplate.generator.**</exclude>
-                                    <exclude>com.github.alex.zuy.boilerplate.boilerplate.api.**</exclude>
+                                    <exclude>com.github.alex.zuy.boilerplate.api.**</exclude>
                                 </excludes>
                             </relocation>
                         </relocations>

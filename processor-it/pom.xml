@@ -8,16 +8,30 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>com.github.alex.zuy.boilerplate</groupId>
+        <groupId>com.github.alex-zuy.boilerplate</groupId>
         <artifactId>boilerplate-generator</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.alex.zuy.boilerplate</groupId>
+            <groupId>com.github.alex-zuy.boilerplate</groupId>
             <artifactId>processor</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus.staging.maven.plugin}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
