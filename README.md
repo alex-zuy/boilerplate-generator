@@ -1,6 +1,5 @@
-[![Build Status](https://travis-ci.org/alex-zuy/boilerplate-generator.svg?branch=master)](https://travis-ci.org/alex-zuy/boilerplate-generator)
-
 # Boilerplate generator
+[![Build Status](https://travis-ci.org/alex-zuy/boilerplate-generator.svg?branch=master)](https://travis-ci.org/alex-zuy/boilerplate-generator)
 
 The project deals with generation of boilerplate code and more specifically with
 string constants (e.g. names of bean properties).
@@ -81,6 +80,69 @@ public class UserProperties {
 ```
 With this solution we still have following problems:
 1. We need to update constants manually.
-2. We need to manually write such 'constants' classes.
+2. We need to manually write such 'constants' classes - boilerplate code.
 
 This project aims at solving those last two points!
+
+## Features
+
+Domain, nested properties
+
+**TODO**
+
+## Usage
+Boilerplate generator is implemented as Annotation Processor (JSR 269: Pluggable Annotation Processing API).
+To use it in your project you need to:
+1. Add it as dependency in you project.
+2. Configure it by defining annotations in your code.
+ 
+### Adding a dependency
+
+Boilerplate generator is [available](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.alex-zuy.boilerplate%22%20AND%20a%3A%22processor%22)
+from Maven Central, so you can get it in your project just by adding
+dependency to you pom.xml:
+<!-- We can link artifact version using recource filtering -->
+```xml
+<dependency>
+    <groupId>com.github.alex-zuy.boilerplate</groupId>
+    <artifactId>processor</artifactId>
+    <!-- Update version to the latest available -->
+    <version>1.0.0</version>
+    <scope>compile</scope>
+</dependency>
+```
+### Configuring generator
+Boilerplate generator strives to not pollute your code with its annotations.
+For this reason you will need to define your own annotations to mark classes
+you want to process. There are no requirements to this annotations, so it can
+be as simple as:
+```java
+package  com.example.app;
+
+public @interface IncludeMarker {}
+```
+Using this annotation you can configure boilerplate generator to generate metadata classes
+for all classes marked with `@IncludeMarker` annotation. Here is example configuration (in package-info.java):
+```java
+@BeanMetadataConfiguration(
+    supportClassesConfiguration = @SupportClassesConfiguration(basePackage = "com.example.app.generated.support"),
+    domainConfiguration = @DomainConfiguration(
+            includes = @DomainConfiguration.Includes(
+                typeAnnotations = {"com.example.app.IncludeMarker"}))
+)
+package com.example.app;
+```
+Given bean class Person:
+```java
+package com.example.app;
+
+@IncludeMarker
+public class Person {
+    
+    private String name;
+    
+    // getters-setters ...
+}
+```
+Boilerplate generator will generate class `Person_p` which you can use to refer to `Person`\`s class properties.
+For more information about configuration and available options please refer to <!-- TODO: inser link --> JavaDoc.
