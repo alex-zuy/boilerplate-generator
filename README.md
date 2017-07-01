@@ -6,14 +6,16 @@ string constants (e.g. names of bean properties).
 
 <!-- List of link references -->
 [JavaBeansSpec]: http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html
+[JavaAnnotationProcessing]: https://www.jcp.org/en/jsr/detail?id=269
 [BoilerplateGeneratorMavenCentralSearch]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.alex-zuy.boilerplate%22%20AND%20a%3A%22processor%22
-
+[BoilerplateGeneratorJavaDoc]: https://alex-zuy.github.io/boilerplate-generator/
 
 
 ## Index
 1. [Rationale](#rationale)
 2. [Features](#features)
 3. [Usage](#usage)
+4. [Java Doc][BoilerplateGeneratorJavaDoc]
 
 ## Rationale <a id="rationale"></a>
 
@@ -102,7 +104,7 @@ Domain, nested properties
 **TODO**
 
 ## Usage <a id="usage"></a>
-Boilerplate generator is implemented as Annotation Processor (JSR 269: Pluggable Annotation Processing API).
+Boilerplate generator is implemented as Annotation Processor ([JSR 269: Pluggable Annotation Processing API][JavaAnnotationProcessing]).
 To use it in your project you need to:
 1. [Add it as dependency](#usage-add-dependency) in you project.
 2. [Configure](#usage-configure) it by defining annotations in your code.
@@ -124,9 +126,10 @@ dependency to you pom.xml:
 ```
 ### Configuring generator <a id="usage-configure"></a>
 Boilerplate generator strives to not pollute your code with its annotations.
-For this reason you will need to define your own annotations to mark classes
-you want to process. There are no requirements to this annotations, so it can
-be as simple as:
+For this reason it does not provides annotations to do that, so you will need to
+define your own annotations to mark classes you want to process (or use annotations
+you already have in your project). There are no requirements to this annotations,
+so it can be as simple as:
 ```java
 package  com.example.app;
 
@@ -157,4 +160,4 @@ public class Person {
 }
 ```
 Boilerplate generator will generate class `Person_p` which you can use to refer to `Person`\`s class properties.
-For more information about configuration and available options please refer to <!-- TODO: inser link --> JavaDoc.
+For more information about configuration and available options please refer to [JavaDoc][BoilerplateGeneratorJavaDoc].
