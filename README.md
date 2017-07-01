@@ -4,11 +4,22 @@
 The project deals with generation of boilerplate code and more specifically with
 string constants (e.g. names of bean properties).
 
-## Rationale
+<!-- List of link references -->
+[JavaBeansSpec]: http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html
+[BoilerplateGeneratorMavenCentralSearch]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.alex-zuy.boilerplate%22%20AND%20a%3A%22processor%22
 
-### Bean Properties Names
 
-The ubiquitous in Java World [Java Beans](http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html)
+
+## Index
+1. [Rationale](#rationale)
+2. [Features](#features)
+3. [Usage](#usage)
+
+## Rationale <a id="rationale"></a>
+
+### Bean Properties Names <a id=""></a>
+
+The ubiquitous in Java World [Java Beans][JavaBeansSpec]
 pattern often forces you to refer to properties of beans using their names.
 Some cases are:
 * validation of beans (especially in web applications). You may need to validate bean
@@ -84,13 +95,13 @@ With this solution we still have following problems:
 
 This project aims at solving those last two points!
 
-## Features
+## Features <a id="features"></a>
 
 Domain, nested properties
 
 **TODO**
 
-## Usage
+## Usage <a id="usage"></a>
 Boilerplate generator is implemented as Annotation Processor (JSR 269: Pluggable Annotation Processing API).
 To use it in your project you need to:
 1. [Add it as dependency](#usage-add-dependency) in you project.
@@ -98,7 +109,7 @@ To use it in your project you need to:
  
 ### Adding a dependency <a id="usage-add-dependency"></a>
 
-Boilerplate generator is [available](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.alex-zuy.boilerplate%22%20AND%20a%3A%22processor%22)
+Boilerplate generator is [available][BoilerplateGeneratorMavenCentralSearch]
 from Maven Central, so you can get it in your project just by adding
 dependency to you pom.xml:
 <!-- We can link artifact version using recource filtering -->
@@ -125,7 +136,8 @@ Using this annotation you can configure boilerplate generator to generate metada
 for all classes marked with `@IncludeMarker` annotation. Here is example configuration (in package-info.java):
 ```java
 @BeanMetadataConfiguration(
-    supportClassesConfiguration = @SupportClassesConfiguration(basePackage = "com.example.app.generated.support"),
+    supportClassesConfiguration = @SupportClassesConfiguration(
+        basePackage = "com.example.app.generated.support"),
     domainConfiguration = @DomainConfiguration(
             includes = @DomainConfiguration.Includes(
                 typeAnnotations = {"com.example.app.IncludeMarker"}))
