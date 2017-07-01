@@ -96,7 +96,7 @@ To use it in your project you need to:
 1. [Add it as dependency](#usage-add-dependency) in you project.
 2. [Configure](#usage-configure) it by defining annotations in your code.
  
-### Adding a dependency <a href="#usage-add-dependency"></a>
+### Adding a dependency <a id="usage-add-dependency"></a>
 
 Boilerplate generator is [available](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.alex-zuy.boilerplate%22%20AND%20a%3A%22processor%22)
 from Maven Central, so you can get it in your project just by adding
@@ -111,7 +111,7 @@ dependency to you pom.xml:
     <scope>compile</scope>
 </dependency>
 ```
-### Configuring generator <a href="#usage-configure"></a>
+### Configuring generator <a id="usage-configure"></a>
 Boilerplate generator strives to not pollute your code with its annotations.
 For this reason you will need to define your own annotations to mark classes
 you want to process. There are no requirements to this annotations, so it can
