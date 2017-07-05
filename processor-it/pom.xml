@@ -2,20 +2,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>processor-it</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>com.github.alex-zuy.boilerplate</groupId>
         <artifactId>boilerplate-generator</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.github.alex-zuy.boilerplate</groupId>
             <artifactId>processor</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

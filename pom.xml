@@ -3,7 +3,7 @@
 
     <groupId>com.github.alex-zuy.boilerplate</groupId>
     <artifactId>boilerplate-generator</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -48,7 +48,7 @@
         <connection>scm:git:git@github.com:alex-zuy/boilerplate-generator.git</connection>
         <developerConnection>scm:git:git@github.com:alex-zuy/boilerplate-generator.git</developerConnection>
         <url>https://github.com/alex-zuy/boilerplate-generator</url>
-      <tag>boilerplate-generator-1.0.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
