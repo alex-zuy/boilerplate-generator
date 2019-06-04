@@ -1,8 +1,9 @@
 # Boilerplate generator
 [![Build Status](https://travis-ci.org/alex-zuy/boilerplate-generator.svg?branch=master)](https://travis-ci.org/alex-zuy/boilerplate-generator)
 
-The project deals with generation of boilerplate code and more specifically with
-string constants (e.g. names of bean properties).
+The project deals with generation of property name constants for Java Beans classes. Implemented
+as annotation processor it does not requires complex sutup, build tools integrations, IDE plugins, etc.
+Just add as dependency and you are good to go.
 
 <!-- Link references -->
 [JavaBeansSpec]: http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html
