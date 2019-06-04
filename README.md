@@ -16,7 +16,7 @@ string constants (e.g. names of bean properties).
 1. [Features](#features)
 2. [Rationale](#rationale)
 3. [Setup](#setup)
-4. [Usage](#usage)
+4. [Usage](#usage-in-client-code)
 5. [Java Doc][BoilerplateGeneratorJavaDoc]
 6. [Similar projects](#similar)
 
@@ -25,7 +25,7 @@ string constants (e.g. names of bean properties).
 With Boilerplate generator you can:
 1. Can
     * Use bean property names in your code in safe way (using constants declared in generated code).
-    * Construct nested properties paths (see [usage](#usage) section)
+    * Construct nested properties paths (see [usage](#usage-in-client-code) section)
 2. Don't need to
     * Setup build tool plugins (javac`s builtin compiler API is used)
 
@@ -115,7 +115,7 @@ To use it in your project you need to:
 1. [Add it as dependency](#usage-add-dependency) in you project.
 2. [Configure](#usage-configure) it by defining annotations in your code.
 
-### Adding a dependency <a id="setup-add-dependency"></a>
+### Adding a dependency <a id="usage-add-dependency"></a>
 
 Boilerplate generator is [available][BoilerplateGeneratorMavenCentralSearch]
 from Maven Central, so you can get it in your project just by adding
